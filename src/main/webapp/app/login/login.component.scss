@@ -1,0 +1,18 @@
+.login-container {
+  max-width: 420px;
+  margin: 10vh auto;
+  padding: 8px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b00020;
+  margin-bottom: 8px;
+}

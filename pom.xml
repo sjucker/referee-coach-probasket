@@ -244,7 +244,7 @@
                     <classPatterns>
                         <pattern>ch.refereecoach.probasket.**DTO</pattern>
                     </classPatterns>
-                    <outputFile>src/app/rest.ts</outputFile>
+                    <outputFile>src/main/webapp/rest.ts</outputFile>
                     <outputKind>module</outputKind>
                     <outputFileType>implementationFile</outputFileType>
                     <mapDate>asString</mapDate>
