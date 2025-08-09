@@ -2,7 +2,6 @@ package ch.refereecoach.probasket.configuration;
 
 import ch.refereecoach.probasket.security.BasketplanAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -38,7 +36,6 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        log.info(properties.toString());
         var secretKey = new SecretKeySpec(properties.getJwtSecret().getBytes(UTF_8), SIGNATURE_ALGORITHM.getJcaName());
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
@@ -46,16 +43,16 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
-                   .csrf(AbstractHttpConfigurer::disable)
-                   .exceptionHandling(withDefaults())
-                   .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                   .authorizeHttpRequests(auth -> auth
-                           .requestMatchers("/api/auth/**").permitAll()
-                           .requestMatchers("/api/**").authenticated()
-                           .anyRequest().permitAll() // to serve the Angular frontend
-                   )
-                   .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtSpec -> jwtSpec.decoder(jwtDecoder())))
-                   .build();
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll() // to serve the Angular frontend
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtSpec -> jwtSpec.decoder(jwtDecoder())))
+                .build();
     }
 
 }
