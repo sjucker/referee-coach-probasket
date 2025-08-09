@@ -8,4 +8,4 @@ Content-Type: application/json
 
 ###
 GET localhost:8080/api/ping
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.7mKUWtieRe8IvJN2giH5dGgf0c0s-4alfUJA8rMWLBE
+Authorization: Bearer <TOKEN>
