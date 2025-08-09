@@ -1,0 +1,9 @@
+services:
+  referee-coach-probasket-db:
+    image: postgres:16.8
+    environment:
+      - POSTGRES_USER=probasket
+      - POSTGRES_PASSWORD=probasket
+      - POSTGRES_DB=probasket
+    ports:
+      - "5432:5432"
