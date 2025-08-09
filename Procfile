@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/backend-*.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/referee-coach-probasket-*.jar
