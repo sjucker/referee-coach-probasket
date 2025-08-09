@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "lint-fix": "ng lint --fix"
   },
   "prettier": {
     "overrides": [
@@ -39,6 +40,6 @@
     "angular-eslint": "20.1.1",
     "eslint": "9.33.0",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.34.1"
+    "typescript-eslint": "8.39.0"
   }
 }

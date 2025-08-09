@@ -18,6 +18,17 @@
     * `mvn -U versions:display-property-updates`
     * `mvn -U versions:update-properties`
 
+* Update Angular
+    * `ng update @angular/core@20 @angular/cli@20 --allow-dirty`
+    * `ng update @angular/material@20 --allow-dirty`
+    * `ncu`
+    * `ncu -u`, or
+    * `ncu -i` for interactive update
+    * `npm install`
+    * `npm run build`
+    * `npm run lint`
+    * `npm run lint-fix` (if there are linting issues)
+
 ## Heroku
 
 ### Database
