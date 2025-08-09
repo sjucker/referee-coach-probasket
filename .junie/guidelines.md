@@ -85,6 +85,9 @@ Here is a link to the most recent Angular style guide https://angular.dev/style-
 - Prefer Reactive forms instead of Template-driven ones
 - Do NOT use `ngClass`, use `class` bindings instead, for context: https://angular.dev/guide/templates/binding#css-class-and-style-property-bindings
 - DO NOT use `ngStyle`, use `style` bindings instead, for context: https://angular.dev/guide/templates/binding#css-class-and-style-property-bindings
+- Use MatFormField with MatInput for form inputs
+- Implement ErrorStateMatcher for custom form validation visualization
+- Use Material's built-in animations through BrowserAnimationsModule
 
 ### State Management
 - Use signals for local component state
@@ -102,3 +105,36 @@ Here is a link to the most recent Angular style guide https://angular.dev/style-
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+### Angular Material Best Practices
+
+- Use Material's built-in color palette system
+- Define a custom theme using `@use '@angular/material' as mat;`
+- Implement consistent typography using Material's typography system
+- Use Material's spacing system ($mat-space-*) for consistent layouts
+- Prefer Material CDK for complex interactions (drag-drop, virtual scroll)
+- Use Material's breakpoint observer for responsive designs
+- Implement Material's accessibility features (ARIA labels, focus management)
+- Use Material's overlay services for modals and tooltips
+- Extend Material components using CSS custom properties
+- Use Material's form field appearance consistently throughout the app
+
+### Material Theming
+
+- Create a central theme file (_theme.scss)
+- Define primary, accent, and warn palettes
+- Use Material's typography levels consistently
+- Define custom Material component themes using `mat.define-theme()`
+- Use theme mixins for component-specific theming
+- Implement dark mode using Material's theming system
+- Use Material's elevation helpers for consistent shadow depths
+
+### Material Forms
+
+- Use MatFormField with Material form controls
+- Implement consistent error messages using MatError
+- Use Material's form field appearances (outline, fill)
+- Apply Material's built-in validators
+- Use Material's datepicker for date inputs
+- Implement Material's select components for dropdowns
+- Use Material's autocomplete for searchable dropdowns
