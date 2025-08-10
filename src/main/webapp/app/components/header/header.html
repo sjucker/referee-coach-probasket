@@ -1,19 +1,33 @@
 <mat-toolbar color="primary">
     <mat-toolbar-row>
-        @if (auth.isAuthenticated() && !isOverview()) {
-            <button mat-icon-button [routerLink]="[PATH_OVERVIEW]" matTooltip="Home">
-                <mat-icon>home</mat-icon>
-            </button>
-        }
         <div>Referee Coach ProBasket</div>
         <span class="header-spacer"></span>
         @if (auth.isAuthenticated()) {
-            <button mat-icon-button [matTooltip]="auth.username()">
+            @if (!isOverview()) {
+                <button mat-icon-button [routerLink]="['/', PATH_OVERVIEW]" matTooltip="Home">
+                    <mat-icon>home</mat-icon>
+                </button>
+            }
+            <button mat-icon-button [matMenuTriggerFor]="navMenu" matTooltip="Navigate">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="auth.username()" aria-label="User">
                 <mat-icon>person</mat-icon>
             </button>
-            <button mat-icon-button (click)="logout()" matTooltip="Logout">
+            <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Logout">
                 <mat-icon>logout</mat-icon>
             </button>
         }
+
+        <mat-menu #navMenu="matMenu">
+            <button type="button" mat-menu-item [routerLink]="['/', PATH_OVERVIEW]">
+                <mat-icon>home</mat-icon>
+                <span>Overview</span>
+            </button>
+            <button type="button" mat-menu-item [routerLink]="['/', PATH_TAG_SEARCH]">
+                <mat-icon>search</mat-icon>
+                <span>Tag Search</span>
+            </button>
+        </mat-menu>
     </mat-toolbar-row>
 </mat-toolbar>
