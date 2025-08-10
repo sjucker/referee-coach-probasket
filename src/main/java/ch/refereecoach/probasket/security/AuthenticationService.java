@@ -18,7 +18,7 @@ public class AuthenticationService {
 
     public LoginResponseDTO authenticate(String username, String password) throws AuthenticationException {
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return new LoginResponseDTO(jwtTokenService.generateJwtToken(authentication));
+        return new LoginResponseDTO(jwtTokenService.generateJwtToken(authentication), username);
     }
 
 }

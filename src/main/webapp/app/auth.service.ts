@@ -11,34 +11,46 @@ export class AuthService {
 
     private baseUrl = environment.baseUrl
 
-    private readonly tokenKey = 'auth_token';
-    private readonly _token = signal<string | null>(this.readToken());
+    private readonly tokenKey = 'probasket-token';
+    private readonly usernameKey = 'probasket-username';
+
+    private readonly _token = signal<string | null>(this.readValue(this.tokenKey));
+    private readonly _username = signal<string | null>(this.readValue(this.usernameKey));
+
     readonly token = computed(() => this._token());
+    readonly username = computed(() => this._username());
     readonly isAuthenticated = computed(() => !!this._token());
 
     login(username: string, password: string) {
         const body: LoginRequestDTO = {username, password};
         return this.http.post<LoginResponseDTO>(`${this.baseUrl}/api/auth/login`, body).pipe(
             tap((res) => {
-                this.setToken(res.token);
+                this._token.set(res.token);
+                this.storeValue(this.tokenKey, res.token);
+
+                this._username.set(res.username);
+                this.storeValue(this.usernameKey, res.username);
             })
         );
     }
 
     logout() {
-        this.setToken(null);
+        this._token.set(null);
+        this.storeValue(this.tokenKey, null);
+
+        this._username.set(null);
+        this.storeValue(this.usernameKey, null);
     }
 
-    private setToken(token: string | null) {
-        this._token.set(token);
+    private storeValue(key: string, token: string | null) {
         if (token) {
-            localStorage.setItem(this.tokenKey, token);
+            localStorage.setItem(key, token);
         } else {
-            localStorage.removeItem(this.tokenKey);
+            localStorage.removeItem(key);
         }
     }
 
-    private readToken(): string | null {
-        return localStorage.getItem(this.tokenKey);
+    private readValue(key: string): string | null {
+        return localStorage.getItem(key);
     }
 }
