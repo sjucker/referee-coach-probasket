@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -25,7 +25,7 @@ interface RefereeSelection {
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Overview implements OnInit {
+export class Overview {
     private readonly fb = inject(FormBuilder);
     private readonly http = inject(HttpClient);
     protected readonly auth = inject(AuthService);
@@ -47,10 +47,6 @@ export class Overview implements OnInit {
     protected readonly form = this.fb.nonNullable.group({
         gameNumber: ['', [Validators.required]],
     });
-
-    ngOnInit(): void {
-
-    }
 
     searchGame(): void {
         this.problemDescription.set(null);
@@ -113,7 +109,7 @@ export class Overview implements OnInit {
                     // TODO
                     // this.edit(response.id, ReportType.COACHING);
                 },
-                error: err => {
+                error: () => {
                     this.creating.set(false);
                     this.snackBar.open("An unexpected error occurred, report could not be created.", undefined, {
                         duration: 3000,
