@@ -1,23 +1,51 @@
 <app-header></app-header>
 <app-loading-bar [show]="loading()"></app-loading-bar>
 
-<section class="container">
-  <mat-card>
-    <mat-card-title>Welcome</mat-card-title>
-    <mat-card-content>
-      @if (error()) {
-        <p class="error">{{ error() }}</p>
-      }
-      @if (pingResult()) {
-        <p class="success">Backend says: {{ pingResult() }}</p>
-      } @else {
-        <p>Awaiting response...</p>
-      }
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="ping()" [disabled]="loading()">Ping /api/ping</button>
-      <button mat-raised-button color="primary" (click)="pingAdmin()" [disabled]="loading()">ADMIN Ping /api/ping/admin</button>
-      <button mat-button color="warn" (click)="logout()">Logout</button>
-    </mat-card-actions>
-  </mat-card>
-</section>
+@if (auth.isRefereeCoach()) {
+    <mat-card appearance="outlined">
+        <mat-card-content>
+            <div class="search-container">
+                <form [formGroup]="form" (ngSubmit)="searchGame()" role="form">
+                    <mat-form-field appearance="outline" color="accent">
+                        <mat-label>Game Number (e.g., 21-03520)</mat-label>
+                        <input formControlName="gameNumber" autocomplete="off" matInput name="gameNumber" type="text">
+                    </mat-form-field>
+                    <button color="primary" mat-flat-button type="submit" [disabled]="searching()">Search</button>
+                </form>
+
+                @if (game() && videoUrlInputNeeded()) {
+                    <div>
+                        <mat-form-field appearance="outline" color="accent">
+                            <mat-label>YouTube URL</mat-label>
+                            <input [ngModel]="videoUrl()" (ngModelChange)="videoUrl.set($event)"
+                                   [disabled]="textOnlyMode()"
+                                   autocomplete="off" matInput name="youtubeUrl" type="text">
+                        </mat-form-field>
+                        <mat-checkbox [ngModel]="textOnlyMode()" (ngModelChange)="textOnlyMode.set($event)">No Video Comments</mat-checkbox>
+                    </div>
+                }
+                @if (game()) {
+                    <form (ngSubmit)="createRefereeReport()" role="form">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Select Referee</mat-label>
+                            <mat-select [value]="referee()" (selectionChange)="referee.set($event.value)">
+                                @for (ref of referees(); track ref.id) {
+                                    <mat-option [value]="ref">{{ ref.name }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        <button color="primary" mat-flat-button
+                                [disabled]="!referee() ||(!videoUrl() && !textOnlyMode()) || creating()">
+                            Start
+                        </button>
+                    </form>
+                    @if (problemDescription()) {
+                        <div>
+                            {{ problemDescription() }}
+                        </div>
+                    }
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
+}

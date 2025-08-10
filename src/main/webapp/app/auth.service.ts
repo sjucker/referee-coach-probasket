@@ -1,7 +1,7 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
-import {LoginRequestDTO, LoginResponseDTO} from "../rest";
+import {LoginRequestDTO, LoginResponseDTO, UserRole} from "../rest";
 import {environment} from "../environments/environment";
 
 
@@ -66,5 +66,13 @@ export class AuthService {
 
     private readRoles(): string[] {
         return localStorage.getItem(this.rolesKey)?.split(',') ?? [];
+    }
+
+    public isRefereeCoach(): boolean {
+        return this.hasRole(UserRole.REFEREE_COACH);
+    }
+
+    public isTrainerCoach(): boolean {
+        return this.hasRole(UserRole.TRAINER_COACH);
     }
 }
