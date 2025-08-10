@@ -1,4 +1,4 @@
-package ch.refereecoach.probasket.security;
+package ch.refereecoach.probasket.service.auth;
 
 import ch.refereecoach.probasket.common.UserRole;
 import ch.refereecoach.probasket.dto.auth.LoginResponseDTO;

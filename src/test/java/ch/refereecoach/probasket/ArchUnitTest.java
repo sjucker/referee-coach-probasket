@@ -15,15 +15,29 @@ import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
 import static com.tngtech.archunit.core.domain.properties.HasName.Predicates.name;
 import static com.tngtech.archunit.core.domain.properties.HasOwner.Predicates.With.owner;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 @AnalyzeClasses(packages = "ch.refereecoach.probasket")
 public class ArchUnitTest {
 
+    @ArchTest
+    public static final ArchRule layered_architecture = layeredArchitecture()
+            .consideringAllDependencies()
+            .layer("JOOQ").definedBy("ch.refereecoach.probasket.jooq..")
+            .layer("SERVICE").definedBy("ch.refereecoach.probasket.service..")
+            .layer("DTO").definedBy("ch.refereecoach.probasket.dto..")
+            .layer("REST").definedBy("ch.refereecoach.probasket.rest..")
+            .layer("CONFIGURATION").definedBy("ch.refereecoach.probasket.configuration..")
+            .whereLayer("REST").mayNotBeAccessedByAnyLayer()
+            .whereLayer("SERVICE").mayOnlyBeAccessedByLayers("REST", "CONFIGURATION")
+            .whereLayer("JOOQ").mayOnlyBeAccessedByLayers("SERVICE");
+
     // usage of jOOQ's stream is dangerous since it must be closed manually or in a try-with-resources
     // this is often forgotten, therefore, we prohibit it entirely
     @ArchTest
-    public static final ArchRule no_jooq_stream = noClasses().should().callMethodWhere(target(name("stream"))
-                                                                                               .and(target(owner(assignableTo(ResultQuery.class)))));
+    public static final ArchRule no_jooq_stream = noClasses().should()
+                                                             .callMethodWhere(target(name("stream"))
+                                                                     .and(target(owner(assignableTo(ResultQuery.class)))));
 
     // always use DateUtil
     @ArchTest

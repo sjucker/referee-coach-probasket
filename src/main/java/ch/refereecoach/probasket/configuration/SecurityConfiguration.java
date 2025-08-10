@@ -1,7 +1,7 @@
 package ch.refereecoach.probasket.configuration;
 
 import ch.refereecoach.probasket.common.UserRole;
-import ch.refereecoach.probasket.security.BasketplanAuthenticationProvider;
+import ch.refereecoach.probasket.service.auth.BasketplanAuthenticationProvider;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import static ch.refereecoach.probasket.security.JwtService.CLAIM_AUTHORITIES;
+import static ch.refereecoach.probasket.service.auth.JwtService.CLAIM_AUTHORITIES;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;

@@ -1,4 +1,4 @@
-package ch.refereecoach.probasket.security;
+package ch.refereecoach.probasket.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

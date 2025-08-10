@@ -1,4 +1,4 @@
-package ch.refereecoach.probasket.security;
+package ch.refereecoach.probasket.service.auth;
 
 import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Login;
@@ -18,7 +18,11 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.refereecoach.probasket.common.UserRole.*;
+import static ch.refereecoach.probasket.common.UserRole.ADMIN;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH;
+import static ch.refereecoach.probasket.common.UserRole.TRAINER;
+import static ch.refereecoach.probasket.common.UserRole.TRAINER_COACH;
 import static ch.refereecoach.probasket.util.DateUtil.now;
 
 @Slf4j
