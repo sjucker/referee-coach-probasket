@@ -2,6 +2,7 @@ package ch.refereecoach.probasket.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -15,7 +16,9 @@ import static org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256;
 
 @Component
 @RequiredArgsConstructor
-public class JwtTokenService {
+public class JwtService {
+
+    public static final String CLAIM_AUTHORITIES = "authorities";
 
     private final JwtEncoder encoder;
 
@@ -28,6 +31,9 @@ public class JwtTokenService {
                                  .issuedAt(now)
                                  .expiresAt(now.plus(365, DAYS))
                                  .subject(userPrincipal)
+                                 .claim(CLAIM_AUTHORITIES, authentication.getAuthorities().stream()
+                                                                         .map(GrantedAuthority::getAuthority)
+                                                                         .toList())
                                  .build();
 
         var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(HS256).build(), claims);

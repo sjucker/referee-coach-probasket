@@ -8,6 +8,7 @@ import ch.refereecoach.probasket.jooq.AbstractSpringDAOImpl;
 import ch.refereecoach.probasket.jooq.tables.Login;
 import ch.refereecoach.probasket.jooq.tables.records.LoginRecord;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,5 +145,95 @@ public class LoginDao extends AbstractSpringDAOImpl<LoginRecord, ch.refereecoach
      */
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByEmail(String... values) {
         return fetch(Login.LOGIN.EMAIL, values);
+    }
+
+    /**
+     * Fetch records that have <code>last_login BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfLastLogin(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(Login.LOGIN.LAST_LOGIN, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>last_login IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByLastLogin(LocalDateTime... values) {
+        return fetch(Login.LOGIN.LAST_LOGIN, values);
+    }
+
+    /**
+     * Fetch records that have <code>referee_coach BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfRefereeCoach(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Login.LOGIN.REFEREE_COACH, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>referee_coach IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByRefereeCoach(Boolean... values) {
+        return fetch(Login.LOGIN.REFEREE_COACH, values);
+    }
+
+    /**
+     * Fetch records that have <code>referee BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfReferee(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Login.LOGIN.REFEREE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>referee IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByReferee(Boolean... values) {
+        return fetch(Login.LOGIN.REFEREE, values);
+    }
+
+    /**
+     * Fetch records that have <code>trainer_coach BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfTrainerCoach(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Login.LOGIN.TRAINER_COACH, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>trainer_coach IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByTrainerCoach(Boolean... values) {
+        return fetch(Login.LOGIN.TRAINER_COACH, values);
+    }
+
+    /**
+     * Fetch records that have <code>trainer BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfTrainer(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Login.LOGIN.TRAINER, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>trainer IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByTrainer(Boolean... values) {
+        return fetch(Login.LOGIN.TRAINER, values);
+    }
+
+    /**
+     * Fetch records that have <code>admin BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfAdmin(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Login.LOGIN.ADMIN, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>admin IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByAdmin(Boolean... values) {
+        return fetch(Login.LOGIN.ADMIN, values);
     }
 }

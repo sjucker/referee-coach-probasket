@@ -8,13 +8,6 @@
     </mat-card-header>
 
     <mat-card-content>
-        @if (error()) {
-            <div class="error" role="alert">
-                <mat-icon color="warn">error</mat-icon>
-                {{ error() }}
-            </div>
-        }
-
         <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on">
             <mat-form-field appearance="outline" color="accent">
                 <mat-label>Username</mat-label>
@@ -31,6 +24,13 @@
                     <mat-error>Password is required</mat-error>
                 }
             </mat-form-field>
+
+            @if (error()) {
+                <div class="error" role="alert">
+                    <mat-icon color="warn">error</mat-icon>
+                    {{ error() }}
+                </div>
+            }
 
             <button color="primary" mat-flat-button type="submit" [disabled]="form.invalid || loading()">
                 Login

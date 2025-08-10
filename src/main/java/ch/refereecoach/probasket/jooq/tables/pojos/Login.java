@@ -5,6 +5,7 @@ package ch.refereecoach.probasket.jooq.tables.pojos;
 
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 /**
@@ -20,6 +21,12 @@ public class Login implements Serializable {
     private String firstname;
     private String lastname;
     private String email;
+    private LocalDateTime lastLogin;
+    private Boolean refereeCoach;
+    private Boolean referee;
+    private Boolean trainerCoach;
+    private Boolean trainer;
+    private Boolean admin;
 
     public Login() {}
 
@@ -29,6 +36,12 @@ public class Login implements Serializable {
         this.firstname = value.firstname;
         this.lastname = value.lastname;
         this.email = value.email;
+        this.lastLogin = value.lastLogin;
+        this.refereeCoach = value.refereeCoach;
+        this.referee = value.referee;
+        this.trainerCoach = value.trainerCoach;
+        this.trainer = value.trainer;
+        this.admin = value.admin;
     }
 
     public Login(
@@ -36,13 +49,25 @@ public class Login implements Serializable {
         String basketplanUsername,
         String firstname,
         String lastname,
-        String email
+        String email,
+        LocalDateTime lastLogin,
+        Boolean refereeCoach,
+        Boolean referee,
+        Boolean trainerCoach,
+        Boolean trainer,
+        Boolean admin
     ) {
         this.id = id;
         this.basketplanUsername = basketplanUsername;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        this.lastLogin = lastLogin;
+        this.refereeCoach = refereeCoach;
+        this.referee = referee;
+        this.trainerCoach = trainerCoach;
+        this.trainer = trainer;
+        this.admin = admin;
     }
 
     /**
@@ -115,6 +140,90 @@ public class Login implements Serializable {
         this.email = email;
     }
 
+    /**
+     * Getter for <code>public.login.last_login</code>.
+     */
+    public LocalDateTime getLastLogin() {
+        return this.lastLogin;
+    }
+
+    /**
+     * Setter for <code>public.login.last_login</code>.
+     */
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    /**
+     * Getter for <code>public.login.referee_coach</code>.
+     */
+    public Boolean getRefereeCoach() {
+        return this.refereeCoach;
+    }
+
+    /**
+     * Setter for <code>public.login.referee_coach</code>.
+     */
+    public void setRefereeCoach(Boolean refereeCoach) {
+        this.refereeCoach = refereeCoach;
+    }
+
+    /**
+     * Getter for <code>public.login.referee</code>.
+     */
+    public Boolean getReferee() {
+        return this.referee;
+    }
+
+    /**
+     * Setter for <code>public.login.referee</code>.
+     */
+    public void setReferee(Boolean referee) {
+        this.referee = referee;
+    }
+
+    /**
+     * Getter for <code>public.login.trainer_coach</code>.
+     */
+    public Boolean getTrainerCoach() {
+        return this.trainerCoach;
+    }
+
+    /**
+     * Setter for <code>public.login.trainer_coach</code>.
+     */
+    public void setTrainerCoach(Boolean trainerCoach) {
+        this.trainerCoach = trainerCoach;
+    }
+
+    /**
+     * Getter for <code>public.login.trainer</code>.
+     */
+    public Boolean getTrainer() {
+        return this.trainer;
+    }
+
+    /**
+     * Setter for <code>public.login.trainer</code>.
+     */
+    public void setTrainer(Boolean trainer) {
+        this.trainer = trainer;
+    }
+
+    /**
+     * Getter for <code>public.login.admin</code>.
+     */
+    public Boolean getAdmin() {
+        return this.admin;
+    }
+
+    /**
+     * Setter for <code>public.login.admin</code>.
+     */
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -154,6 +263,42 @@ public class Login implements Serializable {
         }
         else if (!this.email.equals(other.email))
             return false;
+        if (this.lastLogin == null) {
+            if (other.lastLogin != null)
+                return false;
+        }
+        else if (!this.lastLogin.equals(other.lastLogin))
+            return false;
+        if (this.refereeCoach == null) {
+            if (other.refereeCoach != null)
+                return false;
+        }
+        else if (!this.refereeCoach.equals(other.refereeCoach))
+            return false;
+        if (this.referee == null) {
+            if (other.referee != null)
+                return false;
+        }
+        else if (!this.referee.equals(other.referee))
+            return false;
+        if (this.trainerCoach == null) {
+            if (other.trainerCoach != null)
+                return false;
+        }
+        else if (!this.trainerCoach.equals(other.trainerCoach))
+            return false;
+        if (this.trainer == null) {
+            if (other.trainer != null)
+                return false;
+        }
+        else if (!this.trainer.equals(other.trainer))
+            return false;
+        if (this.admin == null) {
+            if (other.admin != null)
+                return false;
+        }
+        else if (!this.admin.equals(other.admin))
+            return false;
         return true;
     }
 
@@ -166,6 +311,12 @@ public class Login implements Serializable {
         result = prime * result + ((this.firstname == null) ? 0 : this.firstname.hashCode());
         result = prime * result + ((this.lastname == null) ? 0 : this.lastname.hashCode());
         result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
+        result = prime * result + ((this.lastLogin == null) ? 0 : this.lastLogin.hashCode());
+        result = prime * result + ((this.refereeCoach == null) ? 0 : this.refereeCoach.hashCode());
+        result = prime * result + ((this.referee == null) ? 0 : this.referee.hashCode());
+        result = prime * result + ((this.trainerCoach == null) ? 0 : this.trainerCoach.hashCode());
+        result = prime * result + ((this.trainer == null) ? 0 : this.trainer.hashCode());
+        result = prime * result + ((this.admin == null) ? 0 : this.admin.hashCode());
         return result;
     }
 
@@ -178,6 +329,12 @@ public class Login implements Serializable {
         sb.append(", ").append(firstname);
         sb.append(", ").append(lastname);
         sb.append(", ").append(email);
+        sb.append(", ").append(lastLogin);
+        sb.append(", ").append(refereeCoach);
+        sb.append(", ").append(referee);
+        sb.append(", ").append(trainerCoach);
+        sb.append(", ").append(trainer);
+        sb.append(", ").append(admin);
 
         sb.append(")");
         return sb.toString();

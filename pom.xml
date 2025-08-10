@@ -57,6 +57,7 @@
         <sonar.projectKey></sonar.projectKey>
 
         <jooq-codegen-skip>true</jooq-codegen-skip>
+        <frontend-build-skip>false</frontend-build-skip>
     </properties>
     <dependencies>
         <dependency>
@@ -172,6 +173,9 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <skip>${frontend-build-skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>install node and npm</id>

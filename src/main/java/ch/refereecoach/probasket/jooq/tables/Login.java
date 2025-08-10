@@ -8,6 +8,7 @@ import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
 import ch.refereecoach.probasket.jooq.tables.records.LoginRecord;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -76,6 +77,36 @@ public class Login extends TableImpl<LoginRecord> {
      * The column <code>public.login.email</code>.
      */
     public final TableField<LoginRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+
+    /**
+     * The column <code>public.login.last_login</code>.
+     */
+    public final TableField<LoginRecord, LocalDateTime> LAST_LOGIN = createField(DSL.name("last_login"), SQLDataType.LOCALDATETIME(6), this, "");
+
+    /**
+     * The column <code>public.login.referee_coach</code>.
+     */
+    public final TableField<LoginRecord, Boolean> REFEREE_COACH = createField(DSL.name("referee_coach"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.login.referee</code>.
+     */
+    public final TableField<LoginRecord, Boolean> REFEREE = createField(DSL.name("referee"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.login.trainer_coach</code>.
+     */
+    public final TableField<LoginRecord, Boolean> TRAINER_COACH = createField(DSL.name("trainer_coach"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.login.trainer</code>.
+     */
+    public final TableField<LoginRecord, Boolean> TRAINER = createField(DSL.name("trainer"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.login.admin</code>.
+     */
+    public final TableField<LoginRecord, Boolean> ADMIN = createField(DSL.name("admin"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
     private Login(Name alias, Table<LoginRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

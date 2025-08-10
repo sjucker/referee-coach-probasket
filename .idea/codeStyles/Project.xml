@@ -2,6 +2,10 @@
   <code_scheme name="Project" version="173">
     <option name="RIGHT_MARGIN" value="200" />
     <codeStyleSettings language="JAVA">
+      <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
+      <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+      <option name="KEEP_BLANK_LINES_BETWEEN_PACKAGE_DECLARATION_AND_HEADER" value="1" />
+      <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
     </codeStyleSettings>

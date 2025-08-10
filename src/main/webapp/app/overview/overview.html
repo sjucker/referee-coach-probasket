@@ -16,6 +16,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="primary" (click)="ping()" [disabled]="loading()">Ping /api/ping</button>
+      <button mat-raised-button color="primary" (click)="pingAdmin()" [disabled]="loading()">ADMIN Ping /api/ping/admin</button>
       <button mat-button color="warn" (click)="logout()">Logout</button>
     </mat-card-actions>
   </mat-card>

@@ -11,7 +11,7 @@
             <button mat-icon-button [matMenuTriggerFor]="navMenu" matTooltip="Navigate">
                 <mat-icon>menu</mat-icon>
             </button>
-            <button mat-icon-button [matTooltip]="auth.username()" aria-label="User">
+            <button mat-icon-button [matTooltip]="auth.username() + ' (' + auth.roles().join(', ')+ ')'" aria-label="User">
                 <mat-icon>person</mat-icon>
             </button>
             <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Logout">

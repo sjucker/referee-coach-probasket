@@ -6,6 +6,8 @@ package ch.refereecoach.probasket.jooq.tables.records;
 
 import ch.refereecoach.probasket.jooq.tables.Login;
 
+import java.time.LocalDateTime;
+
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -88,6 +90,90 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
         return (String) get(4);
     }
 
+    /**
+     * Setter for <code>public.login.last_login</code>.
+     */
+    public void setLastLogin(LocalDateTime value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.login.last_login</code>.
+     */
+    public LocalDateTime getLastLogin() {
+        return (LocalDateTime) get(5);
+    }
+
+    /**
+     * Setter for <code>public.login.referee_coach</code>.
+     */
+    public void setRefereeCoach(Boolean value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.login.referee_coach</code>.
+     */
+    public Boolean getRefereeCoach() {
+        return (Boolean) get(6);
+    }
+
+    /**
+     * Setter for <code>public.login.referee</code>.
+     */
+    public void setReferee(Boolean value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.login.referee</code>.
+     */
+    public Boolean getReferee() {
+        return (Boolean) get(7);
+    }
+
+    /**
+     * Setter for <code>public.login.trainer_coach</code>.
+     */
+    public void setTrainerCoach(Boolean value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.login.trainer_coach</code>.
+     */
+    public Boolean getTrainerCoach() {
+        return (Boolean) get(8);
+    }
+
+    /**
+     * Setter for <code>public.login.trainer</code>.
+     */
+    public void setTrainer(Boolean value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.login.trainer</code>.
+     */
+    public Boolean getTrainer() {
+        return (Boolean) get(9);
+    }
+
+    /**
+     * Setter for <code>public.login.admin</code>.
+     */
+    public void setAdmin(Boolean value) {
+        set(10, value);
+    }
+
+    /**
+     * Getter for <code>public.login.admin</code>.
+     */
+    public Boolean getAdmin() {
+        return (Boolean) get(10);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -111,7 +197,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
     /**
      * Create a detached, initialised LoginRecord
      */
-    public LoginRecord(Long id, String basketplanUsername, String firstname, String lastname, String email) {
+    public LoginRecord(Long id, String basketplanUsername, String firstname, String lastname, String email, LocalDateTime lastLogin, Boolean refereeCoach, Boolean referee, Boolean trainerCoach, Boolean trainer, Boolean admin) {
         super(Login.LOGIN);
 
         setId(id);
@@ -119,6 +205,12 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
         setFirstname(firstname);
         setLastname(lastname);
         setEmail(email);
+        setLastLogin(lastLogin);
+        setRefereeCoach(refereeCoach);
+        setReferee(referee);
+        setTrainerCoach(trainerCoach);
+        setTrainer(trainer);
+        setAdmin(admin);
         resetChangedOnNotNull();
     }
 
@@ -134,6 +226,12 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
             setFirstname(value.getFirstname());
             setLastname(value.getLastname());
             setEmail(value.getEmail());
+            setLastLogin(value.getLastLogin());
+            setRefereeCoach(value.getRefereeCoach());
+            setReferee(value.getReferee());
+            setTrainerCoach(value.getTrainerCoach());
+            setTrainer(value.getTrainer());
+            setAdmin(value.getAdmin());
             resetChangedOnNotNull();
         }
     }

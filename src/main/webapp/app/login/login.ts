@@ -57,8 +57,7 @@ export class Login {
             },
             error: (err) => {
                 this.loading.set(false);
-                const message = err?.error?.message ?? 'Invalid username or password';
-                this.error.set(message);
+                this.error.set(err?.error?.message ?? 'Invalid username or password');
             }
         });
     }

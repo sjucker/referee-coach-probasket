@@ -13,13 +13,20 @@ export class AuthService {
 
     private readonly tokenKey = 'probasket-token';
     private readonly usernameKey = 'probasket-username';
+    private readonly rolesKey = 'probasket-roles';
 
     private readonly _token = signal<string | null>(this.readValue(this.tokenKey));
     private readonly _username = signal<string | null>(this.readValue(this.usernameKey));
+    private readonly _roles = signal<string[]>(this.readRoles());
 
     readonly token = computed(() => this._token());
     readonly username = computed(() => this._username());
+    readonly roles = computed(() => this._roles());
     readonly isAuthenticated = computed(() => !!this._token());
+
+    hasRole(role: string) {
+        return this._roles().includes(role);
+    }
 
     login(username: string, password: string) {
         const body: LoginRequestDTO = {username, password};
@@ -30,6 +37,9 @@ export class AuthService {
 
                 this._username.set(res.username);
                 this.storeValue(this.usernameKey, res.username);
+
+                this._roles.set(res.roles);
+                this.storeValue(this.rolesKey, res.roles.join(','))
             })
         );
     }
@@ -52,5 +62,9 @@ export class AuthService {
 
     private readValue(key: string): string | null {
         return localStorage.getItem(key);
+    }
+
+    private readRoles(): string[] {
+        return localStorage.getItem(this.rolesKey)?.split(',') ?? [];
     }
 }

@@ -15,4 +15,11 @@ form {
   @include responsive.responsive('gt-md') {
     width: 25%;
   }
+
+  .error {
+    color: var(--mat-sys-error);
+    display: flex;
+    align-items: center;
+    gap: variables.$half-padding;
+  }
 }
