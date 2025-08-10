@@ -7,23 +7,26 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
+import {Header} from "../components/header/header";
+import {LoadingBar} from "../components/loading-bar/loading-bar";
 
 @Component({
     selector: 'app-login',
     imports: [
         ReactiveFormsModule,
-        // Angular Material
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
         MatCardModule,
-        MatIconModule
+        MatIconModule,
+        Header,
+        LoadingBar
     ],
-    templateUrl: './login.component.html',
-    styleUrl: './login.component.scss',
+    templateUrl: './login.html',
+    styleUrl: './login.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent {
+export class Login {
     private readonly fb = inject(FormBuilder);
     private readonly auth = inject(AuthService);
     private readonly router = inject(Router);

@@ -1,0 +1,40 @@
+<app-header></app-header>
+<app-loading-bar [show]="loading()"></app-loading-bar>
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Login</mat-card-title>
+        <mat-card-subtitle>Sign in using your Basketplan credentials.</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+        @if (error()) {
+            <div class="error" role="alert">
+                <mat-icon color="warn">error</mat-icon>
+                {{ error() }}
+            </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on">
+            <mat-form-field appearance="outline" color="accent">
+                <mat-label>Username</mat-label>
+                <input matInput type="text" formControlName="username" required/>
+                @if (form.controls.username.touched && form.controls.username.hasError('required')) {
+                    <mat-error>Username is required</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" color="accent">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password" required/>
+                @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+                    <mat-error>Password is required</mat-error>
+                }
+            </mat-form-field>
+
+            <button color="primary" mat-flat-button type="submit" [disabled]="form.invalid || loading()">
+                Login
+            </button>
+        </form>
+    </mat-card-content>
+</mat-card>
