@@ -5,6 +5,7 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
+import ch.refereecoach.probasket.jooq.tables.Tags;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,11 @@ public class Public extends SchemaImpl {
     public final Login LOGIN = Login.LOGIN;
 
     /**
+     * The table <code>public.tags</code>.
+     */
+    public final Tags TAGS = Tags.TAGS;
+
+    /**
      * No further instances allowed
      */
     private Public() {
@@ -48,7 +54,8 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            Login.LOGIN
+            Login.LOGIN,
+            Tags.TAGS
         );
     }
 }

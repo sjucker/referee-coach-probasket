@@ -5,7 +5,9 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
+import ch.refereecoach.probasket.jooq.tables.Tags;
 import ch.refereecoach.probasket.jooq.tables.records.LoginRecord;
+import ch.refereecoach.probasket.jooq.tables.records.TagsRecord;
 
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -26,4 +28,5 @@ public class Keys {
 
     public static final UniqueKey<LoginRecord> PK__LOGIN = Internal.createUniqueKey(Login.LOGIN, DSL.name("pk__login"), new TableField[] { Login.LOGIN.ID }, true);
     public static final UniqueKey<LoginRecord> UQ__LOGIN_USERNAME = Internal.createUniqueKey(Login.LOGIN, DSL.name("uq__login_username"), new TableField[] { Login.LOGIN.BASKETPLAN_USERNAME }, true);
+    public static final UniqueKey<TagsRecord> PK__TAGS = Internal.createUniqueKey(Tags.TAGS, DSL.name("pk__tags"), new TableField[] { Tags.TAGS.ID }, true);
 }

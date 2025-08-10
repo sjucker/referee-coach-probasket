@@ -5,6 +5,7 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
+import ch.refereecoach.probasket.jooq.tables.Tags;
 
 
 /**
@@ -17,4 +18,9 @@ public class Tables {
      * The table <code>public.login</code>.
      */
     public static final Login LOGIN = Login.LOGIN;
+
+    /**
+     * The table <code>public.tags</code>.
+     */
+    public static final Tags TAGS = Tags.TAGS;
 }
