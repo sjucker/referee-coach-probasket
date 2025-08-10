@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -9,6 +9,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {Header} from "../components/header/header";
 import {LoadingBar} from "../components/loading-bar/loading-bar";
+import {PATH_LOGIN, PATH_OVERVIEW} from "../app.routes";
 
 @Component({
     selector: 'app-login',
@@ -30,6 +31,7 @@ export class Login {
     private readonly fb = inject(FormBuilder);
     private readonly auth = inject(AuthService);
     private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
 
     protected readonly loading = signal(false);
     protected readonly error = signal<string | null>(null);
@@ -49,7 +51,9 @@ export class Login {
         this.auth.login(username, password).subscribe({
             next: () => {
                 this.loading.set(false);
-                this.router.navigateByUrl('/main');
+                const requestedUrl = this.route.snapshot.queryParamMap.get('requestedUrl');
+                const defaultUrl = `/${PATH_OVERVIEW}`;
+                this.router.navigateByUrl(requestedUrl && !requestedUrl.includes(`/${PATH_LOGIN}`) ? requestedUrl : defaultUrl);
             },
             error: (err) => {
                 this.loading.set(false);

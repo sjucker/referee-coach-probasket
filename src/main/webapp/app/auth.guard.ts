@@ -3,13 +3,14 @@ import {inject} from '@angular/core';
 import {AuthService} from './auth.service';
 import {PATH_LOGIN, PATH_OVERVIEW} from "./app.routes";
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
     const auth = inject(AuthService);
     const router = inject(Router);
     if (auth.isAuthenticated()) {
         return true;
     }
-    return router.createUrlTree([PATH_LOGIN]);
+    // redirect to login and remember the originally requested URL
+    return router.createUrlTree([PATH_LOGIN], { queryParams: { requestedUrl: state.url } });
 };
 
 export const redirectIfAuthenticatedGuard: CanActivateFn = () => {
