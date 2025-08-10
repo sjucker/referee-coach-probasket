@@ -5,7 +5,13 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
-import ch.refereecoach.probasket.jooq.tables.Tags;
+import ch.refereecoach.probasket.jooq.tables.Report;
+import ch.refereecoach.probasket.jooq.tables.ReportComment;
+import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
+import ch.refereecoach.probasket.jooq.tables.Tag;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,9 +40,39 @@ public class Public extends SchemaImpl {
     public final Login LOGIN = Login.LOGIN;
 
     /**
-     * The table <code>public.tags</code>.
+     * The table <code>public.report</code>.
      */
-    public final Tags TAGS = Tags.TAGS;
+    public final Report REPORT = Report.REPORT;
+
+    /**
+     * The table <code>public.report_comment</code>.
+     */
+    public final ReportComment REPORT_COMMENT = ReportComment.REPORT_COMMENT;
+
+    /**
+     * The table <code>public.report_criteria</code>.
+     */
+    public final ReportCriteria REPORT_CRITERIA = ReportCriteria.REPORT_CRITERIA;
+
+    /**
+     * The table <code>public.report_video_comment</code>.
+     */
+    public final ReportVideoComment REPORT_VIDEO_COMMENT = ReportVideoComment.REPORT_VIDEO_COMMENT;
+
+    /**
+     * The table <code>public.report_video_comment_reply</code>.
+     */
+    public final ReportVideoCommentReply REPORT_VIDEO_COMMENT_REPLY = ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY;
+
+    /**
+     * The table <code>public.report_video_comment_tag</code>.
+     */
+    public final ReportVideoCommentTag REPORT_VIDEO_COMMENT_TAG = ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG;
+
+    /**
+     * The table <code>public.tag</code>.
+     */
+    public final Tag TAG = Tag.TAG;
 
     /**
      * No further instances allowed
@@ -55,7 +91,13 @@ public class Public extends SchemaImpl {
     public final List<Table<?>> getTables() {
         return Arrays.asList(
             Login.LOGIN,
-            Tags.TAGS
+            Report.REPORT,
+            ReportComment.REPORT_COMMENT,
+            ReportCriteria.REPORT_CRITERIA,
+            ReportVideoComment.REPORT_VIDEO_COMMENT,
+            ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY,
+            ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG,
+            Tag.TAG
         );
     }
 }

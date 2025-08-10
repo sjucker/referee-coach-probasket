@@ -5,10 +5,23 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
-import ch.refereecoach.probasket.jooq.tables.Tags;
+import ch.refereecoach.probasket.jooq.tables.Report;
+import ch.refereecoach.probasket.jooq.tables.ReportComment;
+import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
+import ch.refereecoach.probasket.jooq.tables.Tag;
 import ch.refereecoach.probasket.jooq.tables.records.LoginRecord;
-import ch.refereecoach.probasket.jooq.tables.records.TagsRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportCommentRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportCriteriaRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportVideoCommentRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportVideoCommentReplyRecord;
+import ch.refereecoach.probasket.jooq.tables.records.ReportVideoCommentTagRecord;
+import ch.refereecoach.probasket.jooq.tables.records.TagRecord;
 
+import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
@@ -28,5 +41,32 @@ public class Keys {
 
     public static final UniqueKey<LoginRecord> PK__LOGIN = Internal.createUniqueKey(Login.LOGIN, DSL.name("pk__login"), new TableField[] { Login.LOGIN.ID }, true);
     public static final UniqueKey<LoginRecord> UQ__LOGIN_USERNAME = Internal.createUniqueKey(Login.LOGIN, DSL.name("uq__login_username"), new TableField[] { Login.LOGIN.BASKETPLAN_USERNAME }, true);
-    public static final UniqueKey<TagsRecord> PK__TAGS = Internal.createUniqueKey(Tags.TAGS, DSL.name("pk__tags"), new TableField[] { Tags.TAGS.ID }, true);
+    public static final UniqueKey<ReportRecord> PK__REPORT = Internal.createUniqueKey(Report.REPORT, DSL.name("pk__report"), new TableField[] { Report.REPORT.ID }, true);
+    public static final UniqueKey<ReportRecord> UQ__REPORT_EXTERNAL_ID = Internal.createUniqueKey(Report.REPORT, DSL.name("uq__report_external_id"), new TableField[] { Report.REPORT.EXTERNAL_ID }, true);
+    public static final UniqueKey<ReportCommentRecord> PK__REPORT_COMMENT = Internal.createUniqueKey(ReportComment.REPORT_COMMENT, DSL.name("pk__report_comment"), new TableField[] { ReportComment.REPORT_COMMENT.ID }, true);
+    public static final UniqueKey<ReportCriteriaRecord> PK__REPORT_CRITERIA = Internal.createUniqueKey(ReportCriteria.REPORT_CRITERIA, DSL.name("pk__report_criteria"), new TableField[] { ReportCriteria.REPORT_CRITERIA.ID }, true);
+    public static final UniqueKey<ReportVideoCommentRecord> PK__REPORT_VIDEO_COMMENT = Internal.createUniqueKey(ReportVideoComment.REPORT_VIDEO_COMMENT, DSL.name("pk__report_video_comment"), new TableField[] { ReportVideoComment.REPORT_VIDEO_COMMENT.ID }, true);
+    public static final UniqueKey<ReportVideoCommentReplyRecord> PK__REPORT_VIDEO_COMMENT_REPLY = Internal.createUniqueKey(ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY, DSL.name("pk__report_video_comment_reply"), new TableField[] { ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY.ID }, true);
+    public static final UniqueKey<ReportVideoCommentTagRecord> PK__REPORT_VIDEO_COMMENT_TAG = Internal.createUniqueKey(ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG, DSL.name("pk__report_video_comment_tag"), new TableField[] { ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID, ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG.TAG_ID }, true);
+    public static final UniqueKey<TagRecord> PK__TAGS = Internal.createUniqueKey(Tag.TAG, DSL.name("pk__tags"), new TableField[] { Tag.TAG.ID }, true);
+
+    // -------------------------------------------------------------------------
+    // FOREIGN KEY definitions
+    // -------------------------------------------------------------------------
+
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_COACH = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_coach"), new TableField[] { Report.REPORT.COACH_ID }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_CREATED_BY = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_created_by"), new TableField[] { Report.REPORT.CREATED_BY }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_FINISHED_BY = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_finished_by"), new TableField[] { Report.REPORT.FINISHED_BY }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_REFEREE1 = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_referee1"), new TableField[] { Report.REPORT.GAME_REFEREE1_ID }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_REFEREE2 = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_referee2"), new TableField[] { Report.REPORT.GAME_REFEREE2_ID }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_REFEREE3 = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_referee3"), new TableField[] { Report.REPORT.GAME_REFEREE3_ID }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_REPORTEE = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_reportee"), new TableField[] { Report.REPORT.REPORTEE_ID }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportRecord, LoginRecord> REPORT__FK__REPORT_UPDATED_BY = Internal.createForeignKey(Report.REPORT, DSL.name("fk__report_updated_by"), new TableField[] { Report.REPORT.UPDATED_BY }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportCommentRecord, ReportRecord> REPORT_COMMENT__FK__REPORT_COMMENT_REPORT = Internal.createForeignKey(ReportComment.REPORT_COMMENT, DSL.name("fk__report_comment_report"), new TableField[] { ReportComment.REPORT_COMMENT.REPORT_ID }, Keys.PK__REPORT, new TableField[] { Report.REPORT.ID }, true);
+    public static final ForeignKey<ReportCriteriaRecord, ReportRecord> REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT = Internal.createForeignKey(ReportCriteria.REPORT_CRITERIA, DSL.name("fk__report_criteria_report"), new TableField[] { ReportCriteria.REPORT_CRITERIA.REPORT_ID }, Keys.PK__REPORT, new TableField[] { Report.REPORT.ID }, true);
+    public static final ForeignKey<ReportVideoCommentRecord, LoginRecord> REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_CREATED_BY = Internal.createForeignKey(ReportVideoComment.REPORT_VIDEO_COMMENT, DSL.name("fk__report_video_comment_created_by"), new TableField[] { ReportVideoComment.REPORT_VIDEO_COMMENT.CREATED_BY }, Keys.PK__LOGIN, new TableField[] { Login.LOGIN.ID }, true);
+    public static final ForeignKey<ReportVideoCommentRecord, ReportRecord> REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_REPORT = Internal.createForeignKey(ReportVideoComment.REPORT_VIDEO_COMMENT, DSL.name("fk__report_video_comment_report"), new TableField[] { ReportVideoComment.REPORT_VIDEO_COMMENT.REPORT_ID }, Keys.PK__REPORT, new TableField[] { Report.REPORT.ID }, true);
+    public static final ForeignKey<ReportVideoCommentReplyRecord, ReportVideoCommentRecord> REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_COMMENT = Internal.createForeignKey(ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY, DSL.name("fk__report_video_comment_reply_comment"), new TableField[] { ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY.REPORT_VIDEO_COMMENT_ID }, Keys.PK__REPORT_VIDEO_COMMENT, new TableField[] { ReportVideoComment.REPORT_VIDEO_COMMENT.ID }, true);
+    public static final ForeignKey<ReportVideoCommentTagRecord, ReportVideoCommentRecord> REPORT_VIDEO_COMMENT_TAG__FK__REPORT_VIDEO_COMMENT_TAG_COMMENT = Internal.createForeignKey(ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG, DSL.name("fk__report_video_comment_tag_comment"), new TableField[] { ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID }, Keys.PK__REPORT_VIDEO_COMMENT, new TableField[] { ReportVideoComment.REPORT_VIDEO_COMMENT.ID }, true);
+    public static final ForeignKey<ReportVideoCommentTagRecord, TagRecord> REPORT_VIDEO_COMMENT_TAG__FK__REPORT_VIDEO_COMMENT_TAG_TAG = Internal.createForeignKey(ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG, DSL.name("fk__report_video_comment_tag_tag"), new TableField[] { ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG.TAG_ID }, Keys.PK__TAGS, new TableField[] { Tag.TAG.ID }, true);
 }

@@ -5,7 +5,13 @@ package ch.refereecoach.probasket.jooq;
 
 
 import ch.refereecoach.probasket.jooq.tables.Login;
-import ch.refereecoach.probasket.jooq.tables.Tags;
+import ch.refereecoach.probasket.jooq.tables.Report;
+import ch.refereecoach.probasket.jooq.tables.ReportComment;
+import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
+import ch.refereecoach.probasket.jooq.tables.Tag;
 
 
 /**
@@ -20,7 +26,37 @@ public class Tables {
     public static final Login LOGIN = Login.LOGIN;
 
     /**
-     * The table <code>public.tags</code>.
+     * The table <code>public.report</code>.
      */
-    public static final Tags TAGS = Tags.TAGS;
+    public static final Report REPORT = Report.REPORT;
+
+    /**
+     * The table <code>public.report_comment</code>.
+     */
+    public static final ReportComment REPORT_COMMENT = ReportComment.REPORT_COMMENT;
+
+    /**
+     * The table <code>public.report_criteria</code>.
+     */
+    public static final ReportCriteria REPORT_CRITERIA = ReportCriteria.REPORT_CRITERIA;
+
+    /**
+     * The table <code>public.report_video_comment</code>.
+     */
+    public static final ReportVideoComment REPORT_VIDEO_COMMENT = ReportVideoComment.REPORT_VIDEO_COMMENT;
+
+    /**
+     * The table <code>public.report_video_comment_reply</code>.
+     */
+    public static final ReportVideoCommentReply REPORT_VIDEO_COMMENT_REPLY = ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY;
+
+    /**
+     * The table <code>public.report_video_comment_tag</code>.
+     */
+    public static final ReportVideoCommentTag REPORT_VIDEO_COMMENT_TAG = ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG;
+
+    /**
+     * The table <code>public.tag</code>.
+     */
+    public static final Tag TAG = Tag.TAG;
 }

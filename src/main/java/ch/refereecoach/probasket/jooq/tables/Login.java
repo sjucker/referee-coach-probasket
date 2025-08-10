@@ -6,6 +6,8 @@ package ch.refereecoach.probasket.jooq.tables;
 
 import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
+import ch.refereecoach.probasket.jooq.tables.Report.ReportPath;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoComment.ReportVideoCommentPath;
 import ch.refereecoach.probasket.jooq.tables.records.LoginRecord;
 
 import java.time.LocalDateTime;
@@ -15,10 +17,14 @@ import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.InverseForeignKey;
 import org.jooq.Name;
+import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
+import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -137,6 +143,39 @@ public class Login extends TableImpl<LoginRecord> {
         this(DSL.name("login"), null);
     }
 
+    public <O extends Record> Login(Table<O> path, ForeignKey<O, LoginRecord> childPath, InverseForeignKey<O, LoginRecord> parentPath) {
+        super(path, childPath, parentPath, LOGIN);
+    }
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    public static class LoginPath extends Login implements Path<LoginRecord> {
+
+        private static final long serialVersionUID = 1L;
+        public <O extends Record> LoginPath(Table<O> path, ForeignKey<O, LoginRecord> childPath, InverseForeignKey<O, LoginRecord> parentPath) {
+            super(path, childPath, parentPath);
+        }
+        private LoginPath(Name alias, Table<LoginRecord> aliased) {
+            super(alias, aliased);
+        }
+
+        @Override
+        public LoginPath as(String alias) {
+            return new LoginPath(DSL.name(alias), this);
+        }
+
+        @Override
+        public LoginPath as(Name alias) {
+            return new LoginPath(alias, this);
+        }
+
+        @Override
+        public LoginPath as(Table<?> alias) {
+            return new LoginPath(alias.getQualifiedName(), this);
+        }
+    }
+
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -155,6 +194,123 @@ public class Login extends TableImpl<LoginRecord> {
     @Override
     public List<UniqueKey<LoginRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.UQ__LOGIN_USERNAME);
+    }
+
+    private transient ReportPath _fk_ReportCoach;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_coach</code> key
+     */
+    public ReportPath fk_ReportCoach() {
+        if (_fk_ReportCoach == null)
+            _fk_ReportCoach = new ReportPath(this, null, Keys.REPORT__FK__REPORT_COACH.getInverseKey());
+
+        return _fk_ReportCoach;
+    }
+
+    private transient ReportPath _fk_ReportCreatedBy;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_created_by</code> key
+     */
+    public ReportPath fk_ReportCreatedBy() {
+        if (_fk_ReportCreatedBy == null)
+            _fk_ReportCreatedBy = new ReportPath(this, null, Keys.REPORT__FK__REPORT_CREATED_BY.getInverseKey());
+
+        return _fk_ReportCreatedBy;
+    }
+
+    private transient ReportPath _fk_ReportFinishedBy;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_finished_by</code> key
+     */
+    public ReportPath fk_ReportFinishedBy() {
+        if (_fk_ReportFinishedBy == null)
+            _fk_ReportFinishedBy = new ReportPath(this, null, Keys.REPORT__FK__REPORT_FINISHED_BY.getInverseKey());
+
+        return _fk_ReportFinishedBy;
+    }
+
+    private transient ReportPath _fk_ReportReferee1;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_referee1</code> key
+     */
+    public ReportPath fk_ReportReferee1() {
+        if (_fk_ReportReferee1 == null)
+            _fk_ReportReferee1 = new ReportPath(this, null, Keys.REPORT__FK__REPORT_REFEREE1.getInverseKey());
+
+        return _fk_ReportReferee1;
+    }
+
+    private transient ReportPath _fk_ReportReferee2;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_referee2</code> key
+     */
+    public ReportPath fk_ReportReferee2() {
+        if (_fk_ReportReferee2 == null)
+            _fk_ReportReferee2 = new ReportPath(this, null, Keys.REPORT__FK__REPORT_REFEREE2.getInverseKey());
+
+        return _fk_ReportReferee2;
+    }
+
+    private transient ReportPath _fk_ReportReferee3;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_referee3</code> key
+     */
+    public ReportPath fk_ReportReferee3() {
+        if (_fk_ReportReferee3 == null)
+            _fk_ReportReferee3 = new ReportPath(this, null, Keys.REPORT__FK__REPORT_REFEREE3.getInverseKey());
+
+        return _fk_ReportReferee3;
+    }
+
+    private transient ReportPath _fk_ReportReportee;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_reportee</code> key
+     */
+    public ReportPath fk_ReportReportee() {
+        if (_fk_ReportReportee == null)
+            _fk_ReportReportee = new ReportPath(this, null, Keys.REPORT__FK__REPORT_REPORTEE.getInverseKey());
+
+        return _fk_ReportReportee;
+    }
+
+    private transient ReportPath _fk_ReportUpdatedBy;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.report</code>
+     * table, via the <code>fk__report_updated_by</code> key
+     */
+    public ReportPath fk_ReportUpdatedBy() {
+        if (_fk_ReportUpdatedBy == null)
+            _fk_ReportUpdatedBy = new ReportPath(this, null, Keys.REPORT__FK__REPORT_UPDATED_BY.getInverseKey());
+
+        return _fk_ReportUpdatedBy;
+    }
+
+    private transient ReportVideoCommentPath _reportVideoComment;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.report_video_comment</code> table
+     */
+    public ReportVideoCommentPath reportVideoComment() {
+        if (_reportVideoComment == null)
+            _reportVideoComment = new ReportVideoCommentPath(this, null, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_CREATED_BY.getInverseKey());
+
+        return _reportVideoComment;
     }
 
     @Override
