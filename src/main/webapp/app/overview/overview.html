@@ -1,0 +1,23 @@
+<app-header></app-header>
+
+<section class="container">
+  <app-loading-bar [show]="loading()"></app-loading-bar>
+
+  <mat-card>
+    <mat-card-title>Welcome</mat-card-title>
+    <mat-card-content>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      @if (pingResult()) {
+        <p class="success">Backend says: {{ pingResult() }}</p>
+      } @else {
+        <p>Awaiting response...</p>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="ping()" [disabled]="loading()">Ping /api/ping</button>
+      <button mat-button color="warn" (click)="logout()">Logout</button>
+    </mat-card-actions>
+  </mat-card>
+</section>

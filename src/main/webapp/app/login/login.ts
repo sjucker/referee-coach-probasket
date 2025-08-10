@@ -49,7 +49,7 @@ export class Login {
         this.auth.login(username, password).subscribe({
             next: () => {
                 this.loading.set(false);
-                this.router.navigateByUrl('/');
+                this.router.navigateByUrl('/main');
             },
             error: (err) => {
                 this.loading.set(false);

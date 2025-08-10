@@ -32,13 +32,13 @@ export class AuthService {
     private setToken(token: string | null) {
         this._token.set(token);
         if (token) {
-            sessionStorage.setItem(this.tokenKey, token);
+            localStorage.setItem(this.tokenKey, token);
         } else {
-            sessionStorage.removeItem(this.tokenKey);
+            localStorage.removeItem(this.tokenKey);
         }
     }
 
     private readToken(): string | null {
-        return sessionStorage.getItem(this.tokenKey);
+        return localStorage.getItem(this.tokenKey);
     }
 }
