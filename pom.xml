@@ -53,8 +53,7 @@
 
         <sonar.organization>sjucker</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <!-- TODO -->
-        <sonar.projectKey></sonar.projectKey>
+        <sonar.projectKey>sjucker_referee-coach-probasket</sonar.projectKey>
 
         <jooq-codegen-skip>true</jooq-codegen-skip>
         <frontend-build-skip>false</frontend-build-skip>
@@ -147,12 +146,6 @@
             <artifactId>archunit-junit5</artifactId>
             <version>${archunit.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>${sonar-maven-plugin.version}</version>
         </dependency>
     </dependencies>
 
