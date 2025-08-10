@@ -21,6 +21,7 @@ target/
 !.idea/codeStyles/
 !.idea/dataSources.xml
 !.idea/vcs.xml
+http-client.private.env.json
 
 ### NetBeans ###
 /nbproject/private/

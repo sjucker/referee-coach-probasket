@@ -1,4 +1,4 @@
-POST localhost:8080/api/auth/login
+POST {{url}}/api/auth/login
 Content-Type: application/json
 
 {
@@ -7,5 +7,5 @@ Content-Type: application/json
 }
 
 ###
-GET localhost:8080/api/ping
-Authorization: Bearer <TOKEN>
+GET {{url}}/api/ping
+Authorization: Bearer {{token}}
