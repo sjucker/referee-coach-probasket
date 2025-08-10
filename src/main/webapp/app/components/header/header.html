@@ -1,15 +1,19 @@
 <mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <div>Referee Coach ProBasket</div>
-    <span class="header-spacer"></span>
-    @if (auth.isAuthenticated()) {
-        <button mat-icon-button [matTooltip]="auth.username()">
-            <mat-icon>person</mat-icon>
-        </button>
-
-        <button mat-icon-button (click)="logout()" matTooltip="Logout">
-            <mat-icon>logout</mat-icon>
-        </button>
-    }
-  </mat-toolbar-row>
+    <mat-toolbar-row>
+        @if (auth.isAuthenticated() && !isOverview()) {
+            <button mat-icon-button [routerLink]="[PATH_OVERVIEW]" matTooltip="Home">
+                <mat-icon>home</mat-icon>
+            </button>
+        }
+        <div>Referee Coach ProBasket</div>
+        <span class="header-spacer"></span>
+        @if (auth.isAuthenticated()) {
+            <button mat-icon-button [matTooltip]="auth.username()">
+                <mat-icon>person</mat-icon>
+            </button>
+            <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                <mat-icon>logout</mat-icon>
+            </button>
+        }
+    </mat-toolbar-row>
 </mat-toolbar>
