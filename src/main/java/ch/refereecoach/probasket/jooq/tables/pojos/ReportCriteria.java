@@ -16,7 +16,7 @@ public class ReportCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private Long reportId;
+    private Long reportCommentId;
     private String type;
     private String comment;
     private String state;
@@ -25,7 +25,7 @@ public class ReportCriteria implements Serializable {
 
     public ReportCriteria(ReportCriteria value) {
         this.id = value.id;
-        this.reportId = value.reportId;
+        this.reportCommentId = value.reportCommentId;
         this.type = value.type;
         this.comment = value.comment;
         this.state = value.state;
@@ -33,13 +33,13 @@ public class ReportCriteria implements Serializable {
 
     public ReportCriteria(
         Long id,
-        Long reportId,
+        Long reportCommentId,
         String type,
         String comment,
         String state
     ) {
         this.id = id;
-        this.reportId = reportId;
+        this.reportCommentId = reportCommentId;
         this.type = type;
         this.comment = comment;
         this.state = state;
@@ -60,17 +60,17 @@ public class ReportCriteria implements Serializable {
     }
 
     /**
-     * Getter for <code>public.report_criteria.report_id</code>.
+     * Getter for <code>public.report_criteria.report_comment_id</code>.
      */
-    public Long getReportId() {
-        return this.reportId;
+    public Long getReportCommentId() {
+        return this.reportCommentId;
     }
 
     /**
-     * Setter for <code>public.report_criteria.report_id</code>.
+     * Setter for <code>public.report_criteria.report_comment_id</code>.
      */
-    public void setReportId(Long reportId) {
-        this.reportId = reportId;
+    public void setReportCommentId(Long reportCommentId) {
+        this.reportCommentId = reportCommentId;
     }
 
     /**
@@ -130,11 +130,11 @@ public class ReportCriteria implements Serializable {
         }
         else if (!this.id.equals(other.id))
             return false;
-        if (this.reportId == null) {
-            if (other.reportId != null)
+        if (this.reportCommentId == null) {
+            if (other.reportCommentId != null)
                 return false;
         }
-        else if (!this.reportId.equals(other.reportId))
+        else if (!this.reportCommentId.equals(other.reportCommentId))
             return false;
         if (this.type == null) {
             if (other.type != null)
@@ -162,7 +162,7 @@ public class ReportCriteria implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.reportId == null) ? 0 : this.reportId.hashCode());
+        result = prime * result + ((this.reportCommentId == null) ? 0 : this.reportCommentId.hashCode());
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
         result = prime * result + ((this.comment == null) ? 0 : this.comment.hashCode());
         result = prime * result + ((this.state == null) ? 0 : this.state.hashCode());
@@ -174,7 +174,7 @@ public class ReportCriteria implements Serializable {
         StringBuilder sb = new StringBuilder("ReportCriteria (");
 
         sb.append(id);
-        sb.append(", ").append(reportId);
+        sb.append(", ").append(reportCommentId);
         sb.append(", ").append(type);
         sb.append(", ").append(comment);
         sb.append(", ").append(state);

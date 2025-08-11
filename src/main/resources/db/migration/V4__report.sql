@@ -5,8 +5,9 @@ create table report
     external_id        varchar(255) not null
         constraint uq__report_external_id unique,
     report_type        varchar(255) not null,
-    coach_id           bigint       not null,
-    reportee_id        bigint       not null,
+    -- nullable for game-discussions
+    coach_id           bigint,
+    reportee_id        bigint,
     game_number        varchar(255) not null,
     game_competition   varchar(255) not null,
     game_date          date         not null,
@@ -51,14 +52,14 @@ create table report_comment
 
 create table report_criteria
 (
-    id        bigserial
+    id                bigserial
         constraint pk__report_criteria primary key,
-    report_id bigint       not null,
-    type      varchar(255) not null,
-    comment   text,
-    state     varchar(255),
+    report_comment_id bigint       not null,
+    type              varchar(255) not null,
+    comment           text,
+    state             varchar(255),
 
-    constraint fk__report_criteria_report foreign key (report_id) references report (id) on delete cascade
+    constraint fk__report_criteria_report foreign key (report_comment_id) references report_comment (id) on delete cascade
 );
 
 create table report_video_comment
@@ -85,7 +86,8 @@ create table report_video_comment_reply
     created_at              timestamp not null,
     created_by              bigint    not null,
 
-    constraint fk__report_video_comment_reply_comment foreign key (report_video_comment_id) references report_video_comment (id) on delete cascade
+    constraint fk__report_video_comment_reply_comment foreign key (report_video_comment_id) references report_video_comment (id) on delete cascade,
+    constraint fk__report_video_comment_reply_created_by foreign key (created_by) references login (id) on delete cascade
 );
 
 create table report_video_comment_tag
@@ -97,3 +99,12 @@ create table report_video_comment_tag
     constraint fk__report_video_comment_tag_comment foreign key (report_video_comment_id) references report_video_comment (id) on delete cascade,
     constraint fk__report_video_comment_tag_tag foreign key (tag_id) references tag (id) on delete cascade
 );
+
+create table report_comments_last_read
+(
+    report_id    bigint    not null,
+    user_id      bigint    not null,
+    last_read_at timestamp not null,
+
+    constraint pk__report_comments_last_read primary key (report_id, user_id)
+)

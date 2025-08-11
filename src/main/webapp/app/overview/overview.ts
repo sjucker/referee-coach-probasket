@@ -16,7 +16,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
-import {toObservable, takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
 
 interface RefereeSelection {
@@ -71,8 +71,8 @@ export class Overview {
         // Auto load on date range changes
         effect(() => {
             // react to from/to changes
-            const _from = this.fromDate();
-            const _to = this.toDate();
+            this.fromDate();
+            this.toDate();
             // reset to first page
             this.pageIndex.set(0);
             // Call outside of effect tracking to avoid tracking textFilter/pageIndex/pageSize
@@ -103,7 +103,7 @@ export class Overview {
         const page = this.pageIndex();
         const pagesize = this.pageSize();
 
-        let params = new HttpParams()
+        const params = new HttpParams()
             .set('from-date', fromIso)
             .set('to-date', toIso)
             .set('textfilter', filter)

@@ -6,7 +6,7 @@ package ch.refereecoach.probasket.jooq.tables;
 
 import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
-import ch.refereecoach.probasket.jooq.tables.Report.ReportPath;
+import ch.refereecoach.probasket.jooq.tables.ReportComment.ReportCommentPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportCriteriaRecord;
 
 import java.util.Arrays;
@@ -63,9 +63,9 @@ public class ReportCriteria extends TableImpl<ReportCriteriaRecord> {
     public final TableField<ReportCriteriaRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>public.report_criteria.report_id</code>.
+     * The column <code>public.report_criteria.report_comment_id</code>.
      */
-    public final TableField<ReportCriteriaRecord, Long> REPORT_ID = createField(DSL.name("report_id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportCriteriaRecord, Long> REPORT_COMMENT_ID = createField(DSL.name("report_comment_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.report_criteria.type</code>.
@@ -164,16 +164,17 @@ public class ReportCriteria extends TableImpl<ReportCriteriaRecord> {
         return Arrays.asList(Keys.REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT);
     }
 
-    private transient ReportPath _report;
+    private transient ReportCommentPath _reportComment;
 
     /**
-     * Get the implicit join path to the <code>public.report</code> table.
+     * Get the implicit join path to the <code>public.report_comment</code>
+     * table.
      */
-    public ReportPath report() {
-        if (_report == null)
-            _report = new ReportPath(this, Keys.REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT, null);
+    public ReportCommentPath reportComment() {
+        if (_reportComment == null)
+            _reportComment = new ReportCommentPath(this, Keys.REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT, null);
 
-        return _report;
+        return _reportComment;
     }
 
     @Override

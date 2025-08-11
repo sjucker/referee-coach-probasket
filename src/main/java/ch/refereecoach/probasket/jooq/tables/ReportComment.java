@@ -7,6 +7,7 @@ package ch.refereecoach.probasket.jooq.tables;
 import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
 import ch.refereecoach.probasket.jooq.tables.Report.ReportPath;
+import ch.refereecoach.probasket.jooq.tables.ReportCriteria.ReportCriteriaPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportCommentRecord;
 
 import java.math.BigDecimal;
@@ -175,6 +176,19 @@ public class ReportComment extends TableImpl<ReportCommentRecord> {
             _report = new ReportPath(this, Keys.REPORT_COMMENT__FK__REPORT_COMMENT_REPORT, null);
 
         return _report;
+    }
+
+    private transient ReportCriteriaPath _reportCriteria;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.report_criteria</code> table
+     */
+    public ReportCriteriaPath reportCriteria() {
+        if (_reportCriteria == null)
+            _reportCriteria = new ReportCriteriaPath(this, null, Keys.REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT.getInverseKey());
+
+        return _reportCriteria;
     }
 
     @Override

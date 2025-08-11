@@ -8,7 +8,6 @@ import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
 import ch.refereecoach.probasket.jooq.tables.Login.LoginPath;
 import ch.refereecoach.probasket.jooq.tables.ReportComment.ReportCommentPath;
-import ch.refereecoach.probasket.jooq.tables.ReportCriteria.ReportCriteriaPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment.ReportVideoCommentPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportRecord;
 
@@ -80,12 +79,12 @@ public class Report extends TableImpl<ReportRecord> {
     /**
      * The column <code>public.report.coach_id</code>.
      */
-    public final TableField<ReportRecord, Long> COACH_ID = createField(DSL.name("coach_id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportRecord, Long> COACH_ID = createField(DSL.name("coach_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.report.reportee_id</code>.
      */
-    public final TableField<ReportRecord, Long> REPORTEE_ID = createField(DSL.name("reportee_id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportRecord, Long> REPORTEE_ID = createField(DSL.name("reportee_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.report.game_number</code>.
@@ -384,19 +383,6 @@ public class Report extends TableImpl<ReportRecord> {
             _reportComment = new ReportCommentPath(this, null, Keys.REPORT_COMMENT__FK__REPORT_COMMENT_REPORT.getInverseKey());
 
         return _reportComment;
-    }
-
-    private transient ReportCriteriaPath _reportCriteria;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.report_criteria</code> table
-     */
-    public ReportCriteriaPath reportCriteria() {
-        if (_reportCriteria == null)
-            _reportCriteria = new ReportCriteriaPath(this, null, Keys.REPORT_CRITERIA__FK__REPORT_CRITERIA_REPORT.getInverseKey());
-
-        return _reportCriteria;
     }
 
     private transient ReportVideoCommentPath _reportVideoComment;

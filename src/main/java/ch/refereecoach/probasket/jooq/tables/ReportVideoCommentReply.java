@@ -6,6 +6,7 @@ package ch.refereecoach.probasket.jooq.tables;
 
 import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
+import ch.refereecoach.probasket.jooq.tables.Login.LoginPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment.ReportVideoCommentPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportVideoCommentReplyRecord;
 
@@ -165,7 +166,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
 
     @Override
     public List<ForeignKey<ReportVideoCommentReplyRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_COMMENT);
+        return Arrays.asList(Keys.REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_COMMENT, Keys.REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_CREATED_BY);
     }
 
     private transient ReportVideoCommentPath _reportVideoComment;
@@ -179,6 +180,18 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
             _reportVideoComment = new ReportVideoCommentPath(this, Keys.REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_COMMENT, null);
 
         return _reportVideoComment;
+    }
+
+    private transient LoginPath _login;
+
+    /**
+     * Get the implicit join path to the <code>public.login</code> table.
+     */
+    public LoginPath login() {
+        if (_login == null)
+            _login = new LoginPath(this, Keys.REPORT_VIDEO_COMMENT_REPLY__FK__REPORT_VIDEO_COMMENT_REPLY_CREATED_BY, null);
+
+        return _login;
     }
 
     @Override

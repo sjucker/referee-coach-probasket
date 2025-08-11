@@ -33,16 +33,16 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
     }
 
     /**
-     * Setter for <code>public.report_criteria.report_id</code>.
+     * Setter for <code>public.report_criteria.report_comment_id</code>.
      */
-    public void setReportId(Long value) {
+    public void setReportCommentId(Long value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>public.report_criteria.report_id</code>.
+     * Getter for <code>public.report_criteria.report_comment_id</code>.
      */
-    public Long getReportId() {
+    public Long getReportCommentId() {
         return (Long) get(1);
     }
 
@@ -111,11 +111,11 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
     /**
      * Create a detached, initialised ReportCriteriaRecord
      */
-    public ReportCriteriaRecord(Long id, Long reportId, String type, String comment, String state) {
+    public ReportCriteriaRecord(Long id, Long reportCommentId, String type, String comment, String state) {
         super(ReportCriteria.REPORT_CRITERIA);
 
         setId(id);
-        setReportId(reportId);
+        setReportCommentId(reportCommentId);
         setType(type);
         setComment(comment);
         setState(state);
@@ -130,7 +130,7 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
 
         if (value != null) {
             setId(value.getId());
-            setReportId(value.getReportId());
+            setReportCommentId(value.getReportCommentId());
             setType(value.getType());
             setComment(value.getComment());
             setState(value.getState());

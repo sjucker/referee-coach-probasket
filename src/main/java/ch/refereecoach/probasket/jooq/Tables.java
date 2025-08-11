@@ -7,6 +7,7 @@ package ch.refereecoach.probasket.jooq;
 import ch.refereecoach.probasket.jooq.tables.Login;
 import ch.refereecoach.probasket.jooq.tables.Report;
 import ch.refereecoach.probasket.jooq.tables.ReportComment;
+import ch.refereecoach.probasket.jooq.tables.ReportCommentsLastRead;
 import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
@@ -34,6 +35,11 @@ public class Tables {
      * The table <code>public.report_comment</code>.
      */
     public static final ReportComment REPORT_COMMENT = ReportComment.REPORT_COMMENT;
+
+    /**
+     * The table <code>public.report_comments_last_read</code>.
+     */
+    public static final ReportCommentsLastRead REPORT_COMMENTS_LAST_READ = ReportCommentsLastRead.REPORT_COMMENTS_LAST_READ;
 
     /**
      * The table <code>public.report_criteria</code>.
