@@ -40,6 +40,23 @@ export interface CreateRefereeReportResultDTO {
     externalId: string;
 }
 
+export interface ReportOverviewDTO {
+    externalId: string;
+    type: ReportType;
+    date: DateAsString;
+    gameNumber: string;
+    competition: string;
+    teams: string;
+    coach: string;
+    reportee: string;
+    finished: boolean;
+}
+
+export interface ReportSearchResultDTO {
+    items: ReportOverviewDTO[];
+    total: number;
+}
+
 export type DateAsString = string;
 
 export enum UserRole {
@@ -53,4 +70,10 @@ export enum UserRole {
 export enum OfficiatingMode {
     OFFICIATING_2PO = "OFFICIATING_2PO",
     OFFICIATING_3PO = "OFFICIATING_3PO",
+}
+
+export enum ReportType {
+    REFEREE_VIDEO_REPORT = "REFEREE_VIDEO_REPORT",
+    REFEREE_COMMENT_REPORT = "REFEREE_COMMENT_REPORT",
+    TRAINER_REPORT = "TRAINER_REPORT",
 }

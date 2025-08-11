@@ -1,26 +1,31 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {AuthService} from '../auth.service';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {BasketplanGameDTO, CreateRefereeReportDTO, CreateRefereeReportResultDTO, OfficiatingMode} from "../../rest";
+import {BasketplanGameDTO, CreateRefereeReportDTO, CreateRefereeReportResultDTO, OfficiatingMode, ReportOverviewDTO, ReportSearchResultDTO} from "../../rest";
 import {MatFormField} from "@angular/material/form-field";
 import {MatInput, MatLabel} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 interface RefereeSelection {
     id: number,
     name: string
 }
 
+
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatFormField, MatLabel, MatInput, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatFormField, MatLabel, MatInput, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -38,7 +43,19 @@ export class Overview {
     protected readonly referees = signal<RefereeSelection[]>([]);
     protected readonly referee = signal<RefereeSelection | null>(null);
 
-    protected readonly loading = computed(() => this.searching() || this.creating());
+
+    protected readonly fromDate = signal<Date>(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+    protected readonly toDate = signal<Date>(new Date());
+    protected readonly textFilter = signal<string>('');
+    protected readonly pageIndex = signal(0);
+    protected readonly pageSize = signal(10);
+
+    protected readonly reports = signal<ReportOverviewDTO[]>([]);
+    protected readonly totalReports = signal(0);
+    protected readonly tableLoading = signal(false);
+    protected readonly tableError = signal<string | null>(null);
+
+    protected readonly loading = computed(() => this.searching() || this.creating() || this.tableLoading());
     protected readonly creating = signal(false);
     protected readonly error = signal<string | null>(null);
     protected readonly searching = signal(false);
@@ -47,6 +64,66 @@ export class Overview {
     protected readonly form = this.fb.nonNullable.group({
         gameNumber: ['', [Validators.required]],
     });
+
+    constructor() {
+        // initial load of reports
+        this.loadReports();
+    }
+
+    loadReports(): void {
+        this.tableError.set(null);
+        this.tableLoading.set(true);
+
+        const fromIso = this.toIsoDate(this.fromDate());
+        const toIso = this.toIsoDate(this.toDate());
+        const filter = this.textFilter();
+        const page = this.pageIndex();
+        const pagesize = this.pageSize();
+
+        let params = new HttpParams()
+            .set('from-date', fromIso)
+            .set('to-date', toIso)
+            .set('textfilter', filter)
+            .set('page', page)
+            .set('pagesize', pagesize)
+            // backend compatibility
+            .set('from', fromIso)
+            .set('to', toIso)
+            .set('filter', filter)
+            .set('pageSize', pagesize);
+
+        this.http.get<ReportSearchResultDTO>('/api/report', {params}).subscribe({
+            next: result => {
+                this.reports.set(result.items);
+                this.totalReports.set(result.total);
+                this.tableLoading.set(false);
+            },
+            error: () => {
+                this.tableLoading.set(false);
+                this.tableError.set('An error occured.');
+                this.reports.set([]);
+                this.totalReports.set(0);
+            }
+        });
+    }
+
+    onPageChange(event: PageEvent): void {
+        this.pageIndex.set(event.pageIndex);
+        this.pageSize.set(event.pageSize);
+        this.loadReports();
+    }
+
+    onApplyFilters(): void {
+        this.pageIndex.set(0);
+        this.loadReports();
+    }
+
+    private toIsoDate(d: Date): string {
+        const year = d.getFullYear();
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const day = d.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     searchGame(): void {
         this.problemDescription.set(null);
