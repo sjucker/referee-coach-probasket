@@ -37,6 +37,7 @@ public class ReportSearchService {
 
         var items = jooqDsl.selectFrom(REPORT)
                            .where(condition)
+                           .orderBy(REPORT.GAME_DATE.desc(), REPORT.GAME_NUMBER.asc(), REPORT.REPORTEE_ID.asc())
                            .offset(page * pageSize)
                            .limit(pageSize)
                            .fetch(it -> new ReportOverviewDTO(
@@ -53,7 +54,6 @@ public class ReportSearchService {
 
         var count = jooqDsl.fetchCount(REPORT, condition);
 
-
         return new ReportSearchResultDTO(items, count);
     }
 
@@ -66,9 +66,6 @@ public class ReportSearchService {
 //            .filter(overview -> user.isCoach()
 //            || (Objects.equals(overview.getCoachId().orElse(0L), user.getId()))
 //            || overview.isVisibleForReferee())
-//            .sorted(comparing(OverviewDTO::date).reversed()
-//                                                         .thenComparing(OverviewDTO::gameNumber)
-//                                                         .thenComparing(OverviewDTO::reportee, nullsLast(naturalOrder())))
 //            .toList();
 
 }

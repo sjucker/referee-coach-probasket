@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -16,6 +16,8 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import {toObservable, takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
 
 interface RefereeSelection {
     id: number,
@@ -66,8 +68,29 @@ export class Overview {
     });
 
     constructor() {
-        // initial load of reports
-        this.loadReports();
+        // Auto load on date range changes
+        effect(() => {
+            // react to from/to changes
+            const _from = this.fromDate();
+            const _to = this.toDate();
+            // reset to first page
+            this.pageIndex.set(0);
+            // Call outside of effect tracking to avoid tracking textFilter/pageIndex/pageSize
+            untracked(() => this.loadReports());
+        });
+
+        // Debounced text filter changes
+        toObservable(this.textFilter)
+            .pipe(
+                skip(1), // skip initial emission to avoid duplicate initial load
+                debounceTime(1000),
+                distinctUntilChanged(),
+                takeUntilDestroyed()
+            )
+            .subscribe(() => {
+                this.pageIndex.set(0);
+                this.loadReports();
+            });
     }
 
     loadReports(): void {
@@ -100,7 +123,7 @@ export class Overview {
             },
             error: () => {
                 this.tableLoading.set(false);
-                this.tableError.set('An error occured.');
+                this.tableError.set('An error occurred.');
                 this.reports.set([]);
                 this.totalReports.set(0);
             }
@@ -110,11 +133,6 @@ export class Overview {
     onPageChange(event: PageEvent): void {
         this.pageIndex.set(event.pageIndex);
         this.pageSize.set(event.pageSize);
-        this.loadReports();
-    }
-
-    onApplyFilters(): void {
-        this.pageIndex.set(0);
         this.loadReports();
     }
 
