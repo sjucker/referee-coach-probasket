@@ -1,20 +1,22 @@
 package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.common.ReportType;
+import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.report.ReportOverviewDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
-import ch.refereecoach.probasket.jooq.tables.Report;
-import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 
+import static ch.refereecoach.probasket.common.ReportType.GAME_DISCUSSION;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
+import static org.jooq.Operator.AND;
 
 @Slf4j
 @Service
@@ -22,16 +24,18 @@ import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 public class ReportSearchService {
 
     private final DSLContext jooqDsl;
-    private final LoginDao loginDao;
+    private final UserService userService;
 
     public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, String username) {
-        var user = loginDao.fetchOptionalByBasketplanUsername(username)
-                           .orElseThrow(() -> new IllegalArgumentException("user %s not found".formatted(username)));
+        var user = userService.getByBasketplanUsername(username);
 
-        var refereeCoach = user.getRefereeCoach();
-        var trainerCoach = user.getTrainerCoach();
+        // TODO add text filter..how? referee/coach need to be joined... or store the names directly in the report...
 
-        var condition = DSL.trueCondition();
+        var condition = DSL.condition(AND,
+                                      REPORT.GAME_DATE.ge(from),
+                                      REPORT.GAME_DATE.le(to));
+
+        condition.and(getUserCondition(user));
 
         // TODO add filter, etc.
 
@@ -55,6 +59,30 @@ public class ReportSearchService {
         var count = jooqDsl.fetchCount(REPORT, condition);
 
         return new ReportSearchResultDTO(items, count);
+    }
+
+    private Condition getUserCondition(UserDTO user) {
+        if (user.admin()) {
+            return DSL.trueCondition();
+        }
+
+        if (user.refereeCoach() && !user.referee()) {
+
+        }
+
+        if (user.refereeCoach() && user.referee()) {
+
+        }
+
+        if (user.referee()) {
+            return DSL.or(REPORT.REPORTEE_ID.eq(user.id()).and(REPORT.FINISHED_AT.isNotNull()),
+                          REPORT.REPORT_TYPE.eq(GAME_DISCUSSION.name()).and(
+                                  DSL.or(REPORT.GAME_REFEREE1_ID.eq(user.id()),
+                                         REPORT.GAME_REFEREE2_ID.eq(user.id()),
+                                         REPORT.GAME_REFEREE3_ID.eq(user.id()))));
+        }
+
+        return DSL.falseCondition();
     }
 
 //    return Stream.concat(getCoachingsStream(from, to), getGameDiscussionsStream(from, to))

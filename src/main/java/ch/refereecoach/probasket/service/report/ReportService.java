@@ -22,17 +22,16 @@ import static org.apache.commons.lang3.StringUtils.toRootLowerCase;
 @RequiredArgsConstructor
 public class ReportService {
 
-    private final LoginDao loginDao;
     private final ReportDao reportDao;
     private final BasketplanService basketplanService;
+    private final UserService userService;
 
     public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, String username) {
-        var coach = loginDao.fetchOptionalByBasketplanUsername(username)
-                            .orElseThrow(() -> new IllegalArgumentException("user %s not found".formatted(username)));
+        var coach = userService.getByBasketplanUsername(username);
 
         var reportType = videoUrl == null ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
-        if (!hasRequiredRole(reportType, coach)) {
-            throw new IllegalStateException("user %s is not a coach!".formatted(coach.getBasketplanUsername()));
+        if (!coach.hasRequiredRole(reportType)) {
+            throw new IllegalStateException("user %s is not a coach!".formatted(coach.username()));
         }
         var game = basketplanService.findGameByNumber(gameNumber)
                                     .orElseThrow(() -> new IllegalArgumentException("game %s not found".formatted(gameNumber)));
@@ -40,7 +39,7 @@ public class ReportService {
         var report = new Report();
         report.setExternalId(getExternalId());
         report.setReportType(reportType.name());
-        report.setCoachId(coach.getId());
+        report.setCoachId(coach.id());
         report.setReporteeId(reporteeId);
         report.setGameNumber(game.gameNumber());
         report.setGameCompetition(game.competition());
@@ -57,9 +56,9 @@ public class ReportService {
 
         var now = DateUtil.now();
         report.setCreatedAt(now);
-        report.setCreatedBy(coach.getId());
+        report.setCreatedBy(coach.id());
         report.setUpdatedAt(now);
-        report.setUpdatedBy(coach.getId());
+        report.setUpdatedBy(coach.id());
         report.setFinishedAt(null);
         report.setFinishedBy(null);
         report.setReminderSent(false);
@@ -67,13 +66,6 @@ public class ReportService {
         reportDao.insert(report);
 
         return new CreateRefereeReportResultDTO(report.getExternalId());
-    }
-
-    private boolean hasRequiredRole(ReportType reportType, Login login) {
-        return switch (reportType) {
-            case REFEREE_VIDEO_REPORT, REFEREE_COMMENT_REPORT -> login.getRefereeCoach();
-            case TRAINER_REPORT -> login.getTrainer();
-        };
     }
 
     private String getExternalId() {
