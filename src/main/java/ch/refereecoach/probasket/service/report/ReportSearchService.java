@@ -12,11 +12,9 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static ch.refereecoach.probasket.common.ReportType.GAME_DISCUSSION;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
-import static org.jooq.Operator.AND;
 
 @Slf4j
 @Service
@@ -31,10 +29,7 @@ public class ReportSearchService {
 
         // TODO add text filter..how? referee/coach need to be joined... or store the names directly in the report...
 
-        var condition = DSL.condition(AND,
-                                      REPORT.GAME_DATE.ge(from),
-                                      REPORT.GAME_DATE.le(to));
-
+        var condition = REPORT.GAME_DATE.ge(from).and(REPORT.GAME_DATE.le(to));
         condition.and(getUserCondition(user));
 
         // TODO add filter, etc.

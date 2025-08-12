@@ -78,283 +78,353 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
     }
 
     /**
+     * Setter for <code>public.report.coach_name</code>.
+     */
+    public void setCoachName(String value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.report.coach_name</code>.
+     */
+    public String getCoachName() {
+        return (String) get(4);
+    }
+
+    /**
      * Setter for <code>public.report.reportee_id</code>.
      */
     public void setReporteeId(Long value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.report.reportee_id</code>.
      */
     public Long getReporteeId() {
-        return (Long) get(4);
+        return (Long) get(5);
+    }
+
+    /**
+     * Setter for <code>public.report.reportee_name</code>.
+     */
+    public void setReporteeName(String value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.report.reportee_name</code>.
+     */
+    public String getReporteeName() {
+        return (String) get(6);
     }
 
     /**
      * Setter for <code>public.report.game_number</code>.
      */
     public void setGameNumber(String value) {
-        set(5, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>public.report.game_number</code>.
      */
     public String getGameNumber() {
-        return (String) get(5);
+        return (String) get(7);
     }
 
     /**
      * Setter for <code>public.report.game_competition</code>.
      */
     public void setGameCompetition(String value) {
-        set(6, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>public.report.game_competition</code>.
      */
     public String getGameCompetition() {
-        return (String) get(6);
+        return (String) get(8);
     }
 
     /**
      * Setter for <code>public.report.game_date</code>.
      */
     public void setGameDate(LocalDate value) {
-        set(7, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>public.report.game_date</code>.
      */
     public LocalDate getGameDate() {
-        return (LocalDate) get(7);
+        return (LocalDate) get(9);
     }
 
     /**
      * Setter for <code>public.report.game_result</code>.
      */
     public void setGameResult(String value) {
-        set(8, value);
+        set(10, value);
     }
 
     /**
      * Getter for <code>public.report.game_result</code>.
      */
     public String getGameResult() {
-        return (String) get(8);
+        return (String) get(10);
     }
 
     /**
      * Setter for <code>public.report.game_home_team</code>.
      */
     public void setGameHomeTeam(String value) {
-        set(9, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>public.report.game_home_team</code>.
      */
     public String getGameHomeTeam() {
-        return (String) get(9);
+        return (String) get(11);
     }
 
     /**
      * Setter for <code>public.report.game_home_team_id</code>.
      */
     public void setGameHomeTeamId(Integer value) {
-        set(10, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>public.report.game_home_team_id</code>.
      */
     public Integer getGameHomeTeamId() {
-        return (Integer) get(10);
+        return (Integer) get(12);
     }
 
     /**
      * Setter for <code>public.report.game_guest_team</code>.
      */
     public void setGameGuestTeam(String value) {
-        set(11, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>public.report.game_guest_team</code>.
      */
     public String getGameGuestTeam() {
-        return (String) get(11);
+        return (String) get(13);
     }
 
     /**
      * Setter for <code>public.report.game_guest_team_id</code>.
      */
     public void setGameGuestTeamId(Integer value) {
-        set(12, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.report.game_guest_team_id</code>.
      */
     public Integer getGameGuestTeamId() {
-        return (Integer) get(12);
+        return (Integer) get(14);
     }
 
     /**
      * Setter for <code>public.report.game_referee1_id</code>.
      */
     public void setGameReferee1Id(Long value) {
-        set(13, value);
+        set(15, value);
     }
 
     /**
      * Getter for <code>public.report.game_referee1_id</code>.
      */
     public Long getGameReferee1Id() {
-        return (Long) get(13);
+        return (Long) get(15);
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee1_name</code>.
+     */
+    public void setGameReferee1Name(String value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee1_name</code>.
+     */
+    public String getGameReferee1Name() {
+        return (String) get(16);
     }
 
     /**
      * Setter for <code>public.report.game_referee2_id</code>.
      */
     public void setGameReferee2Id(Long value) {
-        set(14, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>public.report.game_referee2_id</code>.
      */
     public Long getGameReferee2Id() {
-        return (Long) get(14);
+        return (Long) get(17);
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee2_name</code>.
+     */
+    public void setGameReferee2Name(String value) {
+        set(18, value);
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee2_name</code>.
+     */
+    public String getGameReferee2Name() {
+        return (String) get(18);
     }
 
     /**
      * Setter for <code>public.report.game_referee3_id</code>.
      */
     public void setGameReferee3Id(Long value) {
-        set(15, value);
+        set(19, value);
     }
 
     /**
      * Getter for <code>public.report.game_referee3_id</code>.
      */
     public Long getGameReferee3Id() {
-        return (Long) get(15);
+        return (Long) get(19);
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee3_name</code>.
+     */
+    public void setGameReferee3Name(String value) {
+        set(20, value);
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee3_name</code>.
+     */
+    public String getGameReferee3Name() {
+        return (String) get(20);
     }
 
     /**
      * Setter for <code>public.report.game_video_url</code>.
      */
     public void setGameVideoUrl(String value) {
-        set(16, value);
+        set(21, value);
     }
 
     /**
      * Getter for <code>public.report.game_video_url</code>.
      */
     public String getGameVideoUrl() {
-        return (String) get(16);
+        return (String) get(21);
     }
 
     /**
      * Setter for <code>public.report.created_at</code>.
      */
     public void setCreatedAt(LocalDateTime value) {
-        set(17, value);
+        set(22, value);
     }
 
     /**
      * Getter for <code>public.report.created_at</code>.
      */
     public LocalDateTime getCreatedAt() {
-        return (LocalDateTime) get(17);
+        return (LocalDateTime) get(22);
     }
 
     /**
      * Setter for <code>public.report.created_by</code>.
      */
     public void setCreatedBy(Long value) {
-        set(18, value);
+        set(23, value);
     }
 
     /**
      * Getter for <code>public.report.created_by</code>.
      */
     public Long getCreatedBy() {
-        return (Long) get(18);
+        return (Long) get(23);
     }
 
     /**
      * Setter for <code>public.report.updated_at</code>.
      */
     public void setUpdatedAt(LocalDateTime value) {
-        set(19, value);
+        set(24, value);
     }
 
     /**
      * Getter for <code>public.report.updated_at</code>.
      */
     public LocalDateTime getUpdatedAt() {
-        return (LocalDateTime) get(19);
+        return (LocalDateTime) get(24);
     }
 
     /**
      * Setter for <code>public.report.updated_by</code>.
      */
     public void setUpdatedBy(Long value) {
-        set(20, value);
+        set(25, value);
     }
 
     /**
      * Getter for <code>public.report.updated_by</code>.
      */
     public Long getUpdatedBy() {
-        return (Long) get(20);
+        return (Long) get(25);
     }
 
     /**
      * Setter for <code>public.report.finished_at</code>.
      */
     public void setFinishedAt(LocalDateTime value) {
-        set(21, value);
+        set(26, value);
     }
 
     /**
      * Getter for <code>public.report.finished_at</code>.
      */
     public LocalDateTime getFinishedAt() {
-        return (LocalDateTime) get(21);
+        return (LocalDateTime) get(26);
     }
 
     /**
      * Setter for <code>public.report.finished_by</code>.
      */
     public void setFinishedBy(Long value) {
-        set(22, value);
+        set(27, value);
     }
 
     /**
      * Getter for <code>public.report.finished_by</code>.
      */
     public Long getFinishedBy() {
-        return (Long) get(22);
+        return (Long) get(27);
     }
 
     /**
      * Setter for <code>public.report.reminder_sent</code>.
      */
     public void setReminderSent(Boolean value) {
-        set(23, value);
+        set(28, value);
     }
 
     /**
      * Getter for <code>public.report.reminder_sent</code>.
      */
     public Boolean getReminderSent() {
-        return (Boolean) get(23);
+        return (Boolean) get(28);
     }
 
     // -------------------------------------------------------------------------
@@ -380,14 +450,16 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
     /**
      * Create a detached, initialised ReportRecord
      */
-    public ReportRecord(Long id, String externalId, String reportType, Long coachId, Long reporteeId, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, Long gameReferee2Id, Long gameReferee3Id, String gameVideoUrl, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent) {
+    public ReportRecord(Long id, String externalId, String reportType, Long coachId, String coachName, Long reporteeId, String reporteeName, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, String gameReferee1Name, Long gameReferee2Id, String gameReferee2Name, Long gameReferee3Id, String gameReferee3Name, String gameVideoUrl, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent) {
         super(Report.REPORT);
 
         setId(id);
         setExternalId(externalId);
         setReportType(reportType);
         setCoachId(coachId);
+        setCoachName(coachName);
         setReporteeId(reporteeId);
+        setReporteeName(reporteeName);
         setGameNumber(gameNumber);
         setGameCompetition(gameCompetition);
         setGameDate(gameDate);
@@ -397,8 +469,11 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
         setGameGuestTeam(gameGuestTeam);
         setGameGuestTeamId(gameGuestTeamId);
         setGameReferee1Id(gameReferee1Id);
+        setGameReferee1Name(gameReferee1Name);
         setGameReferee2Id(gameReferee2Id);
+        setGameReferee2Name(gameReferee2Name);
         setGameReferee3Id(gameReferee3Id);
+        setGameReferee3Name(gameReferee3Name);
         setGameVideoUrl(gameVideoUrl);
         setCreatedAt(createdAt);
         setCreatedBy(createdBy);
@@ -421,7 +496,9 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
             setExternalId(value.getExternalId());
             setReportType(value.getReportType());
             setCoachId(value.getCoachId());
+            setCoachName(value.getCoachName());
             setReporteeId(value.getReporteeId());
+            setReporteeName(value.getReporteeName());
             setGameNumber(value.getGameNumber());
             setGameCompetition(value.getGameCompetition());
             setGameDate(value.getGameDate());
@@ -431,8 +508,11 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
             setGameGuestTeam(value.getGameGuestTeam());
             setGameGuestTeamId(value.getGameGuestTeamId());
             setGameReferee1Id(value.getGameReferee1Id());
+            setGameReferee1Name(value.getGameReferee1Name());
             setGameReferee2Id(value.getGameReferee2Id());
+            setGameReferee2Name(value.getGameReferee2Name());
             setGameReferee3Id(value.getGameReferee3Id());
+            setGameReferee3Name(value.getGameReferee3Name());
             setGameVideoUrl(value.getGameVideoUrl());
             setCreatedAt(value.getCreatedAt());
             setCreatedBy(value.getCreatedBy());

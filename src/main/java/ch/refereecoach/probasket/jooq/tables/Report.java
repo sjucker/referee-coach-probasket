@@ -82,9 +82,19 @@ public class Report extends TableImpl<ReportRecord> {
     public final TableField<ReportRecord, Long> COACH_ID = createField(DSL.name("coach_id"), SQLDataType.BIGINT, this, "");
 
     /**
+     * The column <code>public.report.coach_name</code>.
+     */
+    public final TableField<ReportRecord, String> COACH_NAME = createField(DSL.name("coach_name"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
      * The column <code>public.report.reportee_id</code>.
      */
     public final TableField<ReportRecord, Long> REPORTEE_ID = createField(DSL.name("reportee_id"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.report.reportee_name</code>.
+     */
+    public final TableField<ReportRecord, String> REPORTEE_NAME = createField(DSL.name("reportee_name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>public.report.game_number</code>.
@@ -132,14 +142,29 @@ public class Report extends TableImpl<ReportRecord> {
     public final TableField<ReportRecord, Long> GAME_REFEREE1_ID = createField(DSL.name("game_referee1_id"), SQLDataType.BIGINT, this, "");
 
     /**
+     * The column <code>public.report.game_referee1_name</code>.
+     */
+    public final TableField<ReportRecord, String> GAME_REFEREE1_NAME = createField(DSL.name("game_referee1_name"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
      * The column <code>public.report.game_referee2_id</code>.
      */
     public final TableField<ReportRecord, Long> GAME_REFEREE2_ID = createField(DSL.name("game_referee2_id"), SQLDataType.BIGINT, this, "");
 
     /**
+     * The column <code>public.report.game_referee2_name</code>.
+     */
+    public final TableField<ReportRecord, String> GAME_REFEREE2_NAME = createField(DSL.name("game_referee2_name"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
      * The column <code>public.report.game_referee3_id</code>.
      */
     public final TableField<ReportRecord, Long> GAME_REFEREE3_ID = createField(DSL.name("game_referee3_id"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.report.game_referee3_name</code>.
+     */
+    public final TableField<ReportRecord, String> GAME_REFEREE3_NAME = createField(DSL.name("game_referee3_name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>public.report.game_video_url</code>.

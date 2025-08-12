@@ -21,7 +21,9 @@ public class Report implements Serializable {
     private String externalId;
     private String reportType;
     private Long coachId;
+    private String coachName;
     private Long reporteeId;
+    private String reporteeName;
     private String gameNumber;
     private String gameCompetition;
     private LocalDate gameDate;
@@ -31,8 +33,11 @@ public class Report implements Serializable {
     private String gameGuestTeam;
     private Integer gameGuestTeamId;
     private Long gameReferee1Id;
+    private String gameReferee1Name;
     private Long gameReferee2Id;
+    private String gameReferee2Name;
     private Long gameReferee3Id;
+    private String gameReferee3Name;
     private String gameVideoUrl;
     private LocalDateTime createdAt;
     private Long createdBy;
@@ -49,7 +54,9 @@ public class Report implements Serializable {
         this.externalId = value.externalId;
         this.reportType = value.reportType;
         this.coachId = value.coachId;
+        this.coachName = value.coachName;
         this.reporteeId = value.reporteeId;
+        this.reporteeName = value.reporteeName;
         this.gameNumber = value.gameNumber;
         this.gameCompetition = value.gameCompetition;
         this.gameDate = value.gameDate;
@@ -59,8 +66,11 @@ public class Report implements Serializable {
         this.gameGuestTeam = value.gameGuestTeam;
         this.gameGuestTeamId = value.gameGuestTeamId;
         this.gameReferee1Id = value.gameReferee1Id;
+        this.gameReferee1Name = value.gameReferee1Name;
         this.gameReferee2Id = value.gameReferee2Id;
+        this.gameReferee2Name = value.gameReferee2Name;
         this.gameReferee3Id = value.gameReferee3Id;
+        this.gameReferee3Name = value.gameReferee3Name;
         this.gameVideoUrl = value.gameVideoUrl;
         this.createdAt = value.createdAt;
         this.createdBy = value.createdBy;
@@ -76,7 +86,9 @@ public class Report implements Serializable {
         String externalId,
         String reportType,
         Long coachId,
+        String coachName,
         Long reporteeId,
+        String reporteeName,
         String gameNumber,
         String gameCompetition,
         LocalDate gameDate,
@@ -86,8 +98,11 @@ public class Report implements Serializable {
         String gameGuestTeam,
         Integer gameGuestTeamId,
         Long gameReferee1Id,
+        String gameReferee1Name,
         Long gameReferee2Id,
+        String gameReferee2Name,
         Long gameReferee3Id,
+        String gameReferee3Name,
         String gameVideoUrl,
         LocalDateTime createdAt,
         Long createdBy,
@@ -101,7 +116,9 @@ public class Report implements Serializable {
         this.externalId = externalId;
         this.reportType = reportType;
         this.coachId = coachId;
+        this.coachName = coachName;
         this.reporteeId = reporteeId;
+        this.reporteeName = reporteeName;
         this.gameNumber = gameNumber;
         this.gameCompetition = gameCompetition;
         this.gameDate = gameDate;
@@ -111,8 +128,11 @@ public class Report implements Serializable {
         this.gameGuestTeam = gameGuestTeam;
         this.gameGuestTeamId = gameGuestTeamId;
         this.gameReferee1Id = gameReferee1Id;
+        this.gameReferee1Name = gameReferee1Name;
         this.gameReferee2Id = gameReferee2Id;
+        this.gameReferee2Name = gameReferee2Name;
         this.gameReferee3Id = gameReferee3Id;
+        this.gameReferee3Name = gameReferee3Name;
         this.gameVideoUrl = gameVideoUrl;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
@@ -180,6 +200,20 @@ public class Report implements Serializable {
     }
 
     /**
+     * Getter for <code>public.report.coach_name</code>.
+     */
+    public String getCoachName() {
+        return this.coachName;
+    }
+
+    /**
+     * Setter for <code>public.report.coach_name</code>.
+     */
+    public void setCoachName(String coachName) {
+        this.coachName = coachName;
+    }
+
+    /**
      * Getter for <code>public.report.reportee_id</code>.
      */
     public Long getReporteeId() {
@@ -191,6 +225,20 @@ public class Report implements Serializable {
      */
     public void setReporteeId(Long reporteeId) {
         this.reporteeId = reporteeId;
+    }
+
+    /**
+     * Getter for <code>public.report.reportee_name</code>.
+     */
+    public String getReporteeName() {
+        return this.reporteeName;
+    }
+
+    /**
+     * Setter for <code>public.report.reportee_name</code>.
+     */
+    public void setReporteeName(String reporteeName) {
+        this.reporteeName = reporteeName;
     }
 
     /**
@@ -320,6 +368,20 @@ public class Report implements Serializable {
     }
 
     /**
+     * Getter for <code>public.report.game_referee1_name</code>.
+     */
+    public String getGameReferee1Name() {
+        return this.gameReferee1Name;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee1_name</code>.
+     */
+    public void setGameReferee1Name(String gameReferee1Name) {
+        this.gameReferee1Name = gameReferee1Name;
+    }
+
+    /**
      * Getter for <code>public.report.game_referee2_id</code>.
      */
     public Long getGameReferee2Id() {
@@ -334,6 +396,20 @@ public class Report implements Serializable {
     }
 
     /**
+     * Getter for <code>public.report.game_referee2_name</code>.
+     */
+    public String getGameReferee2Name() {
+        return this.gameReferee2Name;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee2_name</code>.
+     */
+    public void setGameReferee2Name(String gameReferee2Name) {
+        this.gameReferee2Name = gameReferee2Name;
+    }
+
+    /**
      * Getter for <code>public.report.game_referee3_id</code>.
      */
     public Long getGameReferee3Id() {
@@ -345,6 +421,20 @@ public class Report implements Serializable {
      */
     public void setGameReferee3Id(Long gameReferee3Id) {
         this.gameReferee3Id = gameReferee3Id;
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee3_name</code>.
+     */
+    public String getGameReferee3Name() {
+        return this.gameReferee3Name;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee3_name</code>.
+     */
+    public void setGameReferee3Name(String gameReferee3Name) {
+        this.gameReferee3Name = gameReferee3Name;
     }
 
     /**
@@ -492,11 +582,23 @@ public class Report implements Serializable {
         }
         else if (!this.coachId.equals(other.coachId))
             return false;
+        if (this.coachName == null) {
+            if (other.coachName != null)
+                return false;
+        }
+        else if (!this.coachName.equals(other.coachName))
+            return false;
         if (this.reporteeId == null) {
             if (other.reporteeId != null)
                 return false;
         }
         else if (!this.reporteeId.equals(other.reporteeId))
+            return false;
+        if (this.reporteeName == null) {
+            if (other.reporteeName != null)
+                return false;
+        }
+        else if (!this.reporteeName.equals(other.reporteeName))
             return false;
         if (this.gameNumber == null) {
             if (other.gameNumber != null)
@@ -552,17 +654,35 @@ public class Report implements Serializable {
         }
         else if (!this.gameReferee1Id.equals(other.gameReferee1Id))
             return false;
+        if (this.gameReferee1Name == null) {
+            if (other.gameReferee1Name != null)
+                return false;
+        }
+        else if (!this.gameReferee1Name.equals(other.gameReferee1Name))
+            return false;
         if (this.gameReferee2Id == null) {
             if (other.gameReferee2Id != null)
                 return false;
         }
         else if (!this.gameReferee2Id.equals(other.gameReferee2Id))
             return false;
+        if (this.gameReferee2Name == null) {
+            if (other.gameReferee2Name != null)
+                return false;
+        }
+        else if (!this.gameReferee2Name.equals(other.gameReferee2Name))
+            return false;
         if (this.gameReferee3Id == null) {
             if (other.gameReferee3Id != null)
                 return false;
         }
         else if (!this.gameReferee3Id.equals(other.gameReferee3Id))
+            return false;
+        if (this.gameReferee3Name == null) {
+            if (other.gameReferee3Name != null)
+                return false;
+        }
+        else if (!this.gameReferee3Name.equals(other.gameReferee3Name))
             return false;
         if (this.gameVideoUrl == null) {
             if (other.gameVideoUrl != null)
@@ -623,7 +743,9 @@ public class Report implements Serializable {
         result = prime * result + ((this.externalId == null) ? 0 : this.externalId.hashCode());
         result = prime * result + ((this.reportType == null) ? 0 : this.reportType.hashCode());
         result = prime * result + ((this.coachId == null) ? 0 : this.coachId.hashCode());
+        result = prime * result + ((this.coachName == null) ? 0 : this.coachName.hashCode());
         result = prime * result + ((this.reporteeId == null) ? 0 : this.reporteeId.hashCode());
+        result = prime * result + ((this.reporteeName == null) ? 0 : this.reporteeName.hashCode());
         result = prime * result + ((this.gameNumber == null) ? 0 : this.gameNumber.hashCode());
         result = prime * result + ((this.gameCompetition == null) ? 0 : this.gameCompetition.hashCode());
         result = prime * result + ((this.gameDate == null) ? 0 : this.gameDate.hashCode());
@@ -633,8 +755,11 @@ public class Report implements Serializable {
         result = prime * result + ((this.gameGuestTeam == null) ? 0 : this.gameGuestTeam.hashCode());
         result = prime * result + ((this.gameGuestTeamId == null) ? 0 : this.gameGuestTeamId.hashCode());
         result = prime * result + ((this.gameReferee1Id == null) ? 0 : this.gameReferee1Id.hashCode());
+        result = prime * result + ((this.gameReferee1Name == null) ? 0 : this.gameReferee1Name.hashCode());
         result = prime * result + ((this.gameReferee2Id == null) ? 0 : this.gameReferee2Id.hashCode());
+        result = prime * result + ((this.gameReferee2Name == null) ? 0 : this.gameReferee2Name.hashCode());
         result = prime * result + ((this.gameReferee3Id == null) ? 0 : this.gameReferee3Id.hashCode());
+        result = prime * result + ((this.gameReferee3Name == null) ? 0 : this.gameReferee3Name.hashCode());
         result = prime * result + ((this.gameVideoUrl == null) ? 0 : this.gameVideoUrl.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
@@ -654,7 +779,9 @@ public class Report implements Serializable {
         sb.append(", ").append(externalId);
         sb.append(", ").append(reportType);
         sb.append(", ").append(coachId);
+        sb.append(", ").append(coachName);
         sb.append(", ").append(reporteeId);
+        sb.append(", ").append(reporteeName);
         sb.append(", ").append(gameNumber);
         sb.append(", ").append(gameCompetition);
         sb.append(", ").append(gameDate);
@@ -664,8 +791,11 @@ public class Report implements Serializable {
         sb.append(", ").append(gameGuestTeam);
         sb.append(", ").append(gameGuestTeamId);
         sb.append(", ").append(gameReferee1Id);
+        sb.append(", ").append(gameReferee1Name);
         sb.append(", ").append(gameReferee2Id);
+        sb.append(", ").append(gameReferee2Name);
         sb.append(", ").append(gameReferee3Id);
+        sb.append(", ").append(gameReferee3Name);
         sb.append(", ").append(gameVideoUrl);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(createdBy);

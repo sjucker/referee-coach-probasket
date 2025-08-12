@@ -134,6 +134,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     }
 
     /**
+     * Fetch records that have <code>coach_name BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfCoachName(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.COACH_NAME, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>coach_name IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByCoachName(String... values) {
+        return fetch(Report.REPORT.COACH_NAME, values);
+    }
+
+    /**
      * Fetch records that have <code>reportee_id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
@@ -146,6 +161,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
      */
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByReporteeId(Long... values) {
         return fetch(Report.REPORT.REPORTEE_ID, values);
+    }
+
+    /**
+     * Fetch records that have <code>reportee_name BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfReporteeName(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.REPORTEE_NAME, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>reportee_name IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByReporteeName(String... values) {
+        return fetch(Report.REPORT.REPORTEE_NAME, values);
     }
 
     /**
@@ -284,6 +314,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     }
 
     /**
+     * Fetch records that have <code>game_referee1_name BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee1Name(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE1_NAME, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee1_name IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee1Name(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE1_NAME, values);
+    }
+
+    /**
      * Fetch records that have <code>game_referee2_id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
@@ -299,6 +344,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     }
 
     /**
+     * Fetch records that have <code>game_referee2_name BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee2Name(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE2_NAME, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee2_name IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee2Name(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE2_NAME, values);
+    }
+
+    /**
      * Fetch records that have <code>game_referee3_id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
@@ -311,6 +371,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
      */
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee3Id(Long... values) {
         return fetch(Report.REPORT.GAME_REFEREE3_ID, values);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee3_name BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee3Name(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE3_NAME, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee3_name IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee3Name(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE3_NAME, values);
     }
 
     /**
