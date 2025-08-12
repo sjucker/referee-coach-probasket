@@ -1,0 +1,18 @@
+.edit-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.error-card {
+  border-color: #e57373;
+}

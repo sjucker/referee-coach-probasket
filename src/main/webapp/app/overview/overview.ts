@@ -18,6 +18,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
+import {PATH_EDIT} from "../app.routes";
+import {Router} from "@angular/router";
 
 interface RefereeSelection {
     id: number,
@@ -35,6 +37,7 @@ interface RefereeSelection {
 export class Overview {
     private readonly fb = inject(FormBuilder);
     private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
     protected readonly auth = inject(AuthService);
     private readonly snackBar = inject(MatSnackBar);
 
@@ -200,9 +203,7 @@ export class Overview {
             this.http.post<CreateRefereeReportResultDTO>('/api/report/referee', request).subscribe({
                 next: response => {
                     this.creating.set(false);
-                    this.snackBar.open(response.externalId);
-                    // TODO
-                    // this.edit(response.id, ReportType.COACHING);
+                    this.router.navigate([PATH_EDIT, response.externalId]).catch(err => console.error(err))
                 },
                 error: () => {
                     this.creating.set(false);

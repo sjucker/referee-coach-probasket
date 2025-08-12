@@ -11,6 +11,19 @@ export interface LoginResponseDTO {
     roles: UserRole[];
 }
 
+export interface UserDTO {
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    refereeCoach: boolean;
+    referee: boolean;
+    trainerCoach: boolean;
+    trainer: boolean;
+    admin: boolean;
+}
+
 export interface BasketplanGameDTO {
     gameNumber: string;
     competition: string;
@@ -37,6 +50,11 @@ export interface CreateRefereeReportDTO {
 }
 
 export interface CreateRefereeReportResultDTO {
+    externalId: string;
+}
+
+export interface ReportDTO {
+    id: number;
     externalId: string;
 }
 
@@ -76,4 +94,5 @@ export enum ReportType {
     REFEREE_VIDEO_REPORT = "REFEREE_VIDEO_REPORT",
     REFEREE_COMMENT_REPORT = "REFEREE_COMMENT_REPORT",
     TRAINER_REPORT = "TRAINER_REPORT",
+    GAME_DISCUSSION = "GAME_DISCUSSION",
 }

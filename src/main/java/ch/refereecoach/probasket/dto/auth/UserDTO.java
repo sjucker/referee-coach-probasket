@@ -22,4 +22,8 @@ public record UserDTO(@NotNull Long id,
         };
     }
 
+    public String fullName() {
+        return firstName + " " + lastName;
+    }
+
 }

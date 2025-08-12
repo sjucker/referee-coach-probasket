@@ -2,6 +2,7 @@ package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
+import ch.refereecoach.probasket.jooq.tables.pojos.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,28 @@ public class UserService {
 
     public Optional<UserDTO> findByBasketplanUsername(String username) {
         return loginDao.fetchOptionalByBasketplanUsername(username)
-                       .map(it -> new UserDTO(it.getId(),
-                                              it.getBasketplanUsername(),
-                                              it.getFirstname(),
-                                              it.getLastname(),
-                                              it.getEmail(),
-                                              it.getRefereeCoach(),
-                                              it.getReferee(),
-                                              it.getTrainerCoach(),
-                                              it.getTrainer(),
-                                              it.getAdmin()));
+                       .map(UserService::toDTO);
+    }
+
+    public UserDTO getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user %s not found".formatted(id)));
+    }
+
+    public Optional<UserDTO> findById(Long id) {
+        return loginDao.fetchOptionalById(id).map(UserService::toDTO);
+    }
+
+    private static UserDTO toDTO(Login it) {
+        return new UserDTO(it.getId(),
+                           it.getBasketplanUsername(),
+                           it.getFirstname(),
+                           it.getLastname(),
+                           it.getEmail(),
+                           it.getRefereeCoach(),
+                           it.getReferee(),
+                           it.getTrainerCoach(),
+                           it.getTrainer(),
+                           it.getAdmin());
     }
 }

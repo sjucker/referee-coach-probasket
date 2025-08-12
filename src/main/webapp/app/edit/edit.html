@@ -1,0 +1,26 @@
+<app-header />
+
+<div class="edit-container">
+    <app-loading-bar [show]="loading()"/>
+
+    @if (error()) {
+        <mat-card appearance="outlined" class="error-card">
+            <h2>{{ error() }}</h2>
+            @if (externalId()) {
+                <p>External ID: <strong>{{ externalId() }}</strong></p>
+            }
+        </mat-card>
+    } @else if (hasData()) {
+        <mat-card appearance="outlined">
+            <h2>Report</h2>
+            <div class="row">
+                <label>ID</label>
+                <span>{{ report()!.id }}</span>
+            </div>
+            <div class="row">
+                <label>External ID</label>
+                <span>{{ report()!.externalId }}</span>
+            </div>
+        </mat-card>
+    }
+</div>

@@ -1,10 +1,7 @@
 package ch.refereecoach.probasket.service.report;
 
-import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
-import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
-import ch.refereecoach.probasket.jooq.tables.pojos.Login;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.util.DateUtil;
@@ -28,6 +25,7 @@ public class ReportService {
 
     public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, String username) {
         var coach = userService.getByBasketplanUsername(username);
+        var reportee = userService.getById(reporteeId);
 
         var reportType = videoUrl == null ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
         if (!coach.hasRequiredRole(reportType)) {
@@ -40,7 +38,9 @@ public class ReportService {
         report.setExternalId(getExternalId());
         report.setReportType(reportType.name());
         report.setCoachId(coach.id());
-        report.setReporteeId(reporteeId);
+        report.setCoachName(coach.fullName());
+        report.setReporteeId(reportee.id());
+        report.setReporteeName(reportee.fullName());
         report.setGameNumber(game.gameNumber());
         report.setGameCompetition(game.competition());
         report.setGameDate(game.date());
@@ -50,8 +50,11 @@ public class ReportService {
         report.setGameGuestTeam(game.guestTeam());
         report.setGameGuestTeamId(game.guestTeamId());
         report.setGameReferee1Id(game.referee1Id());
+        report.setGameReferee1Name(game.referee1Name());
         report.setGameReferee2Id(game.referee2Id());
+        report.setGameReferee2Name(game.referee2Name());
         report.setGameReferee3Id(game.referee3Id());
+        report.setGameReferee3Name(game.referee3Name());
         report.setGameVideoUrl(videoUrl);
 
         var now = DateUtil.now();
