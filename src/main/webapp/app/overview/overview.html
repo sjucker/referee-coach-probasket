@@ -52,24 +52,25 @@
 
 <mat-card appearance="outlined">
     <mat-card-content>
-        <div class="overview-filters">
-            <mat-form-field appearance="outline">
-                <mat-label>From date</mat-label>
-                <input matInput [matDatepicker]="fromPicker" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)">
-                <mat-datepicker #fromPicker></mat-datepicker>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-                <mat-label>To date</mat-label>
-                <input matInput [matDatepicker]="toPicker" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)">
-                <mat-datepicker #toPicker></mat-datepicker>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="filter-text">
-                <mat-label>Text filter</mat-label>
+        <div class="overview-filter-container">
+            <mat-form-field style="flex: 15">
+                <mat-label>Filter</mat-label>
                 <input matInput [ngModel]="textFilter()" (ngModelChange)="textFilter.set($event)">
             </mat-form-field>
 
+            <mat-form-field appearance="fill" style="flex: 4">
+                <mat-label>From</mat-label>
+                <input matInput [matDatepicker]="pickerFrom" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)" (dateChange)="loadReports()">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" style="flex: 4">
+                <mat-label>To</mat-label>
+                <input matInput [matDatepicker]="pickerTo" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)" (dateChange)="loadReports()">
+                <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                <mat-datepicker #pickerTo></mat-datepicker>
+            </mat-form-field>
         </div>
 
         @if (tableError()) {

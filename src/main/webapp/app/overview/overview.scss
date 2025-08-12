@@ -1,21 +1,12 @@
-.overview-filters {
+@use '../../variables';
+@use '../../responsive';
+
+.overview-filter-container {
   display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
+  flex-direction: column;
 
-.overview-filters .filter-text {
-  min-width: 240px;
-  flex: 1 1 240px;
-}
-
-.table-wrapper {
-  overflow: auto;
-  max-height: 60vh;
-}
-
-.error {
-  color: #c62828;
-  margin: 8px 0;
+  @include responsive.responsive(gt-sm) {
+    flex-direction: row;
+    gap: variables.$padding;
+  }
 }

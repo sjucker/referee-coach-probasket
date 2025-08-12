@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -14,12 +14,12 @@ import {MatOption, MatSelect} from "@angular/material/select";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
 import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
 import {PATH_EDIT} from "../app.routes";
 import {Router} from "@angular/router";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {DateTime} from "luxon";
 
 interface RefereeSelection {
     id: number,
@@ -29,7 +29,7 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatFormField, MatLabel, MatInput, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatNativeDateModule],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatFormField, MatLabel, MatInput, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -49,8 +49,8 @@ export class Overview {
     protected readonly referee = signal<RefereeSelection | null>(null);
 
 
-    protected readonly fromDate = signal<Date>(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-    protected readonly toDate = signal<Date>(new Date());
+    protected readonly fromDate = signal<DateTime>(DateTime.now().minus({year: 1}));
+    protected readonly toDate = signal<DateTime>(DateTime.now());
     protected readonly textFilter = signal<string>('');
     protected readonly pageIndex = signal(0);
     protected readonly pageSize = signal(10);
@@ -71,17 +71,6 @@ export class Overview {
     });
 
     constructor() {
-        // Auto load on date range changes
-        effect(() => {
-            // react to from/to changes
-            this.fromDate();
-            this.toDate();
-            // reset to first page
-            this.pageIndex.set(0);
-            // Call outside of effect tracking to avoid tracking textFilter/pageIndex/pageSize
-            untracked(() => this.loadReports());
-        });
-
         // Debounced text filter changes
         toObservable(this.textFilter)
             .pipe(
@@ -96,26 +85,23 @@ export class Overview {
             });
     }
 
+    // TODO persist search parameters in session storage
+
     loadReports(): void {
         this.tableError.set(null);
         this.tableLoading.set(true);
 
-        const fromIso = this.toIsoDate(this.fromDate());
-        const toIso = this.toIsoDate(this.toDate());
+        const fromIso = this.fromDate().toISODate()
+        const toIso = this.toDate().toISODate()
         const filter = this.textFilter();
         const page = this.pageIndex();
         const pagesize = this.pageSize();
 
         const params = new HttpParams()
-            .set('from-date', fromIso)
-            .set('to-date', toIso)
-            .set('textfilter', filter)
-            .set('page', page)
-            .set('pagesize', pagesize)
-            // backend compatibility
-            .set('from', fromIso)
-            .set('to', toIso)
+            .set('from', fromIso!)
+            .set('to', toIso!)
             .set('filter', filter)
+            .set('page', page)
             .set('pageSize', pagesize);
 
         this.http.get<ReportSearchResultDTO>('/api/report', {params}).subscribe({
