@@ -20,6 +20,8 @@ import {PATH_EDIT} from "../app.routes";
 import {Router} from "@angular/router";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {DateTime} from "luxon";
+import {MatIcon} from "@angular/material/icon";
+import {DatePipe} from "@angular/common";
 
 interface RefereeSelection {
     id: number,
@@ -29,7 +31,7 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -233,7 +235,7 @@ export class Overview implements OnInit {
             this.http.post<CreateRefereeReportResultDTO>('/api/report/referee', request).subscribe({
                 next: response => {
                     this.creating.set(false);
-                    this.router.navigate([PATH_EDIT, response.externalId]).catch(err => console.error(err))
+                    this.edit(response.externalId);
                 },
                 error: () => {
                     this.creating.set(false);
@@ -252,5 +254,9 @@ export class Overview implements OnInit {
             });
         }
 
+    }
+
+    public edit(externalId: string) {
+        this.router.navigate([PATH_EDIT, externalId]).catch(err => console.error(err))
     }
 }
