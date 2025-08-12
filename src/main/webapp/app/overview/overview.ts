@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -7,8 +7,8 @@ import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {AuthService} from '../auth.service';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {BasketplanGameDTO, CreateRefereeReportDTO, CreateRefereeReportResultDTO, OfficiatingMode, ReportOverviewDTO, ReportSearchResultDTO} from "../../rest";
-import {MatFormField} from "@angular/material/form-field";
-import {MatInput, MatLabel} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule, MatLabel} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -29,17 +29,19 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatFormField, MatLabel, MatInput, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Overview {
+export class Overview implements OnInit {
     private readonly fb = inject(FormBuilder);
     private readonly http = inject(HttpClient);
     private readonly router = inject(Router);
     protected readonly auth = inject(AuthService);
     private readonly snackBar = inject(MatSnackBar);
+
+    private static readonly STORAGE_KEY = 'overviewSearchParams';
 
     protected readonly game = signal<BasketplanGameDTO | null>(null);
     protected readonly videoUrl = signal<string | undefined>(undefined);
@@ -70,6 +72,8 @@ export class Overview {
         gameNumber: ['', [Validators.required]],
     });
 
+    private _suppressNextTextFilterLoad = false;
+
     constructor() {
         // Debounced text filter changes
         toObservable(this.textFilter)
@@ -80,16 +84,72 @@ export class Overview {
                 takeUntilDestroyed()
             )
             .subscribe(() => {
+                if (this._suppressNextTextFilterLoad) {
+                    // clear suppression and skip this debounced load caused by restore
+                    this._suppressNextTextFilterLoad = false;
+                    return;
+                }
                 this.pageIndex.set(0);
                 this.loadReports();
             });
     }
 
-    // TODO persist search parameters in session storage
+    ngOnInit(): void {
+        this.restoreSearchFromSession();
+        this.loadReports();
+    }
+
+    private saveSearchToSession(): void {
+        try {
+            const state = {
+                from: this.fromDate().toISODate(),
+                to: this.toDate().toISODate(),
+                filter: this.textFilter(),
+                page: this.pageIndex(),
+                pageSize: this.pageSize()
+            };
+            sessionStorage.setItem(Overview.STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+            // ignore storage errors
+        }
+    }
+
+    private restoreSearchFromSession(): void {
+        try {
+            const raw = sessionStorage.getItem(Overview.STORAGE_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number };
+
+            if (parsed.from) {
+                const f = DateTime.fromISO(parsed.from);
+                if (f.isValid) this.fromDate.set(f);
+            }
+            if (parsed.to) {
+                const t = DateTime.fromISO(parsed.to);
+                if (t.isValid) this.toDate.set(t);
+            }
+            if (typeof parsed.filter === 'string') {
+                // prevent the constructor subscription from triggering an extra load
+                this._suppressNextTextFilterLoad = true;
+                this.textFilter.set(parsed.filter);
+            }
+            if (typeof parsed.page === 'number' && parsed.page >= 0) {
+                this.pageIndex.set(parsed.page);
+            }
+            if (typeof parsed.pageSize === 'number' && parsed.pageSize > 0) {
+                this.pageSize.set(parsed.pageSize);
+            }
+        } catch (e) {
+            // ignore parse errors
+        }
+    }
 
     loadReports(): void {
         this.tableError.set(null);
         this.tableLoading.set(true);
+
+        // persist current search params on every load
+        this.saveSearchToSession();
 
         const fromIso = this.fromDate().toISODate()
         const toIso = this.toDate().toISODate()

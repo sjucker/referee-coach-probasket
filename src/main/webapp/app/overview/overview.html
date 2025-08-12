@@ -61,14 +61,14 @@
             <mat-form-field appearance="fill" style="flex: 4">
                 <mat-label>From</mat-label>
                 <input matInput [matDatepicker]="pickerFrom" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)" (dateChange)="loadReports()">
-                <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
                 <mat-datepicker #pickerFrom></mat-datepicker>
             </mat-form-field>
 
             <mat-form-field appearance="fill" style="flex: 4">
                 <mat-label>To</mat-label>
                 <input matInput [matDatepicker]="pickerTo" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)" (dateChange)="loadReports()">
-                <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
                 <mat-datepicker #pickerTo></mat-datepicker>
             </mat-form-field>
         </div>
