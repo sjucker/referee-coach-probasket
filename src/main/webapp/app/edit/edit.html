@@ -12,15 +12,7 @@
         </mat-card>
     } @else if (hasData()) {
         <mat-card appearance="outlined">
-            <h2>Report</h2>
-            <div class="row">
-                <label>ID</label>
-                <span>{{ report()!.id }}</span>
-            </div>
-            <div class="row">
-                <label>External ID</label>
-                <span>{{ report()!.externalId }}</span>
-            </div>
+            <h2>{{ report()?.id }}</h2>
         </mat-card>
     }
 </div>

@@ -72,8 +72,6 @@ export class Overview implements OnInit {
         gameNumber: ['', [Validators.required]],
     });
 
-    private _suppressNextTextFilterLoad = false;
-
     constructor() {
         // Debounced text filter changes
         toObservable(this.textFilter)
@@ -84,11 +82,6 @@ export class Overview implements OnInit {
                 takeUntilDestroyed()
             )
             .subscribe(() => {
-                if (this._suppressNextTextFilterLoad) {
-                    // clear suppression and skip this debounced load caused by restore
-                    this._suppressNextTextFilterLoad = false;
-                    return;
-                }
                 this.pageIndex.set(0);
                 this.loadReports();
             });
@@ -100,47 +93,38 @@ export class Overview implements OnInit {
     }
 
     private saveSearchToSession(): void {
-        try {
-            const state = {
-                from: this.fromDate().toISODate(),
-                to: this.toDate().toISODate(),
-                filter: this.textFilter(),
-                page: this.pageIndex(),
-                pageSize: this.pageSize()
-            };
-            sessionStorage.setItem(Overview.STORAGE_KEY, JSON.stringify(state));
-        } catch (e) {
-            // ignore storage errors
-        }
+        const state = {
+            from: this.fromDate().toISODate(),
+            to: this.toDate().toISODate(),
+            filter: this.textFilter(),
+            page: this.pageIndex(),
+            pageSize: this.pageSize()
+        };
+        sessionStorage.setItem(Overview.STORAGE_KEY, JSON.stringify(state));
     }
 
     private restoreSearchFromSession(): void {
-        try {
-            const raw = sessionStorage.getItem(Overview.STORAGE_KEY);
-            if (!raw) return;
-            const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number };
 
-            if (parsed.from) {
-                const f = DateTime.fromISO(parsed.from);
-                if (f.isValid) this.fromDate.set(f);
-            }
-            if (parsed.to) {
-                const t = DateTime.fromISO(parsed.to);
-                if (t.isValid) this.toDate.set(t);
-            }
-            if (typeof parsed.filter === 'string') {
-                // prevent the constructor subscription from triggering an extra load
-                this._suppressNextTextFilterLoad = true;
-                this.textFilter.set(parsed.filter);
-            }
-            if (typeof parsed.page === 'number' && parsed.page >= 0) {
-                this.pageIndex.set(parsed.page);
-            }
-            if (typeof parsed.pageSize === 'number' && parsed.pageSize > 0) {
-                this.pageSize.set(parsed.pageSize);
-            }
-        } catch (e) {
-            // ignore parse errors
+        const raw = sessionStorage.getItem(Overview.STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number };
+
+        if (parsed.from) {
+            const f = DateTime.fromISO(parsed.from);
+            if (f.isValid) this.fromDate.set(f);
+        }
+        if (parsed.to) {
+            const t = DateTime.fromISO(parsed.to);
+            if (t.isValid) this.toDate.set(t);
+        }
+        if (typeof parsed.filter === 'string') {
+            this.textFilter.set(parsed.filter);
+        }
+        if (typeof parsed.page === 'number' && parsed.page >= 0) {
+            this.pageIndex.set(parsed.page);
+        }
+        if (typeof parsed.pageSize === 'number' && parsed.pageSize > 0) {
+            this.pageSize.set(parsed.pageSize);
         }
     }
 
