@@ -9,9 +9,9 @@ public class BasketplanAuthenticationService {
 
     public boolean authenticate(String username, String password) {
         // TODO call basketplan-service to authenticate
-        
+
         return switch (toRootLowerCase(username)) {
-            case "caspar.schaudt", "stefan.jucker" -> password.equals("pass");
+            case "caspar.schaudt", "stefan.jucker", "nicolas.castro", "jovan.ljubanic" -> password.equals("pass");
             // TODO add more
             default -> false;
         };
