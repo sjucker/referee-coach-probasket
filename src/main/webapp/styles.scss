@@ -5,8 +5,9 @@
 html {
   @include mat.theme((
           color: (
-                  primary: mat.$red-palette,
-                  tertiary: mat.$rose-palette,
+                  primary: mat.$azure-palette,
+                  tertiary: mat.$orange-palette,
+                  theme-type: dark,
           ),
           typography: (
                   typography: Roboto,
@@ -22,6 +23,13 @@ html {
   @include mat.toolbar-overrides((
           container-background-color: var(--mat-sys-primary),
           container-text-color: var(--mat-sys-on-primary),
+  ));
+}
+
+:root {
+  @include mat.progress-bar-overrides((
+          active-indicator-color: var(--mat-sys-secondary),
+          track-color: var(--mat-sys-on-primary),
   ));
 }
 

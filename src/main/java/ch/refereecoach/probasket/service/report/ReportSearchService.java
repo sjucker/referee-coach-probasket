@@ -2,7 +2,10 @@ package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
-import ch.refereecoach.probasket.dto.report.ReportDTO;
+import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
+import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
+import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
+import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
 import ch.refereecoach.probasket.dto.report.ReportOverviewDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
@@ -17,12 +20,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
+import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_3PO;
 import static ch.refereecoach.probasket.common.ReportType.GAME_DISCUSSION;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.TRAINER_REPORT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_COMMENT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_CRITERIA;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.jooq.Records.mapping;
+import static org.jooq.impl.DSL.multiset;
+import static org.jooq.impl.DSL.select;
 
 @Slf4j
 @Service
@@ -33,17 +43,71 @@ public class ReportSearchService {
     private final ReportDao reportDao;
     private final UserService userService;
 
-    public Optional<ReportDTO> findByExternalId(String externalId, String username) {
+    public Optional<RefereeReportDTO> findRefereeReportByExternalId(String externalId, String username) {
         var user = userService.getByBasketplanUsername(username);
-        return reportDao.fetchOptionalByExternalId(externalId)
-                        // check if user is allowed to open report
-                        .filter(it -> jooqDsl.selectOne()
-                                             .from(REPORT)
-                                             .where(REPORT.ID.eq(it.getId()).and(getUserCondition(user)))
-                                             .fetchOptional()
-                                             .isPresent())
-                        .map(it -> new ReportDTO(it.getId(), it.getExternalId()));
+
+        if (reportDao.fetchOptionalByExternalId(externalId).isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (jooqDsl.selectOne()
+                   .from(REPORT)
+                   .where(REPORT.EXTERNAL_ID.eq(externalId).and(getUserCondition(user)))
+                   .fetchOptional()
+                   .isEmpty()) {
+            log.error("user {} tried to access report {} but is not allowed to!", username, externalId);
+            throw new IllegalArgumentException("not allowed!");
+        }
+
+        return jooqDsl.select(REPORT,
+                              multiset(
+                                      select(REPORT_COMMENT.ID,
+                                             REPORT_COMMENT.TYPE,
+                                             REPORT_COMMENT.COMMENT,
+                                             REPORT_COMMENT.SCORE,
+                                             multiset(select(REPORT_CRITERIA.ID,
+                                                             REPORT_CRITERIA.TYPE,
+                                                             REPORT_CRITERIA.COMMENT,
+                                                             REPORT_CRITERIA.STATE
+                                                            )
+                                                              .from(REPORT_CRITERIA)
+                                                              .where(REPORT_CRITERIA.REPORT_COMMENT_ID.eq(REPORT_COMMENT.ID)))
+                                                     .convertFrom(it -> it.map(mapping(ReportCriteriaDTO::of))))
+                                              .from(REPORT_COMMENT)
+                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
+                                      ).convertFrom(it -> it.map(mapping(ReportCommentDTO::of))))
+                      .from(REPORT)
+                      .where(REPORT.EXTERNAL_ID.eq(externalId))
+                      .fetchOptional(it -> {
+                          var reportRecord = it.value1();
+                          return new RefereeReportDTO(reportRecord.getId(),
+                                                      reportRecord.getExternalId(),
+                                                      reportRecord.getCoachId(),
+                                                      reportRecord.getCoachName(),
+                                                      reportRecord.getReporteeId(),
+                                                      reportRecord.getReporteeName(),
+                                                      new BasketplanGameDTO(reportRecord.getGameNumber(),
+                                                                            reportRecord.getGameCompetition(),
+                                                                            reportRecord.getGameDate(),
+                                                                            reportRecord.getGameResult(),
+                                                                            reportRecord.getGameHomeTeam(),
+                                                                            reportRecord.getGameHomeTeamId(),
+                                                                            reportRecord.getGameGuestTeam(),
+                                                                            reportRecord.getGameGuestTeamId(),
+                                                                            reportRecord.getGameReferee3Id() != null ? OFFICIATING_3PO : OFFICIATING_2PO,
+                                                                            reportRecord.getGameReferee1Id(),
+                                                                            reportRecord.getGameReferee1Name(),
+                                                                            reportRecord.getGameReferee2Id(),
+                                                                            reportRecord.getGameReferee2Name(),
+                                                                            reportRecord.getGameReferee3Id(),
+                                                                            reportRecord.getGameReferee3Name(),
+                                                                            reportRecord.getGameVideoUrl()),
+                                                      it.value2());
+                      });
     }
+
+    // TODO findTrainerReport
+    // TODO findGameDiscussion
 
     public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, String username) {
         var stopWatch = new StopWatch();

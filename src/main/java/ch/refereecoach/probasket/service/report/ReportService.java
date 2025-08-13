@@ -1,8 +1,9 @@
 package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.common.CategoryType;
-import ch.refereecoach.probasket.common.CrtiteriaType;
+import ch.refereecoach.probasket.common.CriteriaType;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
+import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
@@ -16,16 +17,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static ch.refereecoach.probasket.common.CriteriaState.NEUTRAL;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
-import static org.apache.commons.lang3.StringUtils.toRootLowerCase;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+
+    private static final BigDecimal DEFAULT_SCORE = new BigDecimal("7.00");
 
     private final ReportDao reportDao;
     private final ReportCommentDao reportCommentDao;
@@ -79,10 +83,10 @@ public class ReportService {
 
         Arrays.stream(CategoryType.values())
               .forEach(categoryType -> {
-                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, null);
+                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, DEFAULT_SCORE);
                   reportCommentDao.insert(reportComment);
-                  CrtiteriaType.forCategory(categoryType)
-                               .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), null, null)));
+                  CriteriaType.forCategory(categoryType)
+                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), null, NEUTRAL.name())));
               });
 
         return new CreateRefereeReportResultDTO(report.getExternalId());
@@ -92,9 +96,13 @@ public class ReportService {
         String uuid;
         do {
             // insecure is good enough for this use-case
-            uuid = toRootLowerCase(RandomStringUtils.insecure().nextAlphabetic(10));
+            uuid = RandomStringUtils.insecure().nextAlphabetic(10);
         } while (reportDao.fetchOptionalByExternalId(uuid).isPresent());
 
         return uuid;
+    }
+
+    public void updateReport(String externalId, RefereeReportDTO dto, String username) {
+// TODO: implement
     }
 }

@@ -1,18 +1,95 @@
-<app-header />
+<app-header/>
+<app-loading-bar [show]="showLoadingBar()"/>
 
-<div class="edit-container">
-    <app-loading-bar [show]="loading()"/>
-
-    @if (error()) {
-        <mat-card appearance="outlined" class="error-card">
-            <h2>{{ error() }}</h2>
-            @if (externalId()) {
-                <p>External ID: <strong>{{ externalId() }}</strong></p>
+@if (report(); as report) {
+    <mat-card appearance="filled">
+        <mat-card-header>
+            <mat-card-title>Game Info</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="game-info-container">
+                <span>Game Number: {{ report.game.gameNumber }}</span>
+                <span>Competition: {{ report.game.competition }}</span>
+                <span>Date: {{ report.game.date | date:'dd.MM.yyyy' }}</span>
+                <span>Result: {{ report.game.result }}</span>
+                <span>Team A: {{ report.game.homeTeam }}</span>
+                <span>Team B: {{ report.game.guestTeam }}</span>
+            </div>
+            <div class="game-info-container">
+                <span class="coach">Coach: {{ report.coachName }}</span>
+            </div>
+            @if (report.game.officiatingMode === OfficiatingMode.OFFICIATING_3PO) {
+                <div class="game-info-container">
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Crew Chief: {{ report.game.referee1Name }}</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Umpire 1: {{ report.game.referee2Name }}</span>
+                    <span [ngClass]="report.game.referee3Id === report.reporteeId ? 'reportee' : ''">Umpire 2: {{ report.game.referee3Name }}</span>
+                </div>
+            } @else {
+                <div class="game-info-container">
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Referee 1: {{ report.game.referee1Name }}</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Referee 2: {{ report.game.referee2Name }}</span>
+                </div>
             }
-        </mat-card>
-    } @else if (hasData()) {
-        <mat-card appearance="outlined">
-            <h2>{{ report()?.id }}</h2>
-        </mat-card>
-    }
-</div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="filled">
+        <mat-card-actions>
+            <button color="primary" mat-flat-button (click)="save()" [disabled]="!saveEnabled()">Save</button>
+        </mat-card-actions>
+    </mat-card>
+
+    <mat-card appearance="filled">
+        <mat-card-header>
+            <mat-card-title>Comments</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            @for (comment of report.comments; track comment.id) {
+                <h3>{{ comment.typeDescription }}</h3>
+                <div class="comment-container">
+                    <mat-form-field appearance="outline" color="primary">
+                        <mat-label>Comment</mat-label>
+                        <textarea [(ngModel)]="comment.comment"
+                                  (ngModelChange)="onChange()"
+                                  cdkAutosizeMaxRows="6"
+                                  cdkAutosizeMinRows="3"
+                                  cdkTextareaAutosize
+                                  matInput></textarea>
+                    </mat-form-field>
+                    @if (comment.criteria.length > 0) {
+                        <div class="criteria-container">
+                            @for (criteria of comment.criteria; track criteria.id) {
+                                <div>{{ criteria.description }}</div>
+                                <mat-radio-group [(ngModel)]="criteria.state">
+                                    <mat-radio-button [value]="CriteriaState.MINUS" (change)="onChange()" matTooltip="negative"></mat-radio-button>
+                                    <mat-radio-button [value]="CriteriaState.NEUTRAL" (change)="onChange()" matTooltip="neutral"></mat-radio-button>
+                                    <mat-radio-button [value]="CriteriaState.PLUS" (change)="onChange()" matTooltip="positive"></mat-radio-button>
+                                </mat-radio-group>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="filled">
+        <mat-card-header>
+            <mat-card-title>Ratings</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            @for (comment of report.comments; track comment.id; let first = $first; let last = $last) {
+                <app-rating
+                        [title]="comment.typeDescription"
+                        [dto]="comment"
+                        (changed)="onChange()"></app-rating>
+                @if (first) {
+                    (Average of all critera: {{ average() | number: '1.1-1' }})
+                }
+                @if (!last) {
+                    <br/>
+                }
+            }
+        </mat-card-content>
+    </mat-card>
+}

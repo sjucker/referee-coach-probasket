@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 @Getter
 public enum CategoryType {
-    GENERAL("General Comment"),
+    GENERAL("General"),
     IMAGE("Image, Approach"),
     FITNESS("Fitness Condition"),
     MECHANICS(officiatingMode -> officiatingMode.getDescription() + " Mechanics & Individual Officiating Techniques"),

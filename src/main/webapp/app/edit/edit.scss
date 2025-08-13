@@ -1,18 +1,45 @@
-.edit-container {
-  padding: 16px;
+@use "../../responsive";
+@use "../../variables";
+
+.game-info-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+
+  @include responsive.responsive('gt-sm') {
+    flex-direction: row;
+    gap: variables.$padding;
+  }
+
+  .coach {
+    color: var(--mat-sys-secondary);
+  }
+
+  .reportee {
+    color: var(--mat-sys-primary);
+  }
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0;
-}
+.comment-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: variables.$padding;
 
-.error-card {
-  border-color: #e57373;
+  @include responsive.responsive('gt-sm') {
+    flex-direction: row;
+    gap: variables.$padding;
+  }
+
+  > * {
+    flex: 1;
+  }
+
+  .criteria-container {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+
+    @include responsive.responsive('gt-sm') {
+      grid-template-columns: 2fr 5fr;
+    }
+  }
 }

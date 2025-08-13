@@ -2,7 +2,7 @@ package ch.refereecoach.probasket.rest;
 
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
-import ch.refereecoach.probasket.dto.report.ReportDTO;
+import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
 import ch.refereecoach.probasket.service.report.ReportSearchService;
 import ch.refereecoach.probasket.service.report.ReportService;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,12 +50,23 @@ public class ReportEndpoint {
         return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, jwt.getSubject()));
     }
 
-    @GetMapping("/{externalId}")
-    public ResponseEntity<ReportDTO> getReport(@AuthenticationPrincipal Jwt jwt,
-                                               @PathVariable String externalId) {
+    @GetMapping("/referee/{externalId}")
+    public ResponseEntity<RefereeReportDTO> getReport(@AuthenticationPrincipal Jwt jwt,
+                                                      @PathVariable String externalId) {
         log.info("GET /api/report/{} {}", externalId, jwt.getSubject());
 
-        return ResponseEntity.of(reportSearchService.findByExternalId(externalId, jwt.getSubject()));
+        return ResponseEntity.of(reportSearchService.findRefereeReportByExternalId(externalId, jwt.getSubject()));
+    }
+
+    @PutMapping("/referee/{externalId}")
+    public ResponseEntity<Void> updateReport(@AuthenticationPrincipal Jwt jwt,
+                                             @PathVariable String externalId,
+                                             @RequestBody @Valid RefereeReportDTO dto) {
+        log.info("PUT /api/report/{} {}", externalId, jwt.getSubject());
+
+        reportService.updateReport(externalId, dto, jwt.getSubject());
+        
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/referee")

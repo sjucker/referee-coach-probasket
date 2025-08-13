@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public enum CrtiteriaType {
+public enum CriteriaType {
     IMAGE_ON_TIME("pünktlich", CategoryType.IMAGE),
     IMAGE_PRE_GAME_CHECKS("Kontrollen, OT", CategoryType.IMAGE),
     IMAGE_PRE_GAME("Pre-Game", CategoryType.IMAGE),
@@ -50,7 +50,7 @@ public enum CrtiteriaType {
     private final String description;
     private final CategoryType categoryType;
 
-    public static List<CrtiteriaType> forCategory(CategoryType categoryType) {
-        return Arrays.stream(values()).filter(crtiteriaType -> crtiteriaType.getCategoryType() == categoryType).toList();
+    public static List<CriteriaType> forCategory(CategoryType categoryType) {
+        return Arrays.stream(values()).filter(criteriaType -> criteriaType.getCategoryType() == categoryType).toList();
     }
 }
