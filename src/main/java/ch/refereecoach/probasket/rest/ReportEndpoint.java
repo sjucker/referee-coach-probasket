@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Slf4j
 @CrossOrigin(origins = "*")
@@ -55,7 +56,11 @@ public class ReportEndpoint {
                                                       @PathVariable String externalId) {
         log.info("GET /api/report/{} {}", externalId, jwt.getSubject());
 
-        return ResponseEntity.of(reportSearchService.findRefereeReportByExternalId(externalId, jwt.getSubject()));
+        try {
+            return ResponseEntity.of(reportSearchService.findRefereeReportByExternalId(externalId, jwt.getSubject()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(FORBIDDEN).build();
+        }
     }
 
     @PutMapping("/referee/{externalId}")
@@ -65,7 +70,7 @@ public class ReportEndpoint {
         log.info("PUT /api/report/{} {}", externalId, jwt.getSubject());
 
         reportService.updateReport(externalId, dto, jwt.getSubject());
-        
+
         return ResponseEntity.ok().build();
     }
 
