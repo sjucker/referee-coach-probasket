@@ -1,14 +1,22 @@
 package ch.refereecoach.probasket.service.report;
 
+import ch.refereecoach.probasket.common.CategoryType;
+import ch.refereecoach.probasket.common.CrtiteriaType;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportCommentDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
@@ -20,6 +28,8 @@ import static org.apache.commons.lang3.StringUtils.toRootLowerCase;
 public class ReportService {
 
     private final ReportDao reportDao;
+    private final ReportCommentDao reportCommentDao;
+    private final ReportCriteriaDao reportCriteriaDao;
     private final BasketplanService basketplanService;
     private final UserService userService;
 
@@ -65,8 +75,15 @@ public class ReportService {
         report.setFinishedAt(null);
         report.setFinishedBy(null);
         report.setReminderSent(false);
-
         reportDao.insert(report);
+
+        Arrays.stream(CategoryType.values())
+              .forEach(categoryType -> {
+                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, null);
+                  reportCommentDao.insert(reportComment);
+                  CrtiteriaType.forCategory(categoryType)
+                               .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), null, null)));
+              });
 
         return new CreateRefereeReportResultDTO(report.getExternalId());
     }

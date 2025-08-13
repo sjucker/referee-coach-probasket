@@ -7,8 +7,8 @@ package ch.refereecoach.probasket.jooq;
 import ch.refereecoach.probasket.jooq.tables.Login;
 import ch.refereecoach.probasket.jooq.tables.Report;
 import ch.refereecoach.probasket.jooq.tables.ReportComment;
-import ch.refereecoach.probasket.jooq.tables.ReportCommentsLastRead;
 import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
+import ch.refereecoach.probasket.jooq.tables.ReportLastRead;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
@@ -51,14 +51,14 @@ public class Public extends SchemaImpl {
     public final ReportComment REPORT_COMMENT = ReportComment.REPORT_COMMENT;
 
     /**
-     * The table <code>public.report_comments_last_read</code>.
-     */
-    public final ReportCommentsLastRead REPORT_COMMENTS_LAST_READ = ReportCommentsLastRead.REPORT_COMMENTS_LAST_READ;
-
-    /**
      * The table <code>public.report_criteria</code>.
      */
     public final ReportCriteria REPORT_CRITERIA = ReportCriteria.REPORT_CRITERIA;
+
+    /**
+     * The table <code>public.report_last_read</code>.
+     */
+    public final ReportLastRead REPORT_LAST_READ = ReportLastRead.REPORT_LAST_READ;
 
     /**
      * The table <code>public.report_video_comment</code>.
@@ -99,8 +99,8 @@ public class Public extends SchemaImpl {
             Login.LOGIN,
             Report.REPORT,
             ReportComment.REPORT_COMMENT,
-            ReportCommentsLastRead.REPORT_COMMENTS_LAST_READ,
             ReportCriteria.REPORT_CRITERIA,
+            ReportLastRead.REPORT_LAST_READ,
             ReportVideoComment.REPORT_VIDEO_COMMENT,
             ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY,
             ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG,

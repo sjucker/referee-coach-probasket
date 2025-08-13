@@ -105,7 +105,7 @@ create table report_video_comment_tag
     constraint fk__report_video_comment_tag_tag foreign key (tag_id) references tag (id) on delete cascade
 );
 
-create table report_comments_last_read
+create table report_last_read
 (
     report_id    bigint    not null,
     user_id      bigint    not null,
