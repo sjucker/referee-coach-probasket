@@ -115,6 +115,11 @@ public class Login extends TableImpl<LoginRecord> {
      */
     public final TableField<LoginRecord, Boolean> ADMIN = createField(DSL.name("admin"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
+    /**
+     * The column <code>public.login.rank</code>.
+     */
+    public final TableField<LoginRecord, String> RANK = createField(DSL.name("rank"), SQLDataType.VARCHAR(255), this, "");
+
     private Login(Name alias, Table<LoginRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

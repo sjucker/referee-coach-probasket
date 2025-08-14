@@ -17,6 +17,7 @@ export interface UserDTO {
     firstName: string;
     lastName: string;
     email: string;
+    rank?: Rank;
     refereeCoach: boolean;
     referee: boolean;
     trainerCoach: boolean;
@@ -69,6 +70,7 @@ export interface ReportCommentDTO {
     id: number;
     type: CategoryType;
     typeDescription: string;
+    criteriaHints: string[];
     comment?: string;
     scoreRequired: boolean;
     score?: number;
@@ -110,6 +112,14 @@ export enum UserRole {
     ADMIN = "ADMIN",
 }
 
+export enum Rank {
+    RG1 = "RG1",
+    RG2 = "RG2",
+    RG3 = "RG3",
+    RG4 = "RG4",
+    RK = "RK",
+}
+
 export enum OfficiatingMode {
     OFFICIATING_2PO = "OFFICIATING_2PO",
     OFFICIATING_3PO = "OFFICIATING_3PO",
@@ -118,10 +128,10 @@ export enum OfficiatingMode {
 export enum CategoryType {
     GENERAL = "GENERAL",
     IMAGE = "IMAGE",
-    FITNESS = "FITNESS",
-    MECHANICS = "MECHANICS",
     FOULS = "FOULS",
     VIOLATIONS = "VIOLATIONS",
+    MECHANICS = "MECHANICS",
+    FITNESS = "FITNESS",
     GAME_CONTROL = "GAME_CONTROL",
     POINTS_TO_KEEP = "POINTS_TO_KEEP",
     POINTS_TO_IMPROVE = "POINTS_TO_IMPROVE",

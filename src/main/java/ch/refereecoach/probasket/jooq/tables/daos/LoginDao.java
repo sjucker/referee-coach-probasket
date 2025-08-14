@@ -236,4 +236,19 @@ public class LoginDao extends AbstractSpringDAOImpl<LoginRecord, ch.refereecoach
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByAdmin(Boolean... values) {
         return fetch(Login.LOGIN.ADMIN, values);
     }
+
+    /**
+     * Fetch records that have <code>rank BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchRangeOfRank(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Login.LOGIN.RANK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>rank IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Login> fetchByRank(String... values) {
+        return fetch(Login.LOGIN.RANK, values);
+    }
 }

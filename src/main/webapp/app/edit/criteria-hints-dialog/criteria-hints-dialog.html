@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content class="mat-typography">
+    <ul>
+        @for (hint of data.hints; track hint) {
+            <li>{{ hint }}</li>
+        }
+    </ul>
+</mat-dialog-content>

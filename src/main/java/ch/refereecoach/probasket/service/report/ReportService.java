@@ -55,6 +55,7 @@ public class ReportService {
         report.setCoachName(coach.fullName());
         report.setReporteeId(reportee.id());
         report.setReporteeName(reportee.fullName());
+        report.setReporteeRank(reportee.rank().name());
         report.setGameNumber(game.gameNumber());
         report.setGameCompetition(game.competition());
         report.setGameDate(game.date());

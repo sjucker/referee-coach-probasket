@@ -10,6 +10,7 @@ create table report
     coach_name         varchar(255),
     reportee_id        bigint,
     reportee_name      varchar(255),
+    reportee_rank      varchar(255),
     game_number        varchar(255) not null,
     game_competition   varchar(255) not null,
     game_date          date         not null,

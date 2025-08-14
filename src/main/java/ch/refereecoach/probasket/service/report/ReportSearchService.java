@@ -65,6 +65,7 @@ public class ReportSearchService {
                                              REPORT_COMMENT.TYPE,
                                              REPORT_COMMENT.COMMENT,
                                              REPORT_COMMENT.SCORE,
+                                             REPORT.REPORTEE_RANK,
                                              multiset(select(REPORT_CRITERIA.ID,
                                                              REPORT_CRITERIA.TYPE,
                                                              REPORT_CRITERIA.COMMENT,
@@ -80,6 +81,7 @@ public class ReportSearchService {
                       .where(REPORT.EXTERNAL_ID.eq(externalId))
                       .fetchOptional(it -> {
                           var reportRecord = it.value1();
+                          var comments = it.value2();
                           return new RefereeReportDTO(reportRecord.getId(),
                                                       reportRecord.getExternalId(),
                                                       reportRecord.getCoachId(),
@@ -103,7 +105,7 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Name(),
                                                                             reportRecord.getGameVideoUrl()),
                                                       reportRecord.getOverallScore(),
-                                                      it.value2());
+                                                      comments);
                       });
     }
 

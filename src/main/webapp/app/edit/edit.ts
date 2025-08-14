@@ -3,7 +3,7 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
-import {CriteriaState, OfficiatingMode, RefereeReportDTO} from '../../rest';
+import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO} from '../../rest';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {DatePipe, DecimalPipe, NgClass} from "@angular/common";
@@ -14,15 +14,19 @@ import {CdkTextareaAutosize} from "@angular/cdk/text-field";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {Score} from "../components/score/score.component";
+import {MatIconModule} from "@angular/material/icon";
+import {MatDialog, MatDialogModule} from "@angular/material/dialog";
+import {CriteriaHintsDialog} from "./criteria-hints-dialog/criteria-hints-dialog";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, NgClass, DatePipe, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, NgClass, DatePipe, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditPage {
+    private readonly dialog = inject(MatDialog);
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
 
@@ -96,6 +100,15 @@ export class EditPage {
             error: () => {
                 this.saving.set(false);
                 this.error.set('An unexpected error occurred');
+            }
+        });
+    }
+
+    openCriteriaHints(comment: ReportCommentDTO) {
+        this.dialog.open(CriteriaHintsDialog, {
+            data: {
+                hints: comment.criteriaHints,
+                title: comment.typeDescription
             }
         });
     }

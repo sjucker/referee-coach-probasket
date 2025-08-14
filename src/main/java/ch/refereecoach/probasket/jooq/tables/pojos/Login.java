@@ -27,6 +27,7 @@ public class Login implements Serializable {
     private Boolean trainerCoach;
     private Boolean trainer;
     private Boolean admin;
+    private String rank;
 
     public Login() {}
 
@@ -42,6 +43,7 @@ public class Login implements Serializable {
         this.trainerCoach = value.trainerCoach;
         this.trainer = value.trainer;
         this.admin = value.admin;
+        this.rank = value.rank;
     }
 
     public Login(
@@ -55,7 +57,8 @@ public class Login implements Serializable {
         Boolean referee,
         Boolean trainerCoach,
         Boolean trainer,
-        Boolean admin
+        Boolean admin,
+        String rank
     ) {
         this.id = id;
         this.basketplanUsername = basketplanUsername;
@@ -68,6 +71,7 @@ public class Login implements Serializable {
         this.trainerCoach = trainerCoach;
         this.trainer = trainer;
         this.admin = admin;
+        this.rank = rank;
     }
 
     /**
@@ -224,6 +228,20 @@ public class Login implements Serializable {
         this.admin = admin;
     }
 
+    /**
+     * Getter for <code>public.login.rank</code>.
+     */
+    public String getRank() {
+        return this.rank;
+    }
+
+    /**
+     * Setter for <code>public.login.rank</code>.
+     */
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -299,6 +317,12 @@ public class Login implements Serializable {
         }
         else if (!this.admin.equals(other.admin))
             return false;
+        if (this.rank == null) {
+            if (other.rank != null)
+                return false;
+        }
+        else if (!this.rank.equals(other.rank))
+            return false;
         return true;
     }
 
@@ -317,6 +341,7 @@ public class Login implements Serializable {
         result = prime * result + ((this.trainerCoach == null) ? 0 : this.trainerCoach.hashCode());
         result = prime * result + ((this.trainer == null) ? 0 : this.trainer.hashCode());
         result = prime * result + ((this.admin == null) ? 0 : this.admin.hashCode());
+        result = prime * result + ((this.rank == null) ? 0 : this.rank.hashCode());
         return result;
     }
 
@@ -335,6 +360,7 @@ public class Login implements Serializable {
         sb.append(", ").append(trainerCoach);
         sb.append(", ").append(trainer);
         sb.append(", ").append(admin);
+        sb.append(", ").append(rank);
 
         sb.append(")");
         return sb.toString();

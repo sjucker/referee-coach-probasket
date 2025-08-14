@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.service.report;
 
+import ch.refereecoach.probasket.common.Rank;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Login;
@@ -41,6 +42,7 @@ public class UserService {
                            it.getFirstname(),
                            it.getLastname(),
                            it.getEmail(),
+                           Rank.valueOf(it.getRank()),
                            it.getRefereeCoach(),
                            it.getReferee(),
                            it.getTrainerCoach(),

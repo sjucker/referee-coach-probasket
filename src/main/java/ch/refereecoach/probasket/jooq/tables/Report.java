@@ -98,6 +98,11 @@ public class Report extends TableImpl<ReportRecord> {
     public final TableField<ReportRecord, String> REPORTEE_NAME = createField(DSL.name("reportee_name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
+     * The column <code>public.report.reportee_rank</code>.
+     */
+    public final TableField<ReportRecord, String> REPORTEE_RANK = createField(DSL.name("reportee_rank"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
      * The column <code>public.report.game_number</code>.
      */
     public final TableField<ReportRecord, String> GAME_NUMBER = createField(DSL.name("game_number"), SQLDataType.VARCHAR(255).nullable(false), this, "");

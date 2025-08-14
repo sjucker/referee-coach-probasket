@@ -19,6 +19,12 @@
   }
 }
 
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: variables.$padding;
+}
+
 .comment-container {
   display: flex;
   flex-direction: column;

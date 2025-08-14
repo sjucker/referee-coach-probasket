@@ -25,6 +25,7 @@ public class Report implements Serializable {
     private String coachName;
     private Long reporteeId;
     private String reporteeName;
+    private String reporteeRank;
     private String gameNumber;
     private String gameCompetition;
     private LocalDate gameDate;
@@ -59,6 +60,7 @@ public class Report implements Serializable {
         this.coachName = value.coachName;
         this.reporteeId = value.reporteeId;
         this.reporteeName = value.reporteeName;
+        this.reporteeRank = value.reporteeRank;
         this.gameNumber = value.gameNumber;
         this.gameCompetition = value.gameCompetition;
         this.gameDate = value.gameDate;
@@ -92,6 +94,7 @@ public class Report implements Serializable {
         String coachName,
         Long reporteeId,
         String reporteeName,
+        String reporteeRank,
         String gameNumber,
         String gameCompetition,
         LocalDate gameDate,
@@ -123,6 +126,7 @@ public class Report implements Serializable {
         this.coachName = coachName;
         this.reporteeId = reporteeId;
         this.reporteeName = reporteeName;
+        this.reporteeRank = reporteeRank;
         this.gameNumber = gameNumber;
         this.gameCompetition = gameCompetition;
         this.gameDate = gameDate;
@@ -244,6 +248,20 @@ public class Report implements Serializable {
      */
     public void setReporteeName(String reporteeName) {
         this.reporteeName = reporteeName;
+    }
+
+    /**
+     * Getter for <code>public.report.reportee_rank</code>.
+     */
+    public String getReporteeRank() {
+        return this.reporteeRank;
+    }
+
+    /**
+     * Setter for <code>public.report.reportee_rank</code>.
+     */
+    public void setReporteeRank(String reporteeRank) {
+        this.reporteeRank = reporteeRank;
     }
 
     /**
@@ -619,6 +637,12 @@ public class Report implements Serializable {
         }
         else if (!this.reporteeName.equals(other.reporteeName))
             return false;
+        if (this.reporteeRank == null) {
+            if (other.reporteeRank != null)
+                return false;
+        }
+        else if (!this.reporteeRank.equals(other.reporteeRank))
+            return false;
         if (this.gameNumber == null) {
             if (other.gameNumber != null)
                 return false;
@@ -771,6 +795,7 @@ public class Report implements Serializable {
         result = prime * result + ((this.coachName == null) ? 0 : this.coachName.hashCode());
         result = prime * result + ((this.reporteeId == null) ? 0 : this.reporteeId.hashCode());
         result = prime * result + ((this.reporteeName == null) ? 0 : this.reporteeName.hashCode());
+        result = prime * result + ((this.reporteeRank == null) ? 0 : this.reporteeRank.hashCode());
         result = prime * result + ((this.gameNumber == null) ? 0 : this.gameNumber.hashCode());
         result = prime * result + ((this.gameCompetition == null) ? 0 : this.gameCompetition.hashCode());
         result = prime * result + ((this.gameDate == null) ? 0 : this.gameDate.hashCode());
@@ -808,6 +833,7 @@ public class Report implements Serializable {
         sb.append(", ").append(coachName);
         sb.append(", ").append(reporteeId);
         sb.append(", ").append(reporteeName);
+        sb.append(", ").append(reporteeRank);
         sb.append(", ").append(gameNumber);
         sb.append(", ").append(gameCompetition);
         sb.append(", ").append(gameDate);

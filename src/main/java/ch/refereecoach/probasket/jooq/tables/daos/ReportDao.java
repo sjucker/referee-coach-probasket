@@ -180,6 +180,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     }
 
     /**
+     * Fetch records that have <code>reportee_rank BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfReporteeRank(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.REPORTEE_RANK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>reportee_rank IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByReporteeRank(String... values) {
+        return fetch(Report.REPORT.REPORTEE_RANK, values);
+    }
+
+    /**
      * Fetch records that have <code>game_number BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
