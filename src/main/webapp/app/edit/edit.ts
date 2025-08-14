@@ -84,7 +84,12 @@ export class EditPage {
     protected readonly CriteriaState = CriteriaState;
 
     average(): number {
-        return this.report()!.comments.map(comment => comment.score ?? 0).reduce((a, b) => a + b, 0) / this.report()!.comments.length;
+        const length = this.report()!.comments.filter(comment => comment.scoreRequired).length;
+        const totalScore = this.report()!.comments
+            .filter(comment => comment.scoreRequired)
+            .map(comment => comment.score ?? 0)
+            .reduce((a, b) => a + b, 0);
+        return totalScore / length;
     }
 
     // TODO handle unsaved changes

@@ -3,10 +3,10 @@ import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 
-export type CriteriaHintsDialogData = {
-    hints: readonly string[];
+export interface CriteriaHintsDialogData {
+    hints: string[];
     title: string;
-};
+}
 
 @Component({
     selector: 'app-criteria-hints-dialog',
