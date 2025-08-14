@@ -8,6 +8,7 @@ import ch.refereecoach.probasket.jooq.AbstractSpringDAOImpl;
 import ch.refereecoach.probasket.jooq.tables.Report;
 import ch.refereecoach.probasket.jooq.tables.records.ReportRecord;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -401,6 +402,21 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
      */
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameVideoUrl(String... values) {
         return fetch(Report.REPORT.GAME_VIDEO_URL, values);
+    }
+
+    /**
+     * Fetch records that have <code>overall_score BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfOverallScore(BigDecimal lowerInclusive, BigDecimal upperInclusive) {
+        return fetchRange(Report.REPORT.OVERALL_SCORE, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>overall_score IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByOverallScore(BigDecimal... values) {
+        return fetch(Report.REPORT.OVERALL_SCORE, values);
     }
 
     /**

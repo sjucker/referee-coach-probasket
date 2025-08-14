@@ -5,6 +5,7 @@ package ch.refereecoach.probasket.jooq.tables.pojos;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -39,6 +40,7 @@ public class Report implements Serializable {
     private Long gameReferee3Id;
     private String gameReferee3Name;
     private String gameVideoUrl;
+    private BigDecimal overallScore;
     private LocalDateTime createdAt;
     private Long createdBy;
     private LocalDateTime updatedAt;
@@ -72,6 +74,7 @@ public class Report implements Serializable {
         this.gameReferee3Id = value.gameReferee3Id;
         this.gameReferee3Name = value.gameReferee3Name;
         this.gameVideoUrl = value.gameVideoUrl;
+        this.overallScore = value.overallScore;
         this.createdAt = value.createdAt;
         this.createdBy = value.createdBy;
         this.updatedAt = value.updatedAt;
@@ -104,6 +107,7 @@ public class Report implements Serializable {
         Long gameReferee3Id,
         String gameReferee3Name,
         String gameVideoUrl,
+        BigDecimal overallScore,
         LocalDateTime createdAt,
         Long createdBy,
         LocalDateTime updatedAt,
@@ -134,6 +138,7 @@ public class Report implements Serializable {
         this.gameReferee3Id = gameReferee3Id;
         this.gameReferee3Name = gameReferee3Name;
         this.gameVideoUrl = gameVideoUrl;
+        this.overallScore = overallScore;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
@@ -452,6 +457,20 @@ public class Report implements Serializable {
     }
 
     /**
+     * Getter for <code>public.report.overall_score</code>.
+     */
+    public BigDecimal getOverallScore() {
+        return this.overallScore;
+    }
+
+    /**
+     * Setter for <code>public.report.overall_score</code>.
+     */
+    public void setOverallScore(BigDecimal overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    /**
      * Getter for <code>public.report.created_at</code>.
      */
     public LocalDateTime getCreatedAt() {
@@ -690,6 +709,12 @@ public class Report implements Serializable {
         }
         else if (!this.gameVideoUrl.equals(other.gameVideoUrl))
             return false;
+        if (this.overallScore == null) {
+            if (other.overallScore != null)
+                return false;
+        }
+        else if (!this.overallScore.equals(other.overallScore))
+            return false;
         if (this.createdAt == null) {
             if (other.createdAt != null)
                 return false;
@@ -761,6 +786,7 @@ public class Report implements Serializable {
         result = prime * result + ((this.gameReferee3Id == null) ? 0 : this.gameReferee3Id.hashCode());
         result = prime * result + ((this.gameReferee3Name == null) ? 0 : this.gameReferee3Name.hashCode());
         result = prime * result + ((this.gameVideoUrl == null) ? 0 : this.gameVideoUrl.hashCode());
+        result = prime * result + ((this.overallScore == null) ? 0 : this.overallScore.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
@@ -797,6 +823,7 @@ public class Report implements Serializable {
         sb.append(", ").append(gameReferee3Id);
         sb.append(", ").append(gameReferee3Name);
         sb.append(", ").append(gameVideoUrl);
+        sb.append(", ").append(overallScore);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(createdBy);
         sb.append(", ").append(updatedAt);

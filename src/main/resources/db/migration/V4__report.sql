@@ -25,6 +25,7 @@ create table report
     game_referee3_id   bigint,
     game_referee3_name varchar(255),
     game_video_url     varchar(255),
+    overall_score      numeric(2, 1),
     created_at         timestamp    not null,
     created_by         bigint       not null,
     updated_at         timestamp    not null,

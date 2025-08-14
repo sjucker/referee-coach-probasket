@@ -6,6 +6,7 @@ package ch.refereecoach.probasket.jooq.tables.records;
 
 import ch.refereecoach.probasket.jooq.tables.Report;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -330,101 +331,115 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
     }
 
     /**
+     * Setter for <code>public.report.overall_score</code>.
+     */
+    public void setOverallScore(BigDecimal value) {
+        set(22, value);
+    }
+
+    /**
+     * Getter for <code>public.report.overall_score</code>.
+     */
+    public BigDecimal getOverallScore() {
+        return (BigDecimal) get(22);
+    }
+
+    /**
      * Setter for <code>public.report.created_at</code>.
      */
     public void setCreatedAt(LocalDateTime value) {
-        set(22, value);
+        set(23, value);
     }
 
     /**
      * Getter for <code>public.report.created_at</code>.
      */
     public LocalDateTime getCreatedAt() {
-        return (LocalDateTime) get(22);
+        return (LocalDateTime) get(23);
     }
 
     /**
      * Setter for <code>public.report.created_by</code>.
      */
     public void setCreatedBy(Long value) {
-        set(23, value);
+        set(24, value);
     }
 
     /**
      * Getter for <code>public.report.created_by</code>.
      */
     public Long getCreatedBy() {
-        return (Long) get(23);
+        return (Long) get(24);
     }
 
     /**
      * Setter for <code>public.report.updated_at</code>.
      */
     public void setUpdatedAt(LocalDateTime value) {
-        set(24, value);
+        set(25, value);
     }
 
     /**
      * Getter for <code>public.report.updated_at</code>.
      */
     public LocalDateTime getUpdatedAt() {
-        return (LocalDateTime) get(24);
+        return (LocalDateTime) get(25);
     }
 
     /**
      * Setter for <code>public.report.updated_by</code>.
      */
     public void setUpdatedBy(Long value) {
-        set(25, value);
+        set(26, value);
     }
 
     /**
      * Getter for <code>public.report.updated_by</code>.
      */
     public Long getUpdatedBy() {
-        return (Long) get(25);
+        return (Long) get(26);
     }
 
     /**
      * Setter for <code>public.report.finished_at</code>.
      */
     public void setFinishedAt(LocalDateTime value) {
-        set(26, value);
+        set(27, value);
     }
 
     /**
      * Getter for <code>public.report.finished_at</code>.
      */
     public LocalDateTime getFinishedAt() {
-        return (LocalDateTime) get(26);
+        return (LocalDateTime) get(27);
     }
 
     /**
      * Setter for <code>public.report.finished_by</code>.
      */
     public void setFinishedBy(Long value) {
-        set(27, value);
+        set(28, value);
     }
 
     /**
      * Getter for <code>public.report.finished_by</code>.
      */
     public Long getFinishedBy() {
-        return (Long) get(27);
+        return (Long) get(28);
     }
 
     /**
      * Setter for <code>public.report.reminder_sent</code>.
      */
     public void setReminderSent(Boolean value) {
-        set(28, value);
+        set(29, value);
     }
 
     /**
      * Getter for <code>public.report.reminder_sent</code>.
      */
     public Boolean getReminderSent() {
-        return (Boolean) get(28);
+        return (Boolean) get(29);
     }
 
     // -------------------------------------------------------------------------
@@ -450,7 +465,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
     /**
      * Create a detached, initialised ReportRecord
      */
-    public ReportRecord(Long id, String externalId, String reportType, Long coachId, String coachName, Long reporteeId, String reporteeName, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, String gameReferee1Name, Long gameReferee2Id, String gameReferee2Name, Long gameReferee3Id, String gameReferee3Name, String gameVideoUrl, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent) {
+    public ReportRecord(Long id, String externalId, String reportType, Long coachId, String coachName, Long reporteeId, String reporteeName, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, String gameReferee1Name, Long gameReferee2Id, String gameReferee2Name, Long gameReferee3Id, String gameReferee3Name, String gameVideoUrl, BigDecimal overallScore, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent) {
         super(Report.REPORT);
 
         setId(id);
@@ -475,6 +490,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
         setGameReferee3Id(gameReferee3Id);
         setGameReferee3Name(gameReferee3Name);
         setGameVideoUrl(gameVideoUrl);
+        setOverallScore(overallScore);
         setCreatedAt(createdAt);
         setCreatedBy(createdBy);
         setUpdatedAt(updatedAt);
@@ -514,6 +530,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
             setGameReferee3Id(value.getGameReferee3Id());
             setGameReferee3Name(value.getGameReferee3Name());
             setGameVideoUrl(value.getGameVideoUrl());
+            setOverallScore(value.getOverallScore());
             setCreatedAt(value.getCreatedAt());
             setCreatedBy(value.getCreatedBy());
             setUpdatedAt(value.getUpdatedAt());

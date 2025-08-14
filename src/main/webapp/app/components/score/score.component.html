@@ -2,4 +2,4 @@
 <mat-slider min="6" max="9" step="0.1" discrete="true">
     <input matSliderThumb [(ngModel)]="dto().score" (valueChange)="changed.emit()">
 </mat-slider>
-{{ dto().score }} ({{ rating() }})
+{{ dto().score }} ({{ score() }})

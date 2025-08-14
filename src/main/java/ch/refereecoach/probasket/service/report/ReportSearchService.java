@@ -102,6 +102,7 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Id(),
                                                                             reportRecord.getGameReferee3Name(),
                                                                             reportRecord.getGameVideoUrl()),
+                                                      reportRecord.getOverallScore(),
                                                       it.value2());
                       });
     }

@@ -11,6 +11,7 @@ import ch.refereecoach.probasket.jooq.tables.ReportComment.ReportCommentPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment.ReportVideoCommentPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportRecord;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -170,6 +171,11 @@ public class Report extends TableImpl<ReportRecord> {
      * The column <code>public.report.game_video_url</code>.
      */
     public final TableField<ReportRecord, String> GAME_VIDEO_URL = createField(DSL.name("game_video_url"), SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>public.report.overall_score</code>.
+     */
+    public final TableField<ReportRecord, BigDecimal> OVERALL_SCORE = createField(DSL.name("overall_score"), SQLDataType.NUMERIC(2, 1), this, "");
 
     /**
      * The column <code>public.report.created_at</code>.

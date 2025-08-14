@@ -1,24 +1,27 @@
 import {Component, input, output} from '@angular/core';
-import {ReportCommentDTO} from "../../../rest";
 import {MatSlider, MatSliderThumb} from "@angular/material/slider";
 import {FormsModule} from "@angular/forms";
 
+export interface HasScoreDTO {
+    score?: number | null;
+}
+
 @Component({
-    selector: 'app-rating',
+    selector: 'app-score',
     imports: [
         MatSlider,
         MatSliderThumb,
         FormsModule
     ],
-    templateUrl: './rating.html',
-    styleUrl: './rating.scss'
+    templateUrl: './score.component.html',
+    styleUrl: './score.component.scss'
 })
-export class Rating {
+export class Score {
     readonly title = input.required<string>();
-    readonly dto = input.required<ReportCommentDTO>();
+    readonly dto = input.required<HasScoreDTO>();
     readonly changed = output<void>();
 
-    rating() {
+    score() {
         const dto = this.dto();
         if (dto.score) {
             if (dto.score >= 8.6) {

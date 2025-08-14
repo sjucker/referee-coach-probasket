@@ -61,6 +61,7 @@ export interface RefereeReportDTO {
     reporteeId: number;
     reporteeName: string;
     game: BasketplanGameDTO;
+    score?: number;
     comments: ReportCommentDTO[];
 }
 
@@ -69,6 +70,7 @@ export interface ReportCommentDTO {
     type: CategoryType;
     typeDescription: string;
     comment?: string;
+    scoreRequired: boolean;
     score?: number;
     criteria: ReportCriteriaDTO[];
 }

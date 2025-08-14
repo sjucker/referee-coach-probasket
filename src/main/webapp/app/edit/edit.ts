@@ -13,11 +13,11 @@ import {MatInput} from "@angular/material/input";
 import {CdkTextareaAutosize} from "@angular/cdk/text-field";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatTooltipModule} from "@angular/material/tooltip";
-import {Rating} from "../components/rating/rating";
+import {Score} from "../components/score/score.component";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, NgClass, DatePipe, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Rating, DecimalPipe],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, NgClass, DatePipe, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -98,5 +98,9 @@ export class EditPage {
                 this.error.set('An unexpected error occurred');
             }
         });
+    }
+
+    displayRatings(): boolean {
+        return this.report()!.comments.some(comment => comment.scoreRequired);
     }
 }

@@ -71,6 +71,8 @@ public class ReportService {
         report.setGameReferee3Name(game.referee3Name());
         report.setGameVideoUrl(videoUrl);
 
+        report.setOverallScore(DEFAULT_SCORE);
+
         var now = DateUtil.now();
         report.setCreatedAt(now);
         report.setCreatedBy(coach.id());

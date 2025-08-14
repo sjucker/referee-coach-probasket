@@ -73,23 +73,28 @@
         </mat-card-content>
     </mat-card>
 
-    <mat-card appearance="filled">
-        <mat-card-header>
-            <mat-card-title>Ratings</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            @for (comment of report.comments; track comment.id; let first = $first; let last = $last) {
-                <app-rating
-                        [title]="comment.typeDescription"
-                        [dto]="comment"
-                        (changed)="onChange()"></app-rating>
-                @if (first) {
-                    (Average of all critera: {{ average() | number: '1.1-1' }})
+    @if (displayRatings()) {
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>Ratings</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                @for (comment of report.comments; track comment.id; ) {
+                    @if (comment.scoreRequired) {
+                        <app-score
+                                [title]="comment.typeDescription"
+                                [dto]="comment"
+                                (changed)="onChange()"></app-score>
+                        <br/>
+                    }
                 }
-                @if (!last) {
-                    <br/>
-                }
-            }
-        </mat-card-content>
-    </mat-card>
+                <br/>
+                <app-score
+                        [title]="'Overall'"
+                        [dto]="report"
+                        (changed)="onChange()"></app-score>
+                (Average of all critera: {{ average() | number: '1.1-1' }})
+            </mat-card-content>
+        </mat-card>
+    }
 }
