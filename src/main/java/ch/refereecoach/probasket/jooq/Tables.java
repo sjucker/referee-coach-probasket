@@ -10,6 +10,7 @@ import ch.refereecoach.probasket.jooq.tables.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.ReportLastRead;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
 import ch.refereecoach.probasket.jooq.tables.Tag;
@@ -50,6 +51,11 @@ public class Tables {
      * The table <code>public.report_video_comment</code>.
      */
     public static final ReportVideoComment REPORT_VIDEO_COMMENT = ReportVideoComment.REPORT_VIDEO_COMMENT;
+
+    /**
+     * The table <code>public.report_video_comment_ref</code>.
+     */
+    public static final ReportVideoCommentRef REPORT_VIDEO_COMMENT_REF = ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF;
 
     /**
      * The table <code>public.report_video_comment_reply</code>.

@@ -64,6 +64,7 @@ export interface RefereeReportDTO {
     game: BasketplanGameDTO;
     score?: number;
     comments: ReportCommentDTO[];
+    videoComments: ReportVideoCommentDTO[];
 }
 
 export interface ReportCommentDTO {
@@ -100,6 +101,32 @@ export interface ReportOverviewDTO {
 export interface ReportSearchResultDTO {
     items: ReportOverviewDTO[];
     total: number;
+}
+
+export interface ReportVideoCommentDTO {
+    id: number;
+    timestampInSeconds: number;
+    comment: string;
+    createdAt: DateAsString;
+    createdById: number;
+    createdBy: string;
+    requiresReply: boolean;
+    referenceOnly: boolean;
+    replies: ReportVideoCommentReplyDTO[];
+    tags: TagDTO[];
+}
+
+export interface ReportVideoCommentReplyDTO {
+    id: number;
+    reply: string;
+    createdAt: DateAsString;
+    createdById: number;
+    createdBy: string;
+}
+
+export interface TagDTO {
+    id: number;
+    tag: string;
 }
 
 export type DateAsString = string;

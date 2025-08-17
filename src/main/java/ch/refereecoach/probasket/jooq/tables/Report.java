@@ -9,6 +9,7 @@ import ch.refereecoach.probasket.jooq.Public;
 import ch.refereecoach.probasket.jooq.tables.Login.LoginPath;
 import ch.refereecoach.probasket.jooq.tables.ReportComment.ReportCommentPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoComment.ReportVideoCommentPath;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentRef.ReportVideoCommentRefPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportRecord;
 
 import java.math.BigDecimal;
@@ -406,6 +407,19 @@ public class Report extends TableImpl<ReportRecord> {
             _fk_ReportUpdatedBy = new LoginPath(this, Keys.REPORT__FK__REPORT_UPDATED_BY, null);
 
         return _fk_ReportUpdatedBy;
+    }
+
+    private transient ReportVideoCommentRefPath _reportVideoCommentRef;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.report_video_comment_ref</code> table
+     */
+    public ReportVideoCommentRefPath reportVideoCommentRef() {
+        if (_reportVideoCommentRef == null)
+            _reportVideoCommentRef = new ReportVideoCommentRefPath(this, null, Keys.REPORT_VIDEO_COMMENT_REF__FK__REPORT_COACH.getInverseKey());
+
+        return _reportVideoCommentRef;
     }
 
     private transient ReportCommentPath _reportComment;

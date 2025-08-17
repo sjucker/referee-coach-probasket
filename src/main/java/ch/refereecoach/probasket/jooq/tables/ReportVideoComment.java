@@ -8,6 +8,7 @@ import ch.refereecoach.probasket.jooq.Keys;
 import ch.refereecoach.probasket.jooq.Public;
 import ch.refereecoach.probasket.jooq.tables.Login.LoginPath;
 import ch.refereecoach.probasket.jooq.tables.Report.ReportPath;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentRef.ReportVideoCommentRefPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply.ReportVideoCommentReplyPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag.ReportVideoCommentTagPath;
 import ch.refereecoach.probasket.jooq.tables.Tag.TagPath;
@@ -203,6 +204,19 @@ public class ReportVideoComment extends TableImpl<ReportVideoCommentRecord> {
             _report = new ReportPath(this, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_REPORT, null);
 
         return _report;
+    }
+
+    private transient ReportVideoCommentRefPath _reportVideoCommentRef;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.report_video_comment_ref</code> table
+     */
+    public ReportVideoCommentRefPath reportVideoCommentRef() {
+        if (_reportVideoCommentRef == null)
+            _reportVideoCommentRef = new ReportVideoCommentRefPath(this, null, Keys.REPORT_VIDEO_COMMENT_REF__FK__REPORT_REPORTEE.getInverseKey());
+
+        return _reportVideoCommentRef;
     }
 
     private transient ReportVideoCommentReplyPath _reportVideoCommentReply;

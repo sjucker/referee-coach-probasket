@@ -8,6 +8,9 @@ import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
 import ch.refereecoach.probasket.dto.report.ReportOverviewDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
+import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
+import ch.refereecoach.probasket.dto.report.ReportVideoCommentReplyDTO;
+import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,13 @@ import static ch.refereecoach.probasket.common.ReportType.GAME_DISCUSSION;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.TRAINER_REPORT;
+import static ch.refereecoach.probasket.jooq.Tables.LOGIN;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_COMMENT;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_CRITERIA;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_REPLY;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_TAG;
+import static ch.refereecoach.probasket.jooq.Tables.TAG;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.jooq.Records.mapping;
@@ -76,12 +84,46 @@ public class ReportSearchService {
                                                      .convertFrom(it -> it.map(mapping(ReportCriteriaDTO::of))))
                                               .from(REPORT_COMMENT)
                                               .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
-                                      ).convertFrom(it -> it.map(mapping(ReportCommentDTO::of))))
+                                      ).convertFrom(it -> it.map(mapping(ReportCommentDTO::of))),
+                              multiset(
+                                      select(REPORT_VIDEO_COMMENT.ID,
+                                             REPORT_VIDEO_COMMENT.TIMESTAMP_IN_SECONDS,
+                                             REPORT_VIDEO_COMMENT.COMMENT,
+                                             REPORT_VIDEO_COMMENT.CREATED_AT,
+                                             LOGIN.ID,
+                                             LOGIN.FIRSTNAME,
+                                             LOGIN.LASTNAME,
+                                             REPORT_VIDEO_COMMENT.REQUIRES_REPLY,
+                                             multiset(select(REPORT_VIDEO_COMMENT_REPLY.ID,
+                                                             REPORT_VIDEO_COMMENT_REPLY.REPLY,
+                                                             REPORT_VIDEO_COMMENT_REPLY.CREATED_AT,
+                                                             LOGIN.ID,
+                                                             LOGIN.FIRSTNAME,
+                                                             LOGIN.LASTNAME)
+                                                              .from(REPORT_VIDEO_COMMENT_REPLY)
+                                                              .join(LOGIN).on(REPORT_VIDEO_COMMENT_REPLY.CREATED_BY.eq(LOGIN.ID))
+                                                              .where(REPORT_VIDEO_COMMENT_REPLY.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
+                                                              .orderBy(REPORT_VIDEO_COMMENT_REPLY.CREATED_AT.asc())
+                                                     ).convertFrom(it -> it.map(mapping(ReportVideoCommentReplyDTO::of))),
+                                             multiset(select(TAG.ID,
+                                                             TAG.NAME)
+                                                              .from(REPORT_VIDEO_COMMENT_TAG)
+                                                              .join(TAG).on(REPORT_VIDEO_COMMENT_TAG.TAG_ID.eq(TAG.ID))
+                                                              .where(REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
+                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new)))
+                                            )
+                                              .from(REPORT_VIDEO_COMMENT)
+                                              .join(LOGIN).on(LOGIN.ID.eq(REPORT_VIDEO_COMMENT.CREATED_BY))
+                                              .where(REPORT_VIDEO_COMMENT.REPORT_ID.eq(REPORT.ID))
+                                              .orderBy(REPORT_VIDEO_COMMENT.ID.asc())
+                                      ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::of))))
                       .from(REPORT)
                       .where(REPORT.EXTERNAL_ID.eq(externalId))
                       .fetchOptional(it -> {
                           var reportRecord = it.value1();
                           var comments = it.value2();
+                          // TODO merge the video-comment references
+                          var videoComments = it.value3();
                           return new RefereeReportDTO(reportRecord.getId(),
                                                       reportRecord.getExternalId(),
                                                       reportRecord.getCoachId(),
@@ -105,7 +147,8 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Name(),
                                                                             reportRecord.getGameVideoUrl()),
                                                       reportRecord.getOverallScore(),
-                                                      comments);
+                                                      comments,
+                                                      videoComments);
                       });
     }
 
