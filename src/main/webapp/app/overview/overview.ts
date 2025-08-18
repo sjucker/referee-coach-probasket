@@ -243,7 +243,7 @@ export class Overview implements OnInit {
                         duration: 3000,
                         horizontalPosition: "center",
                         verticalPosition: "top"
-                    })
+                    });
                 }
             })
         } else {

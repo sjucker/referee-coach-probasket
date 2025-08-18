@@ -4,12 +4,19 @@ import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaType;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
+import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
+import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
+import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentRefDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentTagDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +25,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static ch.refereecoach.probasket.common.CriteriaState.NEUTRAL;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Service
@@ -34,6 +45,9 @@ public class ReportService {
     private final ReportDao reportDao;
     private final ReportCommentDao reportCommentDao;
     private final ReportCriteriaDao reportCriteriaDao;
+    private final ReportVideoCommentDao reportVideoCommentDao;
+    private final ReportVideoCommentTagDao reportVideoCommentTagDao;
+    private final ReportVideoCommentRefDao reportVideoCommentRefDao;
     private final BasketplanService basketplanService;
     private final UserService userService;
 
@@ -89,7 +103,7 @@ public class ReportService {
                   var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, DEFAULT_SCORE);
                   reportCommentDao.insert(reportComment);
                   CriteriaType.forCategory(categoryType)
-                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), null, NEUTRAL.name())));
+                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), NEUTRAL.name())));
               });
 
         return new CreateRefereeReportResultDTO(report.getExternalId());
@@ -105,7 +119,57 @@ public class ReportService {
         return uuid;
     }
 
-    public void updateReport(String externalId, RefereeReportDTO dto, String username) {
-// TODO: implement
+    public void updateRefereeReport(String externalId, RefereeReportDTO dto, String username) {
+        var coach = userService.getByBasketplanUsername(username);
+        var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+        if (!report.getCoachId().equals(coach.id())) {
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+        }
+
+        var commentsPerType = dto.comments().stream().collect(toMap(ReportCommentDTO::type, identity()));
+        reportCommentDao.fetchByReportId(report.getId())
+                        .forEach(reportComment -> {
+                            var reportCommentDTO = commentsPerType.get(CategoryType.valueOf(reportComment.getType()));
+                            reportComment.setComment(reportCommentDTO.comment());
+                            reportComment.setScore(reportCommentDTO.score());
+                            reportCommentDao.update(reportComment);
+
+                            var criteriaPerType = reportCommentDTO.criteria().stream().collect(toMap(ReportCriteriaDTO::type, identity()));
+                            reportCriteriaDao.fetchByReportCommentId(reportComment.getId())
+                                             .forEach(reportCriteria -> {
+                                                 var reportCriteriaDTO = criteriaPerType.get(CriteriaType.valueOf(reportCriteria.getType()));
+                                                 reportCriteria.setState(reportCriteriaDTO.state() != null ? reportCriteriaDTO.state().name() : null);
+                                                 reportCriteriaDao.update(reportCriteria);
+                                             });
+
+                        });
+
+        var videoCommentsToInsert = new ArrayList<ReportVideoComment>();
+        var videoCommentsToUpdate = new HashMap<Long, ReportVideoCommentDTO>();
+        dto.videoComments()
+           .forEach(videoComment -> {
+               if (videoComment.id() == null) {
+                   if (videoComment.timestampInSeconds() != null) {
+                       videoCommentsToInsert.add(new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply()));
+                   }
+               } else {
+                   videoCommentsToUpdate.put(videoComment.id(), videoComment);
+               }
+           });
+        reportVideoCommentDao.fetchByReportId(report.getId())
+                             .forEach(reportVideoComment -> {
+                                 var reportVideoCommentDTO = videoCommentsToUpdate.get(reportVideoComment.getId());
+                                 reportVideoComment.setTimestampInSeconds(reportVideoCommentDTO.timestampInSeconds());
+                                 reportVideoComment.setComment(reportVideoCommentDTO.comment());
+                                 reportVideoComment.setRequiresReply(reportVideoCommentDTO.requiresReply());
+                                 reportVideoCommentDao.update(reportVideoComment);
+                             });
+
+        reportVideoCommentDao.insert(videoCommentsToInsert);
+
+        report.setOverallScore(dto.score());
+        report.setUpdatedAt(DateUtil.now());
+        report.setUpdatedBy(coach.id());
+        reportDao.update(report);
     }
 }

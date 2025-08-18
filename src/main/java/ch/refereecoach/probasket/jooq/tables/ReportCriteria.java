@@ -73,11 +73,6 @@ public class ReportCriteria extends TableImpl<ReportCriteriaRecord> {
     public final TableField<ReportCriteriaRecord, String> TYPE = createField(DSL.name("type"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>public.report_criteria.comment</code>.
-     */
-    public final TableField<ReportCriteriaRecord, String> COMMENT = createField(DSL.name("comment"), SQLDataType.CLOB, this, "");
-
-    /**
      * The column <code>public.report_criteria.state</code>.
      */
     public final TableField<ReportCriteriaRecord, String> STATE = createField(DSL.name("state"), SQLDataType.VARCHAR(255), this, "");

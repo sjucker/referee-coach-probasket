@@ -52,6 +52,7 @@ public class ReportEndpoint {
     }
 
     @GetMapping("/referee/{externalId}")
+    @Secured({"REFEREE_COACH", "REFEREE"})
     public ResponseEntity<RefereeReportDTO> getReport(@AuthenticationPrincipal Jwt jwt,
                                                       @PathVariable String externalId) {
         log.info("GET /api/report/{} {}", externalId, jwt.getSubject());
@@ -64,12 +65,13 @@ public class ReportEndpoint {
     }
 
     @PutMapping("/referee/{externalId}")
+    @Secured({"REFEREE_COACH"})
     public ResponseEntity<Void> updateReport(@AuthenticationPrincipal Jwt jwt,
                                              @PathVariable String externalId,
                                              @RequestBody @Valid RefereeReportDTO dto) {
         log.info("PUT /api/report/{} {}", externalId, jwt.getSubject());
 
-        reportService.updateReport(externalId, dto, jwt.getSubject());
+        reportService.updateRefereeReport(externalId, dto, jwt.getSubject());
 
         return ResponseEntity.ok().build();
     }

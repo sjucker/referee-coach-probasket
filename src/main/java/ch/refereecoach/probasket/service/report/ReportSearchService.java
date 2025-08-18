@@ -79,7 +79,6 @@ public class ReportSearchService {
                                              REPORT.REPORTEE_RANK,
                                              multiset(select(REPORT_CRITERIA.ID,
                                                              REPORT_CRITERIA.TYPE,
-                                                             REPORT_CRITERIA.COMMENT,
                                                              REPORT_CRITERIA.STATE
                                                             )
                                                               .from(REPORT_CRITERIA)

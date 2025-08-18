@@ -103,21 +103,6 @@ public class ReportCriteriaDao extends AbstractSpringDAOImpl<ReportCriteriaRecor
     }
 
     /**
-     * Fetch records that have <code>comment BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria> fetchRangeOfComment(String lowerInclusive, String upperInclusive) {
-        return fetchRange(ReportCriteria.REPORT_CRITERIA.COMMENT, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>comment IN (values)</code>
-     */
-    public List<ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria> fetchByComment(String... values) {
-        return fetch(ReportCriteria.REPORT_CRITERIA.COMMENT, values);
-    }
-
-    /**
      * Fetch records that have <code>state BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */

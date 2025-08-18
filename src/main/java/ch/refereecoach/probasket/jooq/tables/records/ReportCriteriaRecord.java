@@ -61,31 +61,17 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
     }
 
     /**
-     * Setter for <code>public.report_criteria.comment</code>.
-     */
-    public void setComment(String value) {
-        set(3, value);
-    }
-
-    /**
-     * Getter for <code>public.report_criteria.comment</code>.
-     */
-    public String getComment() {
-        return (String) get(3);
-    }
-
-    /**
      * Setter for <code>public.report_criteria.state</code>.
      */
     public void setState(String value) {
-        set(4, value);
+        set(3, value);
     }
 
     /**
      * Getter for <code>public.report_criteria.state</code>.
      */
     public String getState() {
-        return (String) get(4);
+        return (String) get(3);
     }
 
     // -------------------------------------------------------------------------
@@ -111,13 +97,12 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
     /**
      * Create a detached, initialised ReportCriteriaRecord
      */
-    public ReportCriteriaRecord(Long id, Long reportCommentId, String type, String comment, String state) {
+    public ReportCriteriaRecord(Long id, Long reportCommentId, String type, String state) {
         super(ReportCriteria.REPORT_CRITERIA);
 
         setId(id);
         setReportCommentId(reportCommentId);
         setType(type);
-        setComment(comment);
         setState(state);
         resetChangedOnNotNull();
     }
@@ -132,7 +117,6 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
             setId(value.getId());
             setReportCommentId(value.getReportCommentId());
             setType(value.getType());
-            setComment(value.getComment());
             setState(value.getState());
             resetChangedOnNotNull();
         }

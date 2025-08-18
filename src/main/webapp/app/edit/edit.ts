@@ -17,6 +17,7 @@ import {Score} from "../components/score/score.component";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDialog, MatDialogModule} from "@angular/material/dialog";
 import {CriteriaHintsDialog} from "./criteria-hints-dialog/criteria-hints-dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-edit',
@@ -29,6 +30,7 @@ export class EditPage {
     private readonly dialog = inject(MatDialog);
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
+    private readonly snackBar = inject(MatSnackBar);
 
     protected readonly OfficiatingMode = OfficiatingMode;
 
@@ -101,6 +103,11 @@ export class EditPage {
             next: () => {
                 this.unsavedChanges.set(false);
                 this.saving.set(false);
+                this.snackBar.open("Saved successfully!", undefined, {
+                    duration: 3000,
+                    horizontalPosition: "center",
+                    verticalPosition: "top"
+                });
             },
             error: () => {
                 this.saving.set(false);

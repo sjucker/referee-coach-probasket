@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ReportVideoCommentDTO(@NotNull Long id,
+public record ReportVideoCommentDTO(Long id,
                                     @NotNull Long timestampInSeconds,
                                     @NotNull String comment,
                                     @NotNull LocalDateTime createdAt,

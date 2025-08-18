@@ -18,7 +18,6 @@ public class ReportCriteria implements Serializable {
     private Long id;
     private Long reportCommentId;
     private String type;
-    private String comment;
     private String state;
 
     public ReportCriteria() {}
@@ -27,7 +26,6 @@ public class ReportCriteria implements Serializable {
         this.id = value.id;
         this.reportCommentId = value.reportCommentId;
         this.type = value.type;
-        this.comment = value.comment;
         this.state = value.state;
     }
 
@@ -35,13 +33,11 @@ public class ReportCriteria implements Serializable {
         Long id,
         Long reportCommentId,
         String type,
-        String comment,
         String state
     ) {
         this.id = id;
         this.reportCommentId = reportCommentId;
         this.type = type;
-        this.comment = comment;
         this.state = state;
     }
 
@@ -88,20 +84,6 @@ public class ReportCriteria implements Serializable {
     }
 
     /**
-     * Getter for <code>public.report_criteria.comment</code>.
-     */
-    public String getComment() {
-        return this.comment;
-    }
-
-    /**
-     * Setter for <code>public.report_criteria.comment</code>.
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    /**
      * Getter for <code>public.report_criteria.state</code>.
      */
     public String getState() {
@@ -142,12 +124,6 @@ public class ReportCriteria implements Serializable {
         }
         else if (!this.type.equals(other.type))
             return false;
-        if (this.comment == null) {
-            if (other.comment != null)
-                return false;
-        }
-        else if (!this.comment.equals(other.comment))
-            return false;
         if (this.state == null) {
             if (other.state != null)
                 return false;
@@ -164,7 +140,6 @@ public class ReportCriteria implements Serializable {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.reportCommentId == null) ? 0 : this.reportCommentId.hashCode());
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
-        result = prime * result + ((this.comment == null) ? 0 : this.comment.hashCode());
         result = prime * result + ((this.state == null) ? 0 : this.state.hashCode());
         return result;
     }
@@ -176,7 +151,6 @@ public class ReportCriteria implements Serializable {
         sb.append(id);
         sb.append(", ").append(reportCommentId);
         sb.append(", ").append(type);
-        sb.append(", ").append(comment);
         sb.append(", ").append(state);
 
         sb.append(")");
