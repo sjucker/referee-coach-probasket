@@ -38,4 +38,58 @@
             </mat-card-content>
         </mat-card>
     }
+
+    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT && report.youtubeId) {
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>
+                    Video
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="video-container">
+                    <div>
+                        <youtube-player #youtubePlayer
+                                        [videoId]="report.youtubeId"
+                                        [width]="videoWidth()"
+                                        [height]="videoHeight()"></youtube-player>
+                    </div>
+                    <div class="video-comments-container">
+                        @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                            <mat-card appearance="outlined" [ngClass]="{'important': requiresReply(videoComment)}">
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        <div>Video Comment #{{ i + 1 }}</div>
+                                        @if (requiresReply(videoComment)) {
+                                            <mat-icon
+                                                    class="important"
+                                                    matTooltip="This comment requires a reply from you. Switch to the discussion-mode to do so.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                        @if (flaggedForReply(videoComment)) {
+                                            <mat-icon
+                                                    matTooltip="This comment requires a reply from the referee. Switch to the discussion-mode to view it.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <p>{{ videoComment.comment }}</p>
+                                </mat-card-content>
+                                <mat-card-actions>
+                                    <button (click)="play(videoComment.timestampInSeconds)" mat-stroked-button>
+                                        Jump to Scene
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        }
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    }
 }
+
+<div #widthMeasurement></div>

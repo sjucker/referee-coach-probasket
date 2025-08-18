@@ -57,11 +57,14 @@ export interface CreateRefereeReportResultDTO {
 export interface RefereeReportDTO {
     id: number;
     externalId: string;
+    reportType: ReportType;
     coachId: number;
     coachName: string;
     reporteeId: number;
     reporteeName: string;
     game: BasketplanGameDTO;
+    youtubeId?: string;
+    asportId?: string;
     score?: number;
     finished: boolean;
     comments: ReportCommentDTO[];
@@ -152,6 +155,13 @@ export enum OfficiatingMode {
     OFFICIATING_3PO = "OFFICIATING_3PO",
 }
 
+export enum ReportType {
+    REFEREE_VIDEO_REPORT = "REFEREE_VIDEO_REPORT",
+    REFEREE_COMMENT_REPORT = "REFEREE_COMMENT_REPORT",
+    TRAINER_REPORT = "TRAINER_REPORT",
+    GAME_DISCUSSION = "GAME_DISCUSSION",
+}
+
 export enum CategoryType {
     GENERAL = "GENERAL",
     IMAGE = "IMAGE",
@@ -202,11 +212,4 @@ export enum CriteriaState {
     MINUS = "MINUS",
     NEUTRAL = "NEUTRAL",
     PLUS = "PLUS",
-}
-
-export enum ReportType {
-    REFEREE_VIDEO_REPORT = "REFEREE_VIDEO_REPORT",
-    REFEREE_COMMENT_REPORT = "REFEREE_COMMENT_REPORT",
-    TRAINER_REPORT = "TRAINER_REPORT",
-    GAME_DISCUSSION = "GAME_DISCUSSION",
 }

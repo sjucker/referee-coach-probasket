@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO} from '../../rest';
+import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportType, ReportVideoCommentDTO} from '../../rest';
 import {PATH_VIEW} from '../app.routes';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -22,15 +22,17 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 import {GameInfo} from "../components/game-info/game-info";
+import {YouTubePlayer} from "@angular/youtube-player";
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo, YouTubePlayer, MatCheckbox],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditPage implements HasUnsavedChanges {
+export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDestroy {
     private readonly dialog = inject(MatDialog);
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
@@ -39,6 +41,7 @@ export class EditPage implements HasUnsavedChanges {
 
     protected readonly OfficiatingMode = OfficiatingMode;
     protected readonly CriteriaState = CriteriaState;
+    protected readonly ReportType = ReportType;
 
     readonly unsavedChanges = signal(false);
 
@@ -47,6 +50,13 @@ export class EditPage implements HasUnsavedChanges {
     protected readonly loading = signal<boolean>(true);
     protected readonly saving = signal(false);
     protected readonly showLoadingBar = computed(() => this.saving() || this.loading());
+
+    protected readonly videoWidth = signal<number | null>(null);
+    protected readonly videoHeight = signal<number | null>(null);
+
+    protected readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
+    protected readonly videoCommentsContainer = viewChild<ElementRef<HTMLDivElement>>('videoCommentsContainer');
 
     @HostListener('window:beforeunload', ['$event'])
     handleClose($event: BeforeUnloadEvent) {
@@ -66,6 +76,34 @@ export class EditPage implements HasUnsavedChanges {
             }
             this.fetchReport(eid);
         });
+    }
+
+    ngOnInit(): void {
+        // This code loads the IFrame Player API code asynchronously, according to the instructions at
+        // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.body.appendChild(tag);
+    }
+
+    ngAfterViewInit(): void {
+        window.addEventListener('resize', this.onResize);
+        setTimeout(() => {
+            // wait some time until everything is ready (e.g., scrollbar)
+            this.onResize();
+        }, 200)
+    }
+
+    onResize = (): void => {
+        // margin and padding each 16px on both sides
+        const contentWidth = this.widthMeasurement()!.nativeElement.scrollWidth - (4 * 16);
+
+        this.videoWidth.set(Math.min(contentWidth, 720));
+        this.videoHeight.set(this.videoWidth()! * 0.6);
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('resize', this.onResize);
     }
 
     private fetchReport(externalId: string) {
@@ -177,5 +215,72 @@ export class EditPage implements HasUnsavedChanges {
 
     private isCriteriaValid() {
         return this.report()!.comments.every(comment => !!comment.comment && comment.comment.length > 0);
+    }
+
+
+    jumpTo(time: number): void {
+        this.youtube()!.seekTo(time, true);
+        this.youtube()!.playVideo();
+    }
+
+    addVideoComment(): void {
+        this.report()!.videoComments.push({
+            comment: '',
+            requiresReply: false,
+            timestampInSeconds: Math.round(this.youtube()!.getCurrentTime()),
+            createdAt: '',
+            createdBy: '',
+            createdById: 0,
+            reference: false,
+            replies: [],
+            tags: []
+        });
+
+        setTimeout(() => {
+            const videoCommentsContainer = this.videoCommentsContainer();
+            if (videoCommentsContainer) {
+                videoCommentsContainer.nativeElement.scrollTop = videoCommentsContainer.nativeElement.scrollHeight;
+            }
+        }, 200);
+    }
+
+    deleteComment(videoComment: ReportVideoCommentDTO) {
+        this.onChange();
+        const report = this.report()!;
+        report.videoComments.splice(report.videoComments.indexOf(videoComment), 1);
+    }
+
+    copyComment(videoComment: ReportVideoCommentDTO) {
+        console.log(videoComment);
+        // TODO
+        // this.dialog.open(VideoReportCopyDialogComponent, {
+        //     data: {
+        //         reportee: this.report!.reportee,
+        //         referee1: this.report!.otherReportees.indexOf(Reportee.FIRST_REFEREE) >= 0 ? this.report!.basketplanGame.referee1 : null,
+        //         referee2: this.report!.otherReportees.indexOf(Reportee.SECOND_REFEREE) >= 0 ? this.report!.basketplanGame.referee2 : null,
+        //         referee3: this.report!.otherReportees.indexOf(Reportee.THIRD_REFEREE) >= 0 ? this.report!.basketplanGame.referee3 : null,
+        //
+        //         title: 'Copy Comment to other Report',
+        //         description: 'This will create the same comment in the report for selected referee.'
+        //     } as VideoReportCopyDialogData
+        // }).afterClosed().subscribe((reportee?: Reportee) => {
+        //     if (reportee) {
+        //         this.videoReportService.copyVideoComment(videoComment, reportee).subscribe({
+        //             next: () => {
+        //                 this.showMessage("Successfully copied!");
+        //             },
+        //             error: () => {
+        //                 this.showMessage("An unexpected error occurred, comment could not be copied.");
+        //             }
+        //         })
+        //     }
+        // });
+    }
+
+    isCopyCommentVisible(videoComment: ReportVideoCommentDTO): boolean {
+        console.log(videoComment);
+        return false;
+        // TODO
+        // return this.report!.otherReportees.length > 0 && !!videoComment.id
     }
 }

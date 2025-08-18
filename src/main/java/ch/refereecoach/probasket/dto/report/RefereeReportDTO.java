@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.dto.report;
 
+import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
 import jakarta.validation.constraints.NotNull;
 
@@ -8,11 +9,14 @@ import java.util.List;
 
 public record RefereeReportDTO(@NotNull Long id,
                                @NotNull String externalId,
+                               @NotNull ReportType reportType,
                                @NotNull Long coachId,
                                @NotNull String coachName,
                                @NotNull Long reporteeId,
                                @NotNull String reporteeName,
                                @NotNull BasketplanGameDTO game,
+                               String youtubeId,
+                               String asportId,
                                BigDecimal score,
                                boolean finished,
                                @NotNull List<ReportCommentDTO> comments,

@@ -35,6 +35,7 @@ import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Service
@@ -155,7 +156,7 @@ public class ReportService {
         dto.videoComments()
            .forEach(videoComment -> {
                if (videoComment.id() == null) {
-                   if (videoComment.timestampInSeconds() != null && videoComment.comment() != null) {
+                   if (videoComment.timestampInSeconds() != null && isNotBlank(videoComment.comment())) {
                        videoCommentsToInsert.add(new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply()));
                    }
                } else {

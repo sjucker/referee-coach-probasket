@@ -12,6 +12,7 @@ import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportVideoCommentReplyDTO;
 import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
+import ch.refereecoach.probasket.util.YouTubeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -167,6 +168,7 @@ public class ReportSearchService {
 
                           return new RefereeReportDTO(reportRecord.getId(),
                                                       reportRecord.getExternalId(),
+                                                      ReportType.valueOf(reportRecord.getReportType()),
                                                       reportRecord.getCoachId(),
                                                       reportRecord.getCoachName(),
                                                       reportRecord.getReporteeId(),
@@ -187,6 +189,8 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Id(),
                                                                             reportRecord.getGameReferee3Name(),
                                                                             reportRecord.getGameVideoUrl()),
+                                                      YouTubeUtil.parseYouTubeId(reportRecord.getGameVideoUrl()).orElse(null),
+                                                      null, // TODO Asport
                                                       reportRecord.getOverallScore(),
                                                       reportRecord.getFinishedAt() != null,
                                                       comments,

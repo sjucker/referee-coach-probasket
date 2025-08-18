@@ -77,4 +77,79 @@
             </mat-card-content>
         </mat-card>
     }
+
+    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT && report.youtubeId) {
+        <mat-card appearance="filled">
+            <mat-card-actions class="actions-container">
+                <button mat-flat-button (click)="save()" [disabled]="saving() || !unsavedChanges()">Save</button>
+                <button mat-stroked-button (click)="finish()" [disabled]="saving() || unsavedChanges()">Finish</button>
+                <button mat-stroked-button (click)="view()">View</button>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>Video</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="video-container">
+                    <!-- TODO differentiate between YouTube and Asport-->
+                    <div class="youtube-container">
+                        <youtube-player #youtubePlayer
+                                        [videoId]="report.youtubeId"
+                                        [width]="videoWidth()"
+                                        [height]="videoHeight()"></youtube-player>
+                        <button (click)="addVideoComment()" color="primary" mat-flat-button>
+                            Create comment for current timestamp
+                        </button>
+                    </div>
+                    <div class="video-comments-container" #videoCommentsContainer>
+                        @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                            <mat-card appearance="raised">
+                                <mat-card-content>
+                                    <mat-checkbox [(ngModel)]="videoComment.requiresReply"
+                                                  (ngModelChange)="onChange()"
+                                                  matTooltip="If selected, this comment is highlighted and the referee must reply to it."
+                                                  matTooltipPosition="above">
+                                        Require reply from referee
+                                    </mat-checkbox>
+                                    <mat-form-field appearance="fill" color="accent">
+                                        <mat-label>Comment</mat-label>
+                                        <textarea [(ngModel)]="videoComment.comment"
+                                                  (ngModelChange)="onChange()"
+                                                  maxlength="1024"
+                                                  cdkAutosizeMaxRows="5"
+                                                  cdkAutosizeMinRows="1"
+                                                  cdkTextareaAutosize
+                                                  matInput></textarea>
+                                    </mat-form-field>
+                                    <!-- TODO add tags -->
+                                    <!--                                    <app-tags-selection [availableTags]="availableTags"-->
+                                    <!--                                                        [initialSelectedTags]="videoComment.tags"-->
+                                    <!--                                                        (removed)="removeTag(videoComment, $event)"-->
+                                    <!--                                                        (selected)="selectTag(videoComment, $event)"></app-tags-selection>-->
+                                </mat-card-content>
+                                <mat-card-actions class="actions-container">
+                                    <button (click)="jumpTo(videoComment.timestampInSeconds)" mat-stroked-button>
+                                        Jump to Scene
+                                    </button>
+                                    <button (click)="deleteComment(videoComment)" mat-stroked-button>
+                                        Delete Comment
+                                    </button>
+                                    @if (isCopyCommentVisible(videoComment)) {
+                                        <button (click)="copyComment(videoComment)" mat-stroked-button>
+                                            Copy Comment to other Report
+                                        </button>
+                                    }
+                                </mat-card-actions>
+                            </mat-card>
+                        }
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    }
 }
+
+<!-- here so we know the current width of the window and can resize the YouTube video accordingly -->
+<div #widthMeasurement></div>

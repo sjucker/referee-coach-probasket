@@ -10,13 +10,13 @@
                         <mat-label>Game Number (e.g., 21-03520)</mat-label>
                         <input formControlName="gameNumber" autocomplete="off" matInput name="gameNumber" type="text">
                     </mat-form-field>
-                    <button color="primary" mat-flat-button type="submit" [disabled]="searching()">Search</button>
+                    <button color="primary" mat-flat-button type="submit" [disabled]="searching() || game()">Search</button>
                 </form>
 
                 @if (game() && videoUrlInputNeeded()) {
                     <div>
                         <mat-form-field appearance="outline" color="accent">
-                            <mat-label>YouTube URL</mat-label>
+                            <mat-label>YouTube/Asport URL</mat-label>
                             <input [ngModel]="videoUrl()" (ngModelChange)="videoUrl.set($event)"
                                    [disabled]="textOnlyMode()"
                                    autocomplete="off" matInput name="youtubeUrl" type="text">

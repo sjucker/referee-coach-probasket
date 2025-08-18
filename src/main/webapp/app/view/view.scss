@@ -12,3 +12,40 @@
   align-items: center;
   margin-top: variables.$padding;
 }
+
+.video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  @include responsive.responsive('gt-md') {
+    flex-direction: row;
+    gap: variables.$padding;
+  }
+
+  .youtube-container {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$half-padding;
+  }
+
+  .video-comments-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: variables.$padding;
+    scroll-behavior: smooth;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    .mat-icon {
+      &.important {
+        color: var(--mat-sys-primary);
+      }
+    }
+
+    mat-card {
+      margin: 0;
+    }
+  }
+}
