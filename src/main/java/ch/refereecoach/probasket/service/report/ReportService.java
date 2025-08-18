@@ -126,6 +126,10 @@ public class ReportService {
             throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
         }
 
+        if (report.getFinishedAt() != null) {
+            throw new IllegalStateException("user is not allowed to update already finished video-report!");
+        }
+
         var commentsPerType = dto.comments().stream().collect(toMap(ReportCommentDTO::type, identity()));
         reportCommentDao.fetchByReportId(report.getId())
                         .forEach(reportComment -> {
@@ -149,7 +153,7 @@ public class ReportService {
         dto.videoComments()
            .forEach(videoComment -> {
                if (videoComment.id() == null) {
-                   if (videoComment.timestampInSeconds() != null) {
+                   if (videoComment.timestampInSeconds() != null && videoComment.comment() != null) {
                        videoCommentsToInsert.add(new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply()));
                    }
                } else {
@@ -159,10 +163,14 @@ public class ReportService {
         reportVideoCommentDao.fetchByReportId(report.getId())
                              .forEach(reportVideoComment -> {
                                  var reportVideoCommentDTO = videoCommentsToUpdate.get(reportVideoComment.getId());
-                                 reportVideoComment.setTimestampInSeconds(reportVideoCommentDTO.timestampInSeconds());
-                                 reportVideoComment.setComment(reportVideoCommentDTO.comment());
-                                 reportVideoComment.setRequiresReply(reportVideoCommentDTO.requiresReply());
-                                 reportVideoCommentDao.update(reportVideoComment);
+                                 if (reportVideoCommentDTO != null) {
+                                     reportVideoComment.setTimestampInSeconds(reportVideoCommentDTO.timestampInSeconds());
+                                     reportVideoComment.setComment(reportVideoCommentDTO.comment());
+                                     reportVideoComment.setRequiresReply(reportVideoCommentDTO.requiresReply());
+                                     reportVideoCommentDao.update(reportVideoComment);
+                                 } else {
+                                     reportVideoCommentDao.delete(reportVideoComment);
+                                 }
                              });
 
         reportVideoCommentDao.insert(videoCommentsToInsert);
