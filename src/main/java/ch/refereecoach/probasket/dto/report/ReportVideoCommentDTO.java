@@ -12,7 +12,7 @@ public record ReportVideoCommentDTO(@NotNull Long id,
                                     @NotNull Long createdById,
                                     @NotNull String createdBy,
                                     boolean requiresReply,
-                                    boolean referenceOnly,
+                                    boolean reference,
                                     @NotNull List<ReportVideoCommentReplyDTO> replies,
                                     @NotNull List<TagDTO> tags) {
 
@@ -21,15 +21,14 @@ public record ReportVideoCommentDTO(@NotNull Long id,
                                            boolean requiresReply,
                                            List<ReportVideoCommentReplyDTO> replies,
                                            List<TagDTO> tags) {
-        return new ReportVideoCommentDTO(id,
-                                         timestampInSeconds,
-                                         comment,
-                                         createdAt,
-                                         createdById,
-                                         createdByFirstname + "_" + createdByLastname,
-                                         requiresReply,
-                                         false,
-                                         List.of(),
-                                         List.of());
+        return new ReportVideoCommentDTO(id, timestampInSeconds, comment, createdAt, createdById, createdByFirstname + " " + createdByLastname, requiresReply, false, replies, tags);
+    }
+
+    public static ReportVideoCommentDTO ofReference(Long id, Long timestampInSeconds, String comment,
+                                                    LocalDateTime createdAt, Long createdById, String createdByFirstname, String createdByLastname,
+                                                    boolean requiresReply,
+                                                    List<ReportVideoCommentReplyDTO> replies,
+                                                    List<TagDTO> tags) {
+        return new ReportVideoCommentDTO(id, timestampInSeconds, comment, createdAt, createdById, createdByFirstname + " " + createdByLastname, requiresReply, true, replies, tags);
     }
 }

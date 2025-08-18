@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_3PO;
@@ -33,10 +34,12 @@ import static ch.refereecoach.probasket.jooq.Tables.LOGIN;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_COMMENT;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_CRITERIA;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_REF;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_REPLY;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_TAG;
 import static ch.refereecoach.probasket.jooq.Tables.TAG;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
+import static java.util.Comparator.comparing;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.jooq.Records.mapping;
 import static org.jooq.impl.DSL.multiset;
@@ -116,14 +119,50 @@ public class ReportSearchService {
                                               .join(LOGIN).on(LOGIN.ID.eq(REPORT_VIDEO_COMMENT.CREATED_BY))
                                               .where(REPORT_VIDEO_COMMENT.REPORT_ID.eq(REPORT.ID))
                                               .orderBy(REPORT_VIDEO_COMMENT.ID.asc())
-                                      ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::of))))
+                                      ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::of))),
+                              multiset(
+                                      select(REPORT_VIDEO_COMMENT.ID,
+                                             REPORT_VIDEO_COMMENT.TIMESTAMP_IN_SECONDS,
+                                             REPORT_VIDEO_COMMENT.COMMENT,
+                                             REPORT_VIDEO_COMMENT.CREATED_AT,
+                                             LOGIN.ID,
+                                             LOGIN.FIRSTNAME,
+                                             LOGIN.LASTNAME,
+                                             REPORT_VIDEO_COMMENT.REQUIRES_REPLY,
+                                             multiset(select(REPORT_VIDEO_COMMENT_REPLY.ID,
+                                                             REPORT_VIDEO_COMMENT_REPLY.REPLY,
+                                                             REPORT_VIDEO_COMMENT_REPLY.CREATED_AT,
+                                                             LOGIN.ID,
+                                                             LOGIN.FIRSTNAME,
+                                                             LOGIN.LASTNAME)
+                                                              .from(REPORT_VIDEO_COMMENT_REPLY)
+                                                              .join(LOGIN).on(REPORT_VIDEO_COMMENT_REPLY.CREATED_BY.eq(LOGIN.ID))
+                                                              .where(REPORT_VIDEO_COMMENT_REPLY.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
+                                                              .orderBy(REPORT_VIDEO_COMMENT_REPLY.CREATED_AT.asc())
+                                                     ).convertFrom(it -> it.map(mapping(ReportVideoCommentReplyDTO::of))),
+                                             multiset(select(TAG.ID,
+                                                             TAG.NAME)
+                                                              .from(REPORT_VIDEO_COMMENT_TAG)
+                                                              .join(TAG).on(REPORT_VIDEO_COMMENT_TAG.TAG_ID.eq(TAG.ID))
+                                                              .where(REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
+                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new)))
+                                            )
+                                              .from(REPORT_VIDEO_COMMENT)
+                                              .join(REPORT_VIDEO_COMMENT_REF).on(REPORT_VIDEO_COMMENT.ID.eq(REPORT_VIDEO_COMMENT_REF.REPORT_VIDEO_COMMENT_ID))
+                                              .join(LOGIN).on(LOGIN.ID.eq(REPORT_VIDEO_COMMENT.CREATED_BY))
+                                              .where(REPORT_VIDEO_COMMENT_REF.REPORT_ID.eq(REPORT.ID))
+                                              .orderBy(REPORT_VIDEO_COMMENT.ID.asc())
+                                      ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::ofReference))))
                       .from(REPORT)
                       .where(REPORT.EXTERNAL_ID.eq(externalId))
                       .fetchOptional(it -> {
                           var reportRecord = it.value1();
                           var comments = it.value2();
-                          // TODO merge the video-comment references
-                          var videoComments = it.value3();
+
+                          var videoComments = Stream.concat(it.value3().stream(), it.value4().stream())
+                                                    .sorted(comparing(ReportVideoCommentDTO::id))
+                                                    .toList();
+
                           return new RefereeReportDTO(reportRecord.getId(),
                                                       reportRecord.getExternalId(),
                                                       reportRecord.getCoachId(),

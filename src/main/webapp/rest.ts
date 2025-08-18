@@ -111,7 +111,7 @@ export interface ReportVideoCommentDTO {
     createdById: number;
     createdBy: string;
     requiresReply: boolean;
-    referenceOnly: boolean;
+    reference: boolean;
     replies: ReportVideoCommentReplyDTO[];
     tags: TagDTO[];
 }
