@@ -21,6 +21,9 @@ export interface CriteriaHintsDialogData {
                 }
             </ul>
         </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <button mat-flat-button [mat-dialog-close]="false">Close</button>
+        </mat-dialog-actions>
     `,
     styles: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
