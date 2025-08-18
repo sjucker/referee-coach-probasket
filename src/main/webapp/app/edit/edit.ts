@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, Component, computed, effect, HostListener, inje
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO} from '../../rest';
+import {PATH_VIEW} from '../app.routes';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
-import {DatePipe, DecimalPipe, NgClass} from "@angular/common";
+import {DecimalPipe} from "@angular/common";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule} from "@angular/forms";
 import {MatInput} from "@angular/material/input";
@@ -16,14 +17,15 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {Score} from "../components/score/score.component";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDialog, MatDialogModule} from "@angular/material/dialog";
-import {CriteriaHintsDialog} from "./criteria-hints-dialog/criteria-hints-dialog";
+import {CriteriaHintsDialog} from "./criteria-hints-dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
+import {GameInfo} from "../components/game-info/game-info";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, NgClass, DatePipe, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,10 +35,13 @@ export class EditPage implements HasUnsavedChanges {
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
     private readonly snackBar = inject(MatSnackBar);
+    private readonly router = inject(Router);
 
     protected readonly OfficiatingMode = OfficiatingMode;
+    protected readonly CriteriaState = CriteriaState;
 
     readonly unsavedChanges = signal(false);
+
     protected readonly externalId = signal<string | null>(null);
     protected readonly report = signal<RefereeReportDTO | null>(null);
     protected readonly loading = signal<boolean>(true);
@@ -69,6 +74,11 @@ export class EditPage implements HasUnsavedChanges {
             next: (res) => {
                 this.report.set(res);
                 this.loading.set(false);
+                if (res.finished) {
+                    // Forward to read-only view if report is already finished
+                    this.router.navigate([PATH_VIEW, res.externalId]).catch(() => {
+                    });
+                }
             },
             error: (err) => {
                 this.loading.set(false);
@@ -87,8 +97,6 @@ export class EditPage implements HasUnsavedChanges {
     onChange() {
         this.unsavedChanges.set(true);
     }
-
-    protected readonly CriteriaState = CriteriaState;
 
     average(): number {
         const length = this.report()!.comments.filter(comment => comment.scoreRequired).length;
@@ -115,7 +123,6 @@ export class EditPage implements HasUnsavedChanges {
         });
     }
 
-
     finish() {
         if (!this.isCriteriaValid()) {
             this.displaySnackbar("Report is not yet completed, please add a comment for each criteria.")
@@ -131,7 +138,8 @@ export class EditPage implements HasUnsavedChanges {
                     this.http.post<void>(`/api/report/referee/${this.report()!.externalId}/finish`, {}).subscribe({
                         next: () => {
                             this.saving.set(false);
-                            // TODO navigate to view-page
+                            this.unsavedChanges.set(false);
+                            this.view();
                         },
                         error: () => {
                             this.saving.set(false);
@@ -140,6 +148,11 @@ export class EditPage implements HasUnsavedChanges {
                     });
                 }
             },
+        });
+    }
+
+    view() {
+        this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(() => {
         });
     }
 

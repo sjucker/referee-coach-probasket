@@ -1,24 +1,6 @@
 @use "../../responsive";
 @use "../../variables";
 
-.game-info-container {
-  display: flex;
-  flex-direction: column;
-
-  @include responsive.responsive('gt-sm') {
-    flex-direction: row;
-    gap: variables.$padding;
-  }
-
-  .coach {
-    color: var(--mat-sys-secondary);
-  }
-
-  .reportee {
-    color: var(--mat-sys-primary);
-  }
-}
-
 .title-container,
 .actions-container {
   display: flex;

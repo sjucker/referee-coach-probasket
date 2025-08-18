@@ -1,0 +1,14 @@
+@use "../../responsive";
+@use "../../variables";
+
+.comment {
+  white-space: pre-line;
+}
+
+.criteria-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 variables.$padding;
+  align-items: center;
+  margin-top: variables.$padding;
+}

@@ -12,8 +12,17 @@ export interface CriteriaHintsDialogData {
     selector: 'app-criteria-hints-dialog',
     standalone: true,
     imports: [MatDialogModule, MatButtonModule, MatIconModule],
-    templateUrl: './criteria-hints-dialog.html',
-    styleUrl: './criteria-hints-dialog.scss',
+    template: `
+        <h3 mat-dialog-title>{{ data.title }}</h3>
+        <mat-dialog-content class="mat-typography">
+            <ul>
+                @for (hint of data.hints; track hint) {
+                    <li>{{ hint }}</li>
+                }
+            </ul>
+        </mat-dialog-content>
+    `,
+    styles: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CriteriaHintsDialog {

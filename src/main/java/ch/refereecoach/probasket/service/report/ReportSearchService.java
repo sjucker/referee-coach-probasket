@@ -82,10 +82,13 @@ public class ReportSearchService {
                                                              REPORT_CRITERIA.STATE
                                                             )
                                                               .from(REPORT_CRITERIA)
-                                                              .where(REPORT_CRITERIA.REPORT_COMMENT_ID.eq(REPORT_COMMENT.ID)))
+                                                              .where(REPORT_CRITERIA.REPORT_COMMENT_ID.eq(REPORT_COMMENT.ID))
+                                                              .orderBy(REPORT_CRITERIA.ID.asc())
+                                                     )
                                                      .convertFrom(it -> it.map(mapping(ReportCriteriaDTO::of))))
                                               .from(REPORT_COMMENT)
                                               .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
+                                              .orderBy(REPORT_COMMENT.ID.asc())
                                       ).convertFrom(it -> it.map(mapping(ReportCommentDTO::of))),
                               multiset(
                                       select(REPORT_VIDEO_COMMENT.ID,

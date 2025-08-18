@@ -1,0 +1,41 @@
+<app-header/>
+<app-loading-bar [show]="showLoadingBar()"/>
+
+@if (report(); as report) {
+    <app-game-info [report]="report" [showOverallScore]="true"></app-game-info>
+
+    @for (comment of report.comments; track comment.id) {
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>{{ comment.typeDescription }}</mat-card-title>
+                @if (comment.scoreRequired) {
+                    <mat-card-subtitle>Rating: {{ ScoreUtil.score(comment) }}</mat-card-subtitle>
+                }
+            </mat-card-header>
+            <mat-card-content class="mat-typography">
+                <p class="comment">{{ comment.comment }}</p>
+                @if (hasCriteriaInState(comment, CriteriaState.PLUS)) {
+                    <div class="criteria-container">
+                        <mat-icon>thumb_up</mat-icon>
+                        @for (criteria of comment.criteria; track criteria.id) {
+                            @if (criteria.state === CriteriaState.PLUS) {
+                                <span>{{ criteria.description }}</span>
+                            }
+                        }
+                    </div>
+                }
+
+                @if (hasCriteriaInState(comment, CriteriaState.MINUS)) {
+                    <div class="criteria-container">
+                        <mat-icon>thumb_down</mat-icon>
+                        @for (criteria of comment.criteria; track criteria.id) {
+                            @if (criteria.state === CriteriaState.MINUS) {
+                                <span>{{ criteria.description }}</span>
+                            }
+                        }
+                    </div>
+                }
+            </mat-card-content>
+        </mat-card>
+    }
+}

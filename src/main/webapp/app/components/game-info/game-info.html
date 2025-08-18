@@ -1,0 +1,36 @@
+@if (report(); as report) {
+    <mat-card appearance="filled">
+        <mat-card-header>
+            <mat-card-title>Game Info</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="game-info-container">
+                <span>Game Number: {{ report.game.gameNumber }}</span>
+                <span>Competition: {{ report.game.competition }}</span>
+                <span>Date: {{ report.game.date | date:'dd.MM.yyyy' }}</span>
+                <span>Result: {{ report.game.result }}</span>
+                <span>Team A: {{ report.game.homeTeam }}</span>
+                <span>Team B: {{ report.game.guestTeam }}</span>
+            </div>
+            <div class="game-info-container">
+                <span class="coach">Coach: {{ report.coachName }}</span>
+            </div>
+            @if (report.game.officiatingMode === OfficiatingMode.OFFICIATING_3PO) {
+                <div class="game-info-container">
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Crew Chief: {{ report.game.referee1Name }}</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Umpire 1: {{ report.game.referee2Name }}</span>
+                    <span [ngClass]="report.game.referee3Id === report.reporteeId ? 'reportee' : ''">Umpire 2: {{ report.game.referee3Name }}</span>
+                </div>
+            } @else {
+                <div class="game-info-container">
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Referee 1: {{ report.game.referee1Name }}</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Referee 2: {{ report.game.referee2Name }}</span>
+                </div>
+            }
+
+            @if (showOverallScore()) {
+                <div class="overall-score">Overall Rating: {{ ScoreUtil.score(report) }}</div>
+            }
+        </mat-card-content>
+    </mat-card>
+}
