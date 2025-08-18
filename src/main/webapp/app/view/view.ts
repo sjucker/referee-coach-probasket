@@ -54,8 +54,7 @@ export class ViewPage {
                 this.loading.set(false);
                 this.report.set(null);
                 // If loading fails, navigate back to overview for a safe fallback
-                this.router.navigate(['overview']).catch(() => {
-                });
+                this.router.navigate(['overview']).catch(err => console.error(err));
             }
         });
     }

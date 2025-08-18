@@ -76,8 +76,7 @@ export class EditPage implements HasUnsavedChanges {
                 this.loading.set(false);
                 if (res.finished) {
                     // Forward to read-only view if report is already finished
-                    this.router.navigate([PATH_VIEW, res.externalId]).catch(() => {
-                    });
+                    this.router.navigate([PATH_VIEW, res.externalId]).catch(err => console.error(err));
                 }
             },
             error: (err) => {
@@ -152,8 +151,7 @@ export class EditPage implements HasUnsavedChanges {
     }
 
     view() {
-        this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(() => {
-        });
+        this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(err => console.error(err));
     }
 
     openCriteriaHints(comment: ReportCommentDTO) {
