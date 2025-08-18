@@ -18,6 +18,7 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
+import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class ReportService {
     private final ReportVideoCommentRefDao reportVideoCommentRefDao;
     private final BasketplanService basketplanService;
     private final UserService userService;
+    private final MailService mailService;
 
     public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, String username) {
         var coach = userService.getByBasketplanUsername(username);
@@ -179,5 +181,24 @@ public class ReportService {
         report.setUpdatedAt(DateUtil.now());
         report.setUpdatedBy(coach.id());
         reportDao.update(report);
+    }
+
+    public void finishRefereeReport(String externalId, String username) {
+        var coach = userService.getByBasketplanUsername(username);
+        var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+
+        if (!report.getCoachId().equals(coach.id())) {
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+        }
+
+        if (report.getFinishedAt() != null) {
+            throw new IllegalStateException("user is not allowed to finish already finished video-report!");
+        }
+
+        report.setFinishedAt(DateUtil.now());
+        report.setFinishedBy(coach.id());
+        reportDao.update(report);
+
+        mailService.sendFinishedReportMail(report);
     }
 }

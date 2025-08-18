@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
@@ -18,6 +18,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatDialog, MatDialogModule} from "@angular/material/dialog";
 import {CriteriaHintsDialog} from "./criteria-hints-dialog/criteria-hints-dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {HasUnsavedChanges} from "../can-deactivate.guard";
+import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 
 @Component({
     selector: 'app-edit',
@@ -26,7 +28,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditPage {
+export class EditPage implements HasUnsavedChanges {
     private readonly dialog = inject(MatDialog);
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
@@ -34,14 +36,19 @@ export class EditPage {
 
     protected readonly OfficiatingMode = OfficiatingMode;
 
+    readonly unsavedChanges = signal(false);
     protected readonly externalId = signal<string | null>(null);
     protected readonly report = signal<RefereeReportDTO | null>(null);
     protected readonly loading = signal<boolean>(true);
-    protected readonly error = signal<string | null>(null);
-    protected readonly unsavedChanges = signal(false);
     protected readonly saving = signal(false);
-    protected readonly saveEnabled = computed(() => !this.saving() && this.unsavedChanges());
     protected readonly showLoadingBar = computed(() => this.saving() || this.loading());
+
+    @HostListener('window:beforeunload', ['$event'])
+    handleClose($event: BeforeUnloadEvent) {
+        if (this.unsavedChanges()) {
+            $event.preventDefault();
+        }
+    }
 
     constructor() {
         effect(() => {
@@ -49,7 +56,6 @@ export class EditPage {
             this.externalId.set(eid);
             if (!eid) {
                 this.loading.set(false);
-                this.error.set('Missing externalId route parameter.');
                 this.report.set(null);
                 return;
             }
@@ -59,7 +65,6 @@ export class EditPage {
 
     private fetchReport(externalId: string) {
         this.loading.set(true);
-        this.error.set(null);
         this.http.get<RefereeReportDTO>(`/api/report/referee/${encodeURIComponent(externalId)}`).subscribe({
             next: (res) => {
                 this.report.set(res);
@@ -68,11 +73,11 @@ export class EditPage {
             error: (err) => {
                 this.loading.set(false);
                 if (err?.status === 404) {
-                    this.error.set('Report not found');
+                    this.displaySnackbar('Report not found');
                 } else if (err?.status === 403) {
-                    this.error.set('You are not allowed to access this report');
+                    this.displaySnackbar('You are not allowed to access this report');
                 } else {
-                    this.error.set('An unexpected error occurred');
+                    this.displaySnackbar('An unexpected error occurred');
                 }
                 this.report.set(null);
             }
@@ -94,25 +99,47 @@ export class EditPage {
         return totalScore / length;
     }
 
-    // TODO handle unsaved changes
-
     save() {
         const report = this.report()!;
         this.saving.set(true);
-        this.http.put<void>(`/api/report/referee/${encodeURIComponent(report.externalId)}`, report).subscribe({
+        this.http.put<void>(`/api/report/referee/${report.externalId}`, report).subscribe({
             next: () => {
                 this.unsavedChanges.set(false);
                 this.saving.set(false);
-                this.snackBar.open("Saved successfully!", undefined, {
-                    duration: 3000,
-                    horizontalPosition: "center",
-                    verticalPosition: "top"
-                });
+                this.displaySnackbar('Saved successfully!');
             },
             error: () => {
                 this.saving.set(false);
-                this.error.set('An unexpected error occurred');
+                this.displaySnackbar('An unexpected error occurred');
             }
+        });
+    }
+
+
+    finish() {
+        if (!this.isCriteriaValid()) {
+            this.displaySnackbar("Report is not yet completed, please add a comment for each criteria.")
+            return;
+        }
+
+        // TODO flag at least for comments which require a reply from referee?
+
+        this.dialog.open(FinishRefereeReportDialog).afterClosed().subscribe({
+            next: decision => {
+                if (decision) {
+                    this.saving.set(true);
+                    this.http.post<void>(`/api/report/referee/${this.report()!.externalId}/finish`, {}).subscribe({
+                        next: () => {
+                            this.saving.set(false);
+                            // TODO navigate to view-page
+                        },
+                        error: () => {
+                            this.saving.set(false);
+                            this.displaySnackbar("An unexpected error occurred, report could not be finished.");
+                        }
+                    });
+                }
+            },
         });
     }
 
@@ -127,5 +154,17 @@ export class EditPage {
 
     displayRatings(): boolean {
         return this.report()!.comments.some(comment => comment.scoreRequired);
+    }
+
+    private displaySnackbar(message: string) {
+        this.snackBar.open(message, undefined, {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top"
+        });
+    }
+
+    private isCriteriaValid() {
+        return this.report()!.comments.every(comment => !!comment.comment && comment.comment.length > 0);
     }
 }

@@ -185,6 +185,7 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Name(),
                                                                             reportRecord.getGameVideoUrl()),
                                                       reportRecord.getOverallScore(),
+                                                      reportRecord.getFinishedAt() != null,
                                                       comments,
                                                       videoComments);
                       });

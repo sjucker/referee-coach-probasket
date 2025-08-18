@@ -19,7 +19,8 @@
   }
 }
 
-.title-container {
+.title-container,
+.actions-container {
   display: flex;
   align-items: center;
   gap: variables.$padding;

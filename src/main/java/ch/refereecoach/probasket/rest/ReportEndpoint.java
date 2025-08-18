@@ -84,4 +84,15 @@ public class ReportEndpoint {
 
         return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), jwt.getSubject()));
     }
+
+    @PostMapping(value = "/referee/{externalId}/finish")
+    @Secured({"REFEREE_COACH"})
+    public ResponseEntity<Void> finishReport(@AuthenticationPrincipal Jwt jwt,
+                                             @PathVariable String externalId) {
+        log.info("POST /api/report/referee/{}/finish {}", externalId, jwt.getSubject());
+
+        reportService.finishRefereeReport(externalId, jwt.getSubject());
+
+        return ResponseEntity.ok().build();
+    }
 }

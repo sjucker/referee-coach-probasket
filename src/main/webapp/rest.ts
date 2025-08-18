@@ -63,6 +63,7 @@ export interface RefereeReportDTO {
     reporteeName: string;
     game: BasketplanGameDTO;
     score?: number;
+    finished: boolean;
     comments: ReportCommentDTO[];
     videoComments: ReportVideoCommentDTO[];
 }
@@ -82,7 +83,6 @@ export interface ReportCriteriaDTO {
     id: number;
     type: CriteriaType;
     description: string;
-    comment?: string;
     state?: CriteriaState;
 }
 
@@ -104,7 +104,7 @@ export interface ReportSearchResultDTO {
 }
 
 export interface ReportVideoCommentDTO {
-    id: number;
+    id?: number;
     timestampInSeconds: number;
     comment: string;
     createdAt: DateAsString;

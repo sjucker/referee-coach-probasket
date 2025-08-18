@@ -14,6 +14,7 @@ public record RefereeReportDTO(@NotNull Long id,
                                @NotNull String reporteeName,
                                @NotNull BasketplanGameDTO game,
                                BigDecimal score,
+                               boolean finished,
                                @NotNull List<ReportCommentDTO> comments,
                                @NotNull List<ReportVideoCommentDTO> videoComments) {
 }

@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "probasket")
 public class ApplicationProperties {
+    private String baseUrl;
     private boolean overrideRecipient;
+    private String overrideRecipientMail;
+    private String bccMail;
+    private String ccMail;
     private String jwtSecret;
 }
