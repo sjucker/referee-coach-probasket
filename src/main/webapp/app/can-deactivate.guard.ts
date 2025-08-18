@@ -10,7 +10,7 @@ export interface HasUnsavedChanges {
 
 export const canDeactivateGuard: CanDeactivateFn<HasUnsavedChanges> = (component): boolean | Observable<boolean> => {
     // If there are no unsaved changes, allow navigation
-    if (!component.unsavedChanges) {
+    if (!component.unsavedChanges()) {
         return true;
     }
     const dialog = inject(MatDialog);
