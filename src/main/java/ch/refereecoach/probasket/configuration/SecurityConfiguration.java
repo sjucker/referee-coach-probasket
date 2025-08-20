@@ -4,7 +4,6 @@ import ch.refereecoach.probasket.service.auth.BasketplanAuthenticationProvider;
 import ch.refereecoach.probasket.service.report.UserService;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static ch.refereecoach.probasket.common.UserRole.ADMIN;
 import static ch.refereecoach.probasket.common.UserRole.REFEREE;
@@ -89,7 +89,7 @@ public class SecurityConfiguration {
                    .build();
     }
 
-    private @NotNull ArrayList<SimpleGrantedAuthority> getCurrentAuthorities(Jwt jwt) {
+    private List<SimpleGrantedAuthority> getCurrentAuthorities(Jwt jwt) {
         var login = userService.findByBasketplanUsername(jwt.getSubject())
                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + jwt.getSubject()));
 

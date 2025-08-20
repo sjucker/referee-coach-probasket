@@ -37,7 +37,7 @@ public class ArchUnitTest {
     @ArchTest
     public static final ArchRule no_jooq_stream = noClasses().should()
                                                              .callMethodWhere(target(name("stream"))
-                                                                     .and(target(owner(assignableTo(ResultQuery.class)))));
+                                                                                      .and(target(owner(assignableTo(ResultQuery.class)))));
 
     // always use DateUtil
     @ArchTest
@@ -45,6 +45,11 @@ public class ArchUnitTest {
             .should().callMethod(LocalDate.class, "now")
             .orShould().callMethod(LocalDateTime.class, "now")
             .orShould().callMethod(LocalTime.class, "now");
+
+    @ArchTest
+    public static final ArchRule no_jetbrains_imports = noClasses()
+            .should().dependOnClassesThat()
+            .resideInAPackage("org.jetbrains..");
 
     @ArchTest
     public static final ArchRule no_classes_should_access_standard_streams = GeneralCodingRules.NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
