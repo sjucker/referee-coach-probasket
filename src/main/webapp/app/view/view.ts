@@ -12,6 +12,7 @@ import {ScoreUtil} from "../util/score-util";
 import {YouTubePlayer} from "@angular/youtube-player";
 import {NgClass} from "@angular/common";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {PATH_DISCUSS, PATH_OVERVIEW} from "../app.routes";
 
 @Component({
     selector: 'app-view',
@@ -97,7 +98,7 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
                 this.loading.set(false);
                 this.report.set(null);
                 // If loading fails, navigate back to overview for a safe fallback
-                this.router.navigate(['overview']).catch(err => console.error(err));
+                this.router.navigate([PATH_OVERVIEW]).catch(err => console.error(err));
             }
         });
     }
@@ -109,16 +110,19 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
 
     requiresReply(videoComment: ReportVideoCommentDTO): boolean {
         // TODO
-        console.log(videoComment);
+        console.debug(videoComment);
         return false;
         // return (!this.isLoggedIn() || this.isReferee()) && videoComment.requiresReply && videoComment.replies.length < 1;
     }
 
     flaggedForReply(videoComment: ReportVideoCommentDTO): boolean {
         // TODO
-        console.log(videoComment);
+        console.debug(videoComment);
         return false;
         // return this.isCoach() && videoComment.requiresReply;
     }
 
+    discuss() {
+        this.router.navigate([PATH_DISCUSS, this.report()!.externalId]).catch(err => console.error(err));
+    }
 }

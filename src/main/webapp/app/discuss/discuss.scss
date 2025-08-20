@@ -1,0 +1,54 @@
+@use "../../responsive";
+@use "../../variables";
+
+.comment {
+  white-space: pre-line;
+}
+
+.title-container,
+.actions-container {
+  display: flex;
+  align-items: center;
+  gap: variables.$padding;
+}
+
+.video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  @include responsive.responsive('gt-md') {
+    flex-direction: row;
+    gap: variables.$padding;
+  }
+
+  .youtube-container {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$half-padding;
+  }
+
+  .video-comments-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: variables.$padding;
+    scroll-behavior: smooth;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    .mat-icon {
+      &.important {
+        color: var(--mat-sys-error);
+      }
+    }
+
+    mat-card {
+      margin: 0;
+
+      &.important {
+        border: solid 1px var(--mat-sys-error);
+      }
+    }
+  }
+}

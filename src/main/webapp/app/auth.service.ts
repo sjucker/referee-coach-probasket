@@ -78,4 +78,16 @@ export class AuthService {
     public isTrainerCoach(): boolean {
         return this.hasRole(UserRole.TRAINER_COACH);
     }
+
+    public isReferee(): boolean {
+        return this.hasRole(UserRole.REFEREE);
+    }
+
+    public isTrainer(): boolean {
+        return this.hasRole(UserRole.TRAINER);
+    }
+
+    public isAdmin(): boolean {
+        return this.hasRole(UserRole.ADMIN);
+    }
 }
