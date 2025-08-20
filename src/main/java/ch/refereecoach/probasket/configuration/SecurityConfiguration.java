@@ -1,18 +1,22 @@
 package ch.refereecoach.probasket.configuration;
 
-import ch.refereecoach.probasket.common.UserRole;
 import ch.refereecoach.probasket.service.auth.BasketplanAuthenticationProvider;
+import ch.refereecoach.probasket.service.report.UserService;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -21,7 +25,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.util.ArrayList;
+import java.util.HashSet;
 
+import static ch.refereecoach.probasket.common.UserRole.ADMIN;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH;
+import static ch.refereecoach.probasket.common.UserRole.TRAINER;
+import static ch.refereecoach.probasket.common.UserRole.TRAINER_COACH;
 import static ch.refereecoach.probasket.service.auth.JwtService.CLAIM_AUTHORITIES;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -34,6 +45,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     private final ApplicationProperties properties;
+    private final UserService userService;
 
     @Bean
     public AuthenticationManager authManager(BasketplanAuthenticationProvider provider) {
@@ -56,23 +68,38 @@ public class SecurityConfiguration {
                    .csrf(AbstractHttpConfigurer::disable)
                    .exceptionHandling(withDefaults())
                    .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                   .authorizeHttpRequests(auth -> auth
-                           .requestMatchers("/api/auth/**").permitAll()
-                           .requestMatchers("/api/**").authenticated()
-                           .anyRequest().permitAll() // to serve the Angular frontend
-                   )
+                   .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                                                      .requestMatchers("/api/**").authenticated()
+                                                      .anyRequest().permitAll() // to serve the Angular frontend
+                                         )
                    .oauth2ResourceServer(oauth2 -> oauth2.jwt(
                            jwtSpec -> {
                                jwtSpec.decoder(jwtDecoder());
                                jwtSpec.jwtAuthenticationConverter(jwt -> {
-                                   var authorities = jwt.getClaimAsStringList(CLAIM_AUTHORITIES).stream()
-                                                        .map(UserRole::valueOf)
-                                                        .map(role -> new SimpleGrantedAuthority(role.name()))
-                                                        .toList();
-                                   return new JwtAuthenticationToken(jwt, authorities);
+                                   var currentAuthorities = getCurrentAuthorities(jwt);
+                                   var currentAuthoritiesValues = new HashSet<>(currentAuthorities.stream().map(SimpleGrantedAuthority::getAuthority).toList());
+
+                                   if (jwt.getClaimAsStringList(CLAIM_AUTHORITIES).stream().anyMatch(tokenAuthority -> !currentAuthoritiesValues.contains(tokenAuthority))) {
+                                       throw new BadCredentialsException("JWT contains authority no longer granted");
+                                   }
+
+                                   return new JwtAuthenticationToken(jwt, currentAuthorities);
                                });
                            }))
                    .build();
+    }
+
+    private @NotNull ArrayList<SimpleGrantedAuthority> getCurrentAuthorities(Jwt jwt) {
+        var login = userService.findByBasketplanUsername(jwt.getSubject())
+                               .orElseThrow(() -> new UsernameNotFoundException("User not found: " + jwt.getSubject()));
+
+        var currentAuthorities = new ArrayList<SimpleGrantedAuthority>();
+        if (login.refereeCoach()) currentAuthorities.add(new SimpleGrantedAuthority(REFEREE_COACH.name()));
+        if (login.referee()) currentAuthorities.add(new SimpleGrantedAuthority(REFEREE.name()));
+        if (login.trainerCoach()) currentAuthorities.add(new SimpleGrantedAuthority(TRAINER_COACH.name()));
+        if (login.trainer()) currentAuthorities.add(new SimpleGrantedAuthority(TRAINER.name()));
+        if (login.admin()) currentAuthorities.add(new SimpleGrantedAuthority(ADMIN.name()));
+        return currentAuthorities;
     }
 
 }

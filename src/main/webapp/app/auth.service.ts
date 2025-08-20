@@ -50,6 +50,9 @@ export class AuthService {
 
         this._username.set(null);
         this.storeValue(this.usernameKey, null);
+
+        this._roles.set([]);
+        this.storeValue(this.rolesKey, null);
     }
 
     private storeValue(key: string, token: string | null) {
