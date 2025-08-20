@@ -3,6 +3,7 @@ package ch.refereecoach.probasket.service.report;
 import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
+import ch.refereecoach.probasket.dto.report.RefereeDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
@@ -131,7 +132,7 @@ public class ReportSearchService {
                                              LOGIN.ID,
                                              LOGIN.FIRSTNAME,
                                              LOGIN.LASTNAME,
-                                             REPORT_VIDEO_COMMENT.REQUIRES_REPLY,
+                                             REPORT_VIDEO_COMMENT_REF.REQUIRES_REPLY,
                                              multiset(select(REPORT_VIDEO_COMMENT_REPLY.ID,
                                                              REPORT_VIDEO_COMMENT_REPLY.REPLY,
                                                              REPORT_VIDEO_COMMENT_REPLY.CREATED_AT,
@@ -228,7 +229,12 @@ public class ReportSearchService {
                                    it.getGameCompetition(),
                                    "%s - %s".formatted(it.getGameHomeTeam(), it.getGameGuestTeam()),
                                    it.getCoachName(),
+                                   it.getCoachId(),
                                    it.getReporteeName(),
+                                   it.getReporteeId(),
+                                   RefereeDTO.of(it.getGameReferee1Id(), it.getGameReferee1Name()).orElse(null),
+                                   RefereeDTO.of(it.getGameReferee2Id(), it.getGameReferee2Name()).orElse(null),
+                                   RefereeDTO.of(it.getGameReferee3Id(), it.getGameReferee3Name()).orElse(null),
                                    it.getFinishedAt() != null
                            ));
 

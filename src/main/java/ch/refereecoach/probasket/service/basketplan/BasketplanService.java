@@ -52,15 +52,15 @@ public class BasketplanService {
                         getAttributeValue(leagueHoldingNode, "name").orElse("?"),
                         LocalDate.parse(getAttributeValue(gameNode, "date").orElseThrow()),
                         "%s - %s".formatted(getAttributeValue(resultNode, "homeTeamScore").orElse("?"),
-                                getAttributeValue(resultNode, "guestTeamScore").orElse("?")),
+                                            getAttributeValue(resultNode, "guestTeamScore").orElse("?")),
                         getAttributeValue(homeTeamNode, "name").orElseThrow(),
                         Integer.valueOf(getAttributeValue(homeTeamNode, "id").orElseThrow()),
                         getAttributeValue(guestTeamNode, "name").orElseThrow(),
                         Integer.valueOf(getAttributeValue(guestTeamNode, "id").orElseThrow()),
                         // TODO
                         OfficiatingMode.OFFICIATING_2PO,
-// TODO load ID if available, validation whether in DB?
-                        null, null, null, null, null, null,
+                        // TODO
+                        4L, "Jovan Ljubanic", 3L, "Nicolas Castro", null, null,
 //                        getReferee(gameNode, "referee1Name"),
 //                        getReferee(gameNode, "referee2Name"),
 //                        getReferee(gameNode, "referee3Name"),

@@ -2,5 +2,6 @@ package ch.refereecoach.probasket.dto.report;
 
 import jakarta.validation.constraints.NotNull;
 
-public record CreateRefereeReportResultDTO(@NotNull String externalId) {
+public record CreateRefereeReportResultDTO(@NotNull Long id,
+                                           @NotNull String externalId) {
 }

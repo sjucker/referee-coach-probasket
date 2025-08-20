@@ -68,6 +68,11 @@ public class ReportVideoCommentRef extends TableImpl<ReportVideoCommentRefRecord
      */
     public final TableField<ReportVideoCommentRefRecord, Long> REPORT_VIDEO_COMMENT_ID = createField(DSL.name("report_video_comment_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
+    /**
+     * The column <code>public.report_video_comment_ref.requires_reply</code>.
+     */
+    public final TableField<ReportVideoCommentRefRecord, Boolean> REQUIRES_REPLY = createField(DSL.name("requires_reply"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
     private ReportVideoCommentRef(Name alias, Table<ReportVideoCommentRefRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

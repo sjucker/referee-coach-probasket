@@ -33,6 +33,12 @@
   }
 }
 
+.checkbox-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .video-container {
   display: flex;
   flex-direction: column;

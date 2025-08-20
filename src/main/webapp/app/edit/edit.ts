@@ -251,7 +251,7 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     }
 
     copyComment(videoComment: ReportVideoCommentDTO) {
-        console.log(videoComment);
+        console.debug(videoComment);
         // TODO
         // this.dialog.open(VideoReportCopyDialogComponent, {
         //     data: {
@@ -278,7 +278,7 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     }
 
     isCopyCommentVisible(videoComment: ReportVideoCommentDTO): boolean {
-        console.log(videoComment);
+        console.debug(videoComment);
         return false;
         // TODO
         // return this.report!.otherReportees.length > 0 && !!videoComment.id

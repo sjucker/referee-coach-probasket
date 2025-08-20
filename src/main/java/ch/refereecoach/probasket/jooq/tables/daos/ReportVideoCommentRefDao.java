@@ -72,4 +72,19 @@ public class ReportVideoCommentRefDao extends AbstractSpringDAOImpl<ReportVideoC
     public List<ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef> fetchByReportVideoCommentId(Long... values) {
         return fetch(ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF.REPORT_VIDEO_COMMENT_ID, values);
     }
+
+    /**
+     * Fetch records that have <code>requires_reply BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef> fetchRangeOfRequiresReply(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF.REQUIRES_REPLY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>requires_reply IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef> fetchByRequiresReply(Boolean... values) {
+        return fetch(ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF.REQUIRES_REPLY, values);
+    }
 }

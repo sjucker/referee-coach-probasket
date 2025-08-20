@@ -2,6 +2,7 @@ package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaType;
+import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
@@ -17,6 +18,7 @@ import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.DateUtil;
@@ -65,6 +67,10 @@ public class ReportService {
         var game = basketplanService.findGameByNumber(gameNumber)
                                     .orElseThrow(() -> new IllegalArgumentException("game %s not found".formatted(gameNumber)));
 
+        if (!game.containsReferee(reporteeId)) {
+            throw new IllegalArgumentException("reportee %d not found in game %s".formatted(reporteeId, gameNumber));
+        }
+
         var report = new Report();
         report.setExternalId(getExternalId());
         report.setReportType(reportType.name());
@@ -109,7 +115,7 @@ public class ReportService {
                               .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), NEUTRAL.name())));
               });
 
-        return new CreateRefereeReportResultDTO(report.getExternalId());
+        return new CreateRefereeReportResultDTO(report.getId(), report.getExternalId());
     }
 
     private String getExternalId() {
@@ -153,13 +159,18 @@ public class ReportService {
 
         var videoCommentsToInsert = new ArrayList<ReportVideoComment>();
         var videoCommentsToUpdate = new HashMap<Long, ReportVideoCommentDTO>();
+        var videoCommentRefsToUpdate = new HashMap<Long, ReportVideoCommentDTO>();
         dto.videoComments()
            .forEach(videoComment -> {
-               if (videoComment.id() == null) {
+               if (videoComment.reference()) {
+                   videoCommentRefsToUpdate.put(videoComment.id(), videoComment);
+               } else if (videoComment.id() == null) {
+                   // create
                    if (videoComment.timestampInSeconds() != null && isNotBlank(videoComment.comment())) {
                        videoCommentsToInsert.add(new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply()));
                    }
                } else {
+                   // update
                    videoCommentsToUpdate.put(videoComment.id(), videoComment);
                }
            });
@@ -177,6 +188,17 @@ public class ReportService {
                              });
 
         reportVideoCommentDao.insert(videoCommentsToInsert);
+
+        reportVideoCommentRefDao.fetchByReportId(report.getId())
+                                .forEach(reportVideoCommentRef -> {
+                                    var reportVideoCommentDTO = videoCommentRefsToUpdate.get(reportVideoCommentRef.getReportVideoCommentId());
+                                    if (reportVideoCommentDTO != null) {
+                                        reportVideoCommentRef.setRequiresReply(reportVideoCommentDTO.requiresReply());
+                                        reportVideoCommentRefDao.update(reportVideoCommentRef);
+                                    } else {
+                                        reportVideoCommentRefDao.delete(reportVideoCommentRef);
+                                    }
+                                });
 
         report.setOverallScore(dto.score());
         report.setUpdatedAt(DateUtil.now());
@@ -201,5 +223,23 @@ public class ReportService {
         reportDao.update(report);
 
         mailService.sendFinishedReportMail(report);
+    }
+
+    public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, String username) {
+        var coach = userService.getByBasketplanUsername(username);
+        var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+
+        if (!report.getCoachId().equals(coach.id())) {
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+        }
+
+        var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), username);
+
+        // copy source video-comments as references
+        reportVideoCommentRefDao.insert(reportVideoCommentDao.fetchByReportId(report.getId()).stream()
+                                                             .map(it -> new ReportVideoCommentRef(newReport.id(), it.getId(), it.getRequiresReply()))
+                                                             .toList());
+
+        return newReport;
     }
 }

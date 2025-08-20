@@ -107,16 +107,24 @@
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {
                             <mat-card appearance="raised">
                                 <mat-card-content>
-                                    <mat-checkbox [(ngModel)]="videoComment.requiresReply"
-                                                  (ngModelChange)="onChange()"
-                                                  matTooltip="If selected, this comment is highlighted and the referee must reply to it."
-                                                  matTooltipPosition="above">
-                                        Require reply from referee
-                                    </mat-checkbox>
+                                    <div class="checkbox-container">
+                                        <mat-checkbox [(ngModel)]="videoComment.requiresReply"
+                                                      (ngModelChange)="onChange()"
+                                                      matTooltip="If selected, this comment is highlighted and the referee must reply to it."
+                                                      matTooltipPosition="above">
+                                            Require reply from referee
+                                        </mat-checkbox>
+                                        @if (videoComment.reference) {
+                                            <mat-icon matTooltip="This comment was copied from another report and is not editable.">
+                                                info
+                                            </mat-icon>
+                                        }
+                                    </div>
                                     <mat-form-field appearance="fill" color="accent">
                                         <mat-label>Comment</mat-label>
                                         <textarea [(ngModel)]="videoComment.comment"
                                                   (ngModelChange)="onChange()"
+                                                  [disabled]="videoComment.reference"
                                                   maxlength="1024"
                                                   cdkAutosizeMaxRows="5"
                                                   cdkAutosizeMinRows="1"

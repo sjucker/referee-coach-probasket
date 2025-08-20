@@ -44,6 +44,10 @@ export interface BasketplanGameDTO {
     videoUrl?: string;
 }
 
+export interface CopyRefereeReportDTO {
+    reporteeId: number;
+}
+
 export interface CreateRefereeReportDTO {
     gameNumber: string;
     reporteeId: number;
@@ -51,7 +55,13 @@ export interface CreateRefereeReportDTO {
 }
 
 export interface CreateRefereeReportResultDTO {
+    id: number;
     externalId: string;
+}
+
+export interface RefereeDTO {
+    id: number;
+    name: string;
 }
 
 export interface RefereeReportDTO {
@@ -97,7 +107,12 @@ export interface ReportOverviewDTO {
     competition: string;
     teams: string;
     coach: string;
+    coachId: number;
     reportee: string;
+    reporteeId: number;
+    referee1?: RefereeDTO;
+    referee2?: RefereeDTO;
+    referee3?: RefereeDTO;
     finished: boolean;
 }
 

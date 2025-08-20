@@ -6,7 +6,17 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {AuthService} from '../auth.service';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {BasketplanGameDTO, CreateRefereeReportDTO, CreateRefereeReportResultDTO, OfficiatingMode, ReportOverviewDTO, ReportSearchResultDTO} from "../../rest";
+import {
+    BasketplanGameDTO,
+    CopyRefereeReportDTO,
+    CreateRefereeReportDTO,
+    CreateRefereeReportResultDTO,
+    OfficiatingMode,
+    RefereeDTO,
+    ReportOverviewDTO,
+    ReportSearchResultDTO,
+    ReportType
+} from "../../rest";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule, MatLabel} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
@@ -22,6 +32,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {DateTime} from "luxon";
 import {MatIcon} from "@angular/material/icon";
 import {DatePipe} from "@angular/common";
+import {MatDialog} from "@angular/material/dialog";
+import {CopyReportDialog, CopyReportDialogData} from "./copy-report-dialog";
 
 interface RefereeSelection {
     id: number,
@@ -37,6 +49,7 @@ interface RefereeSelection {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Overview implements OnInit {
+    private readonly dialog = inject(MatDialog);
     private readonly fb = inject(FormBuilder);
     private readonly http = inject(HttpClient);
     private readonly router = inject(Router);
@@ -245,7 +258,7 @@ export class Overview implements OnInit {
                         verticalPosition: "top"
                     });
                 }
-            })
+            });
         } else {
             this.snackBar.open("Please search for a game or select a referee", undefined, {
                 duration: 3000,
@@ -258,5 +271,42 @@ export class Overview implements OnInit {
 
     public edit(externalId: string) {
         this.router.navigate([PATH_EDIT, externalId]).catch(err => console.error(err))
+    }
+
+    isCoaching(dto: ReportOverviewDTO): boolean {
+        return dto.type !== ReportType.GAME_DISCUSSION;
+    }
+
+    copy(dto: ReportOverviewDTO) {
+        this.dialog.open<CopyReportDialog, CopyReportDialogData, RefereeDTO>(CopyReportDialog, {
+            data: {
+                reporteeId: dto.reporteeId,
+                referee1: dto.referee1,
+                referee2: dto.referee2,
+                referee3: dto.referee3,
+                title: 'Copy Report',
+                description: 'A new report will be created containing all comments from the existing source report.'
+            }
+        }).afterClosed().subscribe((referee) => {
+            if (referee) {
+                const request: CopyRefereeReportDTO = {
+                    reporteeId: referee.id,
+                };
+                this.http.post<CreateRefereeReportResultDTO>(`/api/report/referee/${dto.externalId}/copy`, request).subscribe({
+                    next: response => {
+                        this.creating.set(false);
+                        this.edit(response.externalId);
+                    },
+                    error: () => {
+                        this.creating.set(false);
+                        this.snackBar.open("An unexpected error occurred, report could not be copied.", undefined, {
+                            duration: 3000,
+                            horizontalPosition: "center",
+                            verticalPosition: "top"
+                        });
+                    }
+                });
+            }
+        });
     }
 }

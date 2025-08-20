@@ -17,20 +17,24 @@ public class ReportVideoCommentRef implements Serializable {
 
     private Long reportId;
     private Long reportVideoCommentId;
+    private Boolean requiresReply;
 
     public ReportVideoCommentRef() {}
 
     public ReportVideoCommentRef(ReportVideoCommentRef value) {
         this.reportId = value.reportId;
         this.reportVideoCommentId = value.reportVideoCommentId;
+        this.requiresReply = value.requiresReply;
     }
 
     public ReportVideoCommentRef(
         Long reportId,
-        Long reportVideoCommentId
+        Long reportVideoCommentId,
+        Boolean requiresReply
     ) {
         this.reportId = reportId;
         this.reportVideoCommentId = reportVideoCommentId;
+        this.requiresReply = requiresReply;
     }
 
     /**
@@ -63,6 +67,20 @@ public class ReportVideoCommentRef implements Serializable {
         this.reportVideoCommentId = reportVideoCommentId;
     }
 
+    /**
+     * Getter for <code>public.report_video_comment_ref.requires_reply</code>.
+     */
+    public Boolean getRequiresReply() {
+        return this.requiresReply;
+    }
+
+    /**
+     * Setter for <code>public.report_video_comment_ref.requires_reply</code>.
+     */
+    public void setRequiresReply(Boolean requiresReply) {
+        this.requiresReply = requiresReply;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -84,6 +102,12 @@ public class ReportVideoCommentRef implements Serializable {
         }
         else if (!this.reportVideoCommentId.equals(other.reportVideoCommentId))
             return false;
+        if (this.requiresReply == null) {
+            if (other.requiresReply != null)
+                return false;
+        }
+        else if (!this.requiresReply.equals(other.requiresReply))
+            return false;
         return true;
     }
 
@@ -93,6 +117,7 @@ public class ReportVideoCommentRef implements Serializable {
         int result = 1;
         result = prime * result + ((this.reportId == null) ? 0 : this.reportId.hashCode());
         result = prime * result + ((this.reportVideoCommentId == null) ? 0 : this.reportVideoCommentId.hashCode());
+        result = prime * result + ((this.requiresReply == null) ? 0 : this.requiresReply.hashCode());
         return result;
     }
 
@@ -102,6 +127,7 @@ public class ReportVideoCommentRef implements Serializable {
 
         sb.append(reportId);
         sb.append(", ").append(reportVideoCommentId);
+        sb.append(", ").append(requiresReply);
 
         sb.append(")");
         return sb.toString();

@@ -48,6 +48,20 @@ public class ReportVideoCommentRefRecord extends UpdatableRecordImpl<ReportVideo
         return (Long) get(1);
     }
 
+    /**
+     * Setter for <code>public.report_video_comment_ref.requires_reply</code>.
+     */
+    public void setRequiresReply(Boolean value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.report_video_comment_ref.requires_reply</code>.
+     */
+    public Boolean getRequiresReply() {
+        return (Boolean) get(2);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -71,11 +85,12 @@ public class ReportVideoCommentRefRecord extends UpdatableRecordImpl<ReportVideo
     /**
      * Create a detached, initialised ReportVideoCommentRefRecord
      */
-    public ReportVideoCommentRefRecord(Long reportId, Long reportVideoCommentId) {
+    public ReportVideoCommentRefRecord(Long reportId, Long reportVideoCommentId, Boolean requiresReply) {
         super(ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF);
 
         setReportId(reportId);
         setReportVideoCommentId(reportVideoCommentId);
+        setRequiresReply(requiresReply);
         resetChangedOnNotNull();
     }
 
@@ -88,6 +103,7 @@ public class ReportVideoCommentRefRecord extends UpdatableRecordImpl<ReportVideo
         if (value != null) {
             setReportId(value.getReportId());
             setReportVideoCommentId(value.getReportVideoCommentId());
+            setRequiresReply(value.getRequiresReply());
             resetChangedOnNotNull();
         }
     }

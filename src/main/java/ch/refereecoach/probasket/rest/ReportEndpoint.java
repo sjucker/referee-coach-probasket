@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.rest;
 
+import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
@@ -94,5 +95,15 @@ public class ReportEndpoint {
         reportService.finishRefereeReport(externalId, jwt.getSubject());
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/referee/{externalId}/copy")
+    @Secured({"REFEREE_COACH"})
+    public ResponseEntity<CreateRefereeReportResultDTO> copyReport(@AuthenticationPrincipal Jwt jwt,
+                                                                   @PathVariable String externalId,
+                                                                   @RequestBody @Valid CopyRefereeReportDTO dto) {
+        log.info("POST /api/report/referee/{}/copy {} {}", externalId, dto, jwt.getSubject());
+
+        return ResponseEntity.ok(reportService.copyReport(externalId, dto, jwt.getSubject()));
     }
 }

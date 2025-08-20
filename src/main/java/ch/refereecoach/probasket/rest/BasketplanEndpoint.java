@@ -34,7 +34,7 @@ public class BasketplanEndpoint {
         return ResponseEntity.ok(new BasketplanGameDTO(
                 "24-06531", "H1LRA Saison 24/25", LocalDate.parse("2024-10-05"),
                 "67:61", "BC Winterthur 2 H1", 1213, "Frauenfeld Herren 1 H1", 506, OFFICIATING_2PO,
-                1L, "Ljubanic Jovan", 2L, "Castro Nicolas", null, null, null));
+                4L, "Ljubanic Jovan", 3L, "Castro Nicolas", null, null, null));
 
 //        return ResponseEntity.of(basketplanService.findGameByNumber(gameNumber));
     }
