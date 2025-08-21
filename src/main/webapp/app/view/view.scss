@@ -5,6 +5,13 @@
   white-space: pre-line;
 }
 
+.title-container,
+.actions-container {
+  display: flex;
+  align-items: center;
+  gap: variables.$padding;
+}
+
 .criteria-container {
   display: flex;
   flex-wrap: wrap;
@@ -44,8 +51,18 @@
       }
     }
 
+    .mat-icon {
+      &.important {
+        color: var(--mat-sys-error);
+      }
+    }
+
     mat-card {
       margin: 0;
+
+      &.important {
+        border: solid 1px var(--mat-sys-error);
+      }
     }
   }
 }

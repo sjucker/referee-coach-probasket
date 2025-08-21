@@ -1,8 +1,14 @@
 @use "../../responsive";
 @use "../../variables";
 
-.comment {
+.comment,
+.reply {
   white-space: pre-line;
+}
+
+.new-reply,
+.new-comment {
+  color: var(--mat-sys-primary);
 }
 
 .title-container,
@@ -50,5 +56,17 @@
         border: solid 1px var(--mat-sys-error);
       }
     }
+  }
+}
+
+.reply-container {
+  display: flex;
+  flex-direction: column;
+
+  .reply-detail-container {
+    display: flex;
+    flex-direction: row;
+    gap: variables.$padding;
+    align-items: center;
   }
 }

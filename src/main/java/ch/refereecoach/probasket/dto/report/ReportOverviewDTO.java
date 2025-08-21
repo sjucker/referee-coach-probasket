@@ -12,11 +12,13 @@ public record ReportOverviewDTO(@NotNull String externalId,
                                 @NotNull String competition,
                                 @NotNull String teams,
                                 @NotNull String coach,
+                                // TODO null for game-discussion
                                 @NotNull Long coachId,
                                 @NotNull String reportee,
                                 @NotNull Long reporteeId,
                                 RefereeDTO referee1,
                                 RefereeDTO referee2,
                                 RefereeDTO referee3,
-                                boolean finished) {
+                                boolean finished,
+                                boolean userIsCoach) {
 }

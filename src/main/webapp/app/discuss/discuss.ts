@@ -3,26 +3,29 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
-import {RefereeReportDTO, ReportType, ReportVideoCommentDTO, ReportVideoCommentReplyDTO} from '../../rest';
+import {CreateReportVideoCommentReplyDTO, RefereeReportDTO, ReportType, ReportVideoCommentDTO, ReportVideoCommentReplyDTO} from '../../rest';
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {GameInfo} from "../components/game-info/game-info";
 import {YouTubePlayer} from "@angular/youtube-player";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {PATH_OVERVIEW, PATH_VIEW} from "../app.routes";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {AuthService} from "../auth.service";
 import {DatePipe, NgClass} from "@angular/common";
 import {CdkTextareaAutosize} from "@angular/cdk/text-field";
 import {MatInput} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule} from "@angular/forms";
+import {MatDialog} from "@angular/material/dialog";
+import {ReplyDialog} from "./reply-dialog";
+import {DateTime} from "luxon";
+import {FinishReplyDialog, FinishReplyDialogData} from "./finish-reply-dialog";
 
 @Component({
     selector: 'app-discuss',
-    imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, YouTubePlayer, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule],
+    imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, YouTubePlayer, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule, MatIconButton],
     templateUrl: './discuss.html',
     styleUrl: './discuss.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -32,14 +35,15 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly snackBar = inject(MatSnackBar);
-    private readonly auth = inject(AuthService);
+    private readonly dialog = inject(MatDialog);
 
     readonly unsavedChanges = signal(false);
 
     protected readonly externalId = signal<string | null>(null);
     protected readonly report = signal<RefereeReportDTO | null>(null);
-    protected readonly loading = signal<boolean>(true);
-    protected readonly showLoadingBar = computed(() => this.loading());
+    protected readonly loading = signal<boolean>(false);
+    protected readonly saving = signal<boolean>(false);
+    protected readonly showLoadingBar = computed(() => this.loading() || this.saving());
 
     readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
     readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
@@ -47,6 +51,8 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
 
     protected readonly videoWidth = signal<number | null>(null);
     protected readonly videoHeight = signal<number | null>(null);
+
+    newReplies = signal<CreateReportVideoCommentReplyDTO[]>([]);
 
     constructor() {
         effect(() => {
@@ -118,11 +124,6 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
         this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(err => console.error(err));
     }
 
-    isReferee(): boolean {
-        // TODO not correct, possible that is ref and coach...fix this
-        return this.auth.isReferee();
-    }
-
     addVideoComment() {
         const timestampInSeconds = Math.round(this.youtube()!.getCurrentTime());
 
@@ -160,14 +161,13 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     }
 
     requiresReply(videoComment: ReportVideoCommentDTO): boolean {
-        // TODO fix logic for coach
-        return videoComment.requiresReply;
+        const dto = this.report()!;
+        return dto.userIsReportee && videoComment.requiresReply && !videoComment.replies.some(c => c.createdById == dto.reporteeId);
     }
 
     flaggedForReply(videoComment: ReportVideoCommentDTO) {
-        // TODO fix logic for coach
-        console.debug(videoComment);
-        return false;
+        const dto = this.report()!;
+        return !dto.userIsReportee && videoComment.requiresReply;
     }
 
     deleteReply(videoComment: ReportVideoCommentDTO, reply: ReportVideoCommentReplyDTO) {
@@ -176,7 +176,48 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     }
 
     reply(videoComment: ReportVideoCommentDTO) {
-        // TODO
-        console.debug(videoComment);
+        this.dialog.open<ReplyDialog, unknown, string>(ReplyDialog, {
+            disableClose: true,
+            hasBackdrop: true,
+            width: '500px',
+        }).afterClosed().subscribe(reply => {
+            const dto = this.report()!;
+            if (reply) {
+                this.newReplies.update(values => {
+                    return [...values, {
+                        commentId: videoComment.id!,
+                        reply: reply,
+                    }];
+                });
+
+                videoComment.replies.push({
+                    id: 0,
+                    reply: reply,
+                    createdBy: 'New Reply',
+                    createdAt: DateTime.now().toISODate(),
+                    createdById: dto.reporteeId,
+                });
+
+                this.unsavedChanges.set(true);
+            }
+        });
+    }
+
+    onChange() {
+        this.unsavedChanges.set(true);
+    }
+
+    finishReply() {
+        const dto = this.report()!;
+        this.dialog.open<FinishReplyDialog, FinishReplyDialogData, boolean>(FinishReplyDialog, {
+            data: {
+                totalReplies: this.newReplies().length,
+                requiredRepliesRemaining: dto.videoComments.filter(comment => this.requiresReply(comment)).length,
+            },
+            disableClose: true,
+            hasBackdrop: true,
+        }).afterClosed().subscribe(result => {
+            console.log(result);
+        })
     }
 }

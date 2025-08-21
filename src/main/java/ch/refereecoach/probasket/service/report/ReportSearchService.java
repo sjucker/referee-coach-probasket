@@ -23,6 +23,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -194,6 +195,7 @@ public class ReportSearchService {
                                                       null, // TODO Asport
                                                       reportRecord.getOverallScore(),
                                                       reportRecord.getFinishedAt() != null,
+                                                      user.id().equals(reportRecord.getReporteeId()),
                                                       comments,
                                                       videoComments);
                       });
@@ -235,7 +237,8 @@ public class ReportSearchService {
                                    RefereeDTO.of(it.getGameReferee1Id(), it.getGameReferee1Name()).orElse(null),
                                    RefereeDTO.of(it.getGameReferee2Id(), it.getGameReferee2Name()).orElse(null),
                                    RefereeDTO.of(it.getGameReferee3Id(), it.getGameReferee3Name()).orElse(null),
-                                   it.getFinishedAt() != null
+                                   it.getFinishedAt() != null,
+                                   Objects.equals(user.id(), it.getCoachId())
                            ));
 
         var count = jooqDsl.fetchCount(REPORT, condition);

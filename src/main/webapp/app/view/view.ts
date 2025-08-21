@@ -109,17 +109,13 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
 
 
     requiresReply(videoComment: ReportVideoCommentDTO): boolean {
-        // TODO
-        console.debug(videoComment);
-        return false;
-        // return (!this.isLoggedIn() || this.isReferee()) && videoComment.requiresReply && videoComment.replies.length < 1;
+        const dto = this.report()!;
+        return dto.userIsReportee && videoComment.requiresReply && !videoComment.replies.some(c => c.createdById == dto.reporteeId);
     }
 
     flaggedForReply(videoComment: ReportVideoCommentDTO): boolean {
-        // TODO
-        console.debug(videoComment);
-        return false;
-        // return this.isCoach() && videoComment.requiresReply;
+        const dto = this.report()!;
+        return !dto.userIsReportee && videoComment.requiresReply;
     }
 
     discuss() {

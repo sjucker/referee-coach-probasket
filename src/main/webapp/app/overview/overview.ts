@@ -26,7 +26,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
-import {PATH_EDIT} from "../app.routes";
+import {PATH_EDIT, PATH_VIEW} from "../app.routes";
 import {Router} from "@angular/router";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {DateTime} from "luxon";
@@ -273,8 +273,9 @@ export class Overview implements OnInit {
         this.router.navigate([PATH_EDIT, externalId]).catch(err => console.error(err))
     }
 
-    isCoaching(dto: ReportOverviewDTO): boolean {
-        return dto.type !== ReportType.GAME_DISCUSSION;
+
+    view(dto: ReportOverviewDTO) {
+        this.router.navigate([PATH_VIEW, dto.externalId]).catch(err => console.error(err))
     }
 
     copy(dto: ReportOverviewDTO) {
@@ -308,5 +309,31 @@ export class Overview implements OnInit {
                 });
             }
         });
+    }
+
+    delete(dto: ReportOverviewDTO) {
+// TODO
+        console.debug('delete', dto);
+    }
+
+    get displayedColumns(): string[] {
+        if (this.auth.isRefereeCoach() || this.auth.isTrainerCoach()) {
+            return ['finished', 'date', 'type', 'gameNumber', 'competition', 'teams', 'coach', 'reportee', 'edit', 'view', 'copy', 'delete'];
+        } else {
+            return ['date', 'gameNumber', 'competition', 'teams', 'coach', 'view'];
+        }
+    }
+
+    isEditable(dto: ReportOverviewDTO) {
+        return this.isCoaching(dto) && dto.userIsCoach && !dto.finished;
+    }
+
+    isDeletable(dto: ReportOverviewDTO): boolean {
+        return this.isCoaching(dto) && (this.isEditable(dto) || this.auth.isAdmin());
+
+    }
+
+    isCoaching(dto: ReportOverviewDTO): boolean {
+        return dto.type !== ReportType.GAME_DISCUSSION;
     }
 }

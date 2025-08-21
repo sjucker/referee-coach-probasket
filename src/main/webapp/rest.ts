@@ -59,6 +59,11 @@ export interface CreateRefereeReportResultDTO {
     externalId: string;
 }
 
+export interface CreateReportVideoCommentReplyDTO {
+    commentId: number;
+    reply: string;
+}
+
 export interface RefereeDTO {
     id: number;
     name: string;
@@ -77,6 +82,7 @@ export interface RefereeReportDTO {
     asportId?: string;
     score?: number;
     finished: boolean;
+    userIsReportee: boolean;
     comments: ReportCommentDTO[];
     videoComments: ReportVideoCommentDTO[];
 }
@@ -114,6 +120,7 @@ export interface ReportOverviewDTO {
     referee2?: RefereeDTO;
     referee3?: RefereeDTO;
     finished: boolean;
+    userIsCoach: boolean;
 }
 
 export interface ReportSearchResultDTO {

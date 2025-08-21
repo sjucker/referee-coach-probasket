@@ -19,6 +19,7 @@ public record RefereeReportDTO(@NotNull Long id,
                                String asportId,
                                BigDecimal score,
                                boolean finished,
+                               boolean userIsReportee,
                                @NotNull List<ReportCommentDTO> comments,
                                @NotNull List<ReportVideoCommentDTO> videoComments) {
 }
