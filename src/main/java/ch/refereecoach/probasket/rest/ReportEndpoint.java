@@ -2,6 +2,7 @@ package ch.refereecoach.probasket.rest;
 
 import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDTO;
+import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
@@ -105,5 +106,16 @@ public class ReportEndpoint {
         log.info("POST /api/report/referee/{}/copy {} {}", externalId, dto, jwt.getSubject());
 
         return ResponseEntity.ok(reportService.copyReport(externalId, dto, jwt.getSubject()));
+    }
+
+    @PostMapping(value = "/referee/{externalId}/discussion")
+    @Secured({"REFEREE_COACH", "REFEREE"})
+    public ResponseEntity<Void> saveDiscussionReply(@AuthenticationPrincipal Jwt jwt,
+                                                    @PathVariable String externalId,
+                                                    @RequestBody @Valid CreateRefereeReportDiscussionReplyDTO dto) {
+        log.info("POST /api/report/referee/{}/discussion {} {}", externalId, dto, jwt.getSubject());
+        reportService.saveDiscussionReply(externalId, dto, jwt.getSubject());
+
+        return ResponseEntity.ok().build();
     }
 }

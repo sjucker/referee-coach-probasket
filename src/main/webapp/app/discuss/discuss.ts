@@ -1,9 +1,17 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
-import {CreateReportVideoCommentReplyDTO, RefereeReportDTO, ReportType, ReportVideoCommentDTO, ReportVideoCommentReplyDTO} from '../../rest';
+import {
+    CreateRefereeReportDiscussionReplyDTO,
+    NewReportVideoCommentDTO,
+    NewReportVideoCommentReplyDTO,
+    RefereeReportDTO,
+    ReportType,
+    ReportVideoCommentDTO,
+    ReportVideoCommentReplyDTO
+} from '../../rest';
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {GameInfo} from "../components/game-info/game-info";
 import {YouTubePlayer} from "@angular/youtube-player";
@@ -28,7 +36,6 @@ import {FinishReplyDialog, FinishReplyDialogData} from "./finish-reply-dialog";
     imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, YouTubePlayer, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule, MatIconButton],
     templateUrl: './discuss.html',
     styleUrl: './discuss.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsavedChanges {
     private readonly http = inject(HttpClient);
@@ -36,6 +43,8 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     private readonly router = inject(Router);
     private readonly snackBar = inject(MatSnackBar);
     private readonly dialog = inject(MatDialog);
+
+    protected readonly ReportType = ReportType;
 
     readonly unsavedChanges = signal(false);
 
@@ -52,7 +61,15 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     protected readonly videoWidth = signal<number | null>(null);
     protected readonly videoHeight = signal<number | null>(null);
 
-    newReplies = signal<CreateReportVideoCommentReplyDTO[]>([]);
+    newReplies = signal<NewReportVideoCommentReplyDTO[]>([]);
+    newComments = signal<NewReportVideoCommentDTO[]>([]);
+
+    @HostListener('window:beforeunload', ['$event'])
+    handleClose($event: BeforeUnloadEvent) {
+        if (this.unsavedChanges()) {
+            $event.preventDefault();
+        }
+    }
 
     constructor() {
         effect(() => {
@@ -118,28 +135,22 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
         });
     }
 
-    protected readonly ReportType = ReportType;
-
     view() {
         this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(err => console.error(err));
     }
 
     addVideoComment() {
         const timestampInSeconds = Math.round(this.youtube()!.getCurrentTime());
+        const dto = this.report()!;
 
-        if (this.report()!.videoComments.some(comment => timestampInSeconds >= comment.timestampInSeconds - 3 && timestampInSeconds <= comment.timestampInSeconds + 3)) {
+        if (dto.videoComments.some(comment => timestampInSeconds >= comment.timestampInSeconds - 3 && timestampInSeconds <= comment.timestampInSeconds + 3)) {
             this.displaySnackbar('There is already an existing comment around this timestamp');
         } else {
-            this.report()!.videoComments.push({
-                comment: '',
-                requiresReply: false,
-                timestampInSeconds: timestampInSeconds,
-                createdAt: '',
-                createdBy: '',
-                createdById: 0,
-                reference: false,
-                replies: [],
-                tags: []
+            this.newComments.update(values => {
+                return [...values, {
+                    comment: '',
+                    timestampInSeconds: timestampInSeconds,
+                }];
             });
 
             setTimeout(() => {
@@ -149,7 +160,6 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
                 }
             }, 200);
         }
-
     }
 
     private displaySnackbar(message: string) {
@@ -171,8 +181,10 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     }
 
     deleteReply(videoComment: ReportVideoCommentDTO, reply: ReportVideoCommentReplyDTO) {
-        // TODO
-        console.debug(videoComment, reply);
+        videoComment.replies = videoComment.replies.filter(r => r !== reply);
+        this.newReplies.update(values => {
+            return values.filter(r => !(r.commentId === videoComment.id && r.reply === reply.reply));
+        });
     }
 
     reply(videoComment: ReportVideoCommentDTO) {
@@ -216,8 +228,27 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
             },
             disableClose: true,
             hasBackdrop: true,
-        }).afterClosed().subscribe(result => {
-            console.log(result);
+        }).afterClosed().subscribe(decision => {
+            if (decision) {
+                this.saving.set(true);
+                const body: CreateRefereeReportDiscussionReplyDTO = {
+                    replies: this.newReplies(),
+                    comments: this.newComments()
+                };
+                this.http.post<void>(`/api/report/referee/${dto.externalId}/discussion`, body).subscribe({
+                    next: () => {
+                        this.saving.set(false);
+                        this.newReplies.set([]);
+                        this.newComments.set([]);
+                        this.unsavedChanges.set(false);
+                        this.displaySnackbar('Replies saved!');
+                    },
+                    error: () => {
+                        this.saving.set(false);
+                        this.displaySnackbar('An unexpected error occurred');
+                    }
+                });
+            }
         })
     }
 }

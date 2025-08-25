@@ -54,12 +54,22 @@ export interface CreateRefereeReportDTO {
     videoUrl?: string;
 }
 
+export interface CreateRefereeReportDiscussionReplyDTO {
+    replies: NewReportVideoCommentReplyDTO[];
+    comments: NewReportVideoCommentDTO[];
+}
+
 export interface CreateRefereeReportResultDTO {
     id: number;
     externalId: string;
 }
 
-export interface CreateReportVideoCommentReplyDTO {
+export interface NewReportVideoCommentDTO {
+    timestampInSeconds: number;
+    comment: string;
+}
+
+export interface NewReportVideoCommentReplyDTO {
     commentId: number;
     reply: string;
 }

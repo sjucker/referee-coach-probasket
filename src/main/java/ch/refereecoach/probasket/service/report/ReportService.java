@@ -3,6 +3,7 @@ package ch.refereecoach.probasket.service.report;
 import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaType;
 import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
+import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
@@ -13,12 +14,14 @@ import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentRefDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentReplyDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentTagDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.DateUtil;
@@ -31,12 +34,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.refereecoach.probasket.common.CriteriaState.NEUTRAL;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
@@ -52,6 +60,7 @@ public class ReportService {
     private final ReportVideoCommentDao reportVideoCommentDao;
     private final ReportVideoCommentTagDao reportVideoCommentTagDao;
     private final ReportVideoCommentRefDao reportVideoCommentRefDao;
+    private final ReportVideoCommentReplyDao reportVideoCommentReplyDao;
     private final BasketplanService basketplanService;
     private final UserService userService;
     private final MailService mailService;
@@ -241,5 +250,69 @@ public class ReportService {
                                                              .toList());
 
         return newReport;
+    }
+
+    public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, String username) {
+        var user = userService.getByBasketplanUsername(username);
+        var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+
+        // TODO dürfen referee-coaches ach zu anderen reports schreiben?
+        if (!Objects.equals(report.getCoachId(), user.id()) && !Objects.equals(report.getReporteeId(), user.id())) {
+            throw new IllegalStateException("user %s is not allowed to reply to this report!".formatted(user.username()));
+        }
+
+        var reportVideoComments = reportVideoCommentDao.fetchByReportId(report.getId()).stream().collect(toMap(ReportVideoComment::getId, identity()));
+        var reportVideoCommentRefs = reportVideoCommentRefDao.fetchByReportId(report.getId()).stream().collect(toMap(ReportVideoCommentRef::getReportVideoCommentId, identity()));
+
+        var totalRepliesAdded = new AtomicInteger(0);
+        var totalVideoCommentsAdded = new AtomicInteger(0);
+
+        var reportIds = getRelevantReportIds(report.getGameNumber(), report.getCoachId());
+
+        dto.replies().forEach(reply -> {
+            if (isBlank(reply.reply())) {
+                return;
+            }
+
+            if (reportVideoComments.containsKey(reply.commentId()) || reportVideoCommentRefs.containsKey(reply.commentId())) {
+                reportVideoCommentReplyDao.insert(new ReportVideoCommentReply(null,
+                                                                              reply.commentId(),
+                                                                              reply.reply(),
+                                                                              DateUtil.now(),
+                                                                              user.id()));
+                totalRepliesAdded.incrementAndGet();
+            } else {
+                log.error("reply to unknown comment id %d".formatted(reply.commentId()));
+            }
+        });
+
+        dto.comments().forEach(comment -> {
+            if (isBlank(comment.comment())) {
+                return;
+            }
+            var newReportVideoComment = new ReportVideoComment(null,
+                                                               report.getId(),
+                                                               comment.timestampInSeconds(),
+                                                               comment.comment(),
+                                                               DateUtil.now(),
+                                                               user.id(),
+                                                               false);
+            reportVideoCommentDao.insert(newReportVideoComment);
+            totalVideoCommentsAdded.incrementAndGet();
+
+            // add references to other reports
+            reportIds.stream()
+                     .filter(id -> !Objects.equals(id, report.getId()))
+                     .forEach(id -> reportVideoCommentRefDao.insert(new ReportVideoCommentRef(id, newReportVideoComment.getId(), false)));
+        });
+
+        // TODO send mail to relevant recipients
+    }
+
+    public Set<Long> getRelevantReportIds(String gameNumber, Long coachId) {
+        return reportDao.fetchByGameNumber(gameNumber).stream()
+                        .filter(report -> Objects.equals(report.getCoachId(), coachId))
+                        .map(Report::getId)
+                        .collect(toSet());
     }
 }

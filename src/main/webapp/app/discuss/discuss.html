@@ -8,7 +8,7 @@
         <mat-card appearance="filled">
             <mat-card-actions class="actions-container">
                 <button mat-flat-button (click)="finishReply()" [disabled]="saving() || !unsavedChanges()">Finish Replying</button>
-                <button mat-stroked-button (click)="view()">View Report</button>
+                <button mat-stroked-button (click)="view()" [disabled]="saving() || unsavedChanges()">View Report</button>
             </mat-card-actions>
         </mat-card>
 
@@ -50,47 +50,59 @@
                                     </mat-card-title>
                                 </mat-card-header>
                                 <mat-card-content>
-                                    @if (videoComment.id) {
-                                        <p>{{ videoComment.comment }}</p>
-                                        @if (videoComment.replies.length > 0 || newReplies().length > 0) {
-                                            <hr/>
-                                        }
-                                        @for (reply of videoComment.replies; track reply) {
-                                            <div class="reply-container">
-                                                <div class="reply-detail-container" [class]="reply.id === 0 ? 'new-reply' : ''">
-                                                    <span class="repliedBy">{{ reply.createdBy }}</span>
-                                                    <span class="repliedAt">{{ reply.createdAt | date:'dd.MM.yyyy' }}</span>
-                                                    @if (reply.id === 0) {
-                                                        <button mat-icon-button (click)="deleteReply(videoComment, reply)">
-                                                            <mat-icon>delete</mat-icon>
-                                                        </button>
-                                                    }
-                                                </div>
-                                                <p class="reply">{{ reply.reply }}</p>
+                                    <p>{{ videoComment.comment }}</p>
+                                    @if (videoComment.replies.length > 0) {
+                                        <hr/>
+                                    }
+                                    @for (reply of videoComment.replies; track reply) {
+                                        <div class="reply-container">
+                                            <div class="reply-detail-container" [class]="reply.id === 0 ? 'new-reply' : ''">
+                                                <span class="repliedBy">{{ reply.createdBy }}</span>
+                                                <span class="repliedAt">{{ reply.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                                                @if (reply.id === 0) {
+                                                    <button mat-icon-button (click)="deleteReply(videoComment, reply)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                }
                                             </div>
-                                        }
-                                    } @else {
-                                        <mat-form-field appearance="outline">
-                                            <mat-label>Comment</mat-label>
-                                            <textarea [(ngModel)]="videoComment.comment"
-                                                      (ngModelChange)="onChange()"
-                                                      maxlength="1024"
-                                                      cdkAutosizeMaxRows="5"
-                                                      cdkAutosizeMinRows="1"
-                                                      cdkTextareaAutosize
-                                                      matInput></textarea>
-                                        </mat-form-field>
+                                            <p class="reply">{{ reply.reply }}</p>
+                                        </div>
                                     }
                                 </mat-card-content>
                                 <mat-card-actions class="actions-container">
                                     <button (click)="play(videoComment.timestampInSeconds)" mat-stroked-button>
                                         Jump to Scene
                                     </button>
-                                    @if (videoComment.id) {
-                                        <button (click)="reply(videoComment)" mat-stroked-button>
-                                            Reply
-                                        </button>
-                                    }
+                                    <button (click)="reply(videoComment)" mat-stroked-button>
+                                        Reply
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        }
+
+                        @for (newVideoComment of newComments(); track newVideoComment) {
+                            <mat-card appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-title class="title-container">
+                                        <div>New Video Comment</div>
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Comment</mat-label>
+                                        <textarea [(ngModel)]="newVideoComment.comment"
+                                                  (ngModelChange)="onChange()"
+                                                  maxlength="1024"
+                                                  cdkAutosizeMaxRows="5"
+                                                  cdkAutosizeMinRows="1"
+                                                  cdkTextareaAutosize
+                                                  matInput></textarea>
+                                    </mat-form-field>
+                                </mat-card-content>
+                                <mat-card-actions class="actions-container">
+                                    <button (click)="play(newVideoComment.timestampInSeconds)" mat-stroked-button>
+                                        Jump to Scene
+                                    </button>
                                 </mat-card-actions>
                             </mat-card>
                         }
