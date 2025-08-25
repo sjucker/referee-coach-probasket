@@ -3,7 +3,7 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportType, ReportVideoCommentDTO} from '../../rest';
+import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportType, ReportVideoCommentDTO, TagDTO} from '../../rest';
 import {PATH_VIEW} from '../app.routes';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -24,10 +24,12 @@ import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 import {GameInfo} from "../components/game-info/game-info";
 import {YouTubePlayer} from "@angular/youtube-player";
 import {MatCheckbox} from "@angular/material/checkbox";
+import {TagSelection} from "../tag-selection/tag-selection";
+import {Observable, of, share} from "rxjs";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo, YouTubePlayer, MatCheckbox],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo, YouTubePlayer, MatCheckbox, TagSelection],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -58,6 +60,8 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     protected readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
     protected readonly videoCommentsContainer = viewChild<ElementRef<HTMLDivElement>>('videoCommentsContainer');
 
+    protected readonly availableTags: Observable<TagDTO[]> = of([]);
+
     @HostListener('window:beforeunload', ['$event'])
     handleClose($event: BeforeUnloadEvent) {
         if (this.unsavedChanges()) {
@@ -76,6 +80,8 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
             }
             this.fetchReport(eid);
         });
+
+        this.availableTags = this.http.get<TagDTO[]>(`/api/tag`).pipe(share())
     }
 
     ngOnInit(): void {
@@ -282,5 +288,16 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
         return false;
         // TODO
         // return this.report!.otherReportees.length > 0 && !!videoComment.id
+    }
+
+
+    selectTag(videoComment: ReportVideoCommentDTO, tag: TagDTO) {
+        this.onChange();
+        videoComment.tags.push(tag);
+    }
+
+    removeTag(videoComment: ReportVideoCommentDTO, tag: TagDTO) {
+        this.onChange();
+        videoComment.tags.splice(videoComment.tags.indexOf(tag), 1);
     }
 }

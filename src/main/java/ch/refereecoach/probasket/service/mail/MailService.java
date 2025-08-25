@@ -43,6 +43,7 @@ public class MailService {
             if (properties.isOverrideRecipient()) {
                 simpleMessage.setTo(properties.getOverrideRecipientMail());
                 simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(reportee.email()));
+                log.info("override recipient mail: {}", properties.getOverrideRecipientMail());
             } else {
                 simpleMessage.setTo(reportee.email());
                 // make sure that copy-receiver does not receive mail twice when he is the coach
@@ -109,6 +110,7 @@ public class MailService {
             if (properties.isOverrideRecipient()) {
                 simpleMessage.setTo(properties.getOverrideRecipientMail());
                 simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(user.email()));
+                log.info("override recipient mail: {}", properties.getOverrideRecipientMail());
             } else {
                 simpleMessage.setTo(user.email());
                 // make sure that copy-receiver does not receive mail twice when he is the coach

@@ -22,6 +22,7 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentTag;
 import ch.refereecoach.probasket.service.basketplan.BasketplanService;
 import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.DateUtil;
@@ -31,7 +32,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
@@ -166,7 +166,8 @@ public class ReportService {
 
                         });
 
-        var videoCommentsToInsert = new ArrayList<ReportVideoComment>();
+        var existingVideoComments = reportVideoCommentDao.fetchByReportId(report.getId());
+
         var videoCommentsToUpdate = new HashMap<Long, ReportVideoCommentDTO>();
         var videoCommentRefsToUpdate = new HashMap<Long, ReportVideoCommentDTO>();
         dto.videoComments()
@@ -176,27 +177,30 @@ public class ReportService {
                } else if (videoComment.id() == null) {
                    // create
                    if (videoComment.timestampInSeconds() != null && isNotBlank(videoComment.comment())) {
-                       videoCommentsToInsert.add(new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply()));
+                       var newVideoComment = new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply());
+                       reportVideoCommentDao.insert(newVideoComment);
+
+                       videoComment.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(newVideoComment.getId(), tag.id())));
                    }
                } else {
                    // update
                    videoCommentsToUpdate.put(videoComment.id(), videoComment);
                }
            });
-        reportVideoCommentDao.fetchByReportId(report.getId())
-                             .forEach(reportVideoComment -> {
-                                 var reportVideoCommentDTO = videoCommentsToUpdate.get(reportVideoComment.getId());
-                                 if (reportVideoCommentDTO != null) {
-                                     reportVideoComment.setTimestampInSeconds(reportVideoCommentDTO.timestampInSeconds());
-                                     reportVideoComment.setComment(reportVideoCommentDTO.comment());
-                                     reportVideoComment.setRequiresReply(reportVideoCommentDTO.requiresReply());
-                                     reportVideoCommentDao.update(reportVideoComment);
-                                 } else {
-                                     reportVideoCommentDao.delete(reportVideoComment);
-                                 }
-                             });
+        existingVideoComments.forEach(reportVideoComment -> {
+            var reportVideoCommentDTO = videoCommentsToUpdate.get(reportVideoComment.getId());
+            if (reportVideoCommentDTO != null) {
+                reportVideoComment.setTimestampInSeconds(reportVideoCommentDTO.timestampInSeconds());
+                reportVideoComment.setComment(reportVideoCommentDTO.comment());
+                reportVideoComment.setRequiresReply(reportVideoCommentDTO.requiresReply());
+                reportVideoCommentDao.update(reportVideoComment);
 
-        reportVideoCommentDao.insert(videoCommentsToInsert);
+                reportVideoCommentTagDao.delete(reportVideoCommentTagDao.fetchByReportVideoCommentId(reportVideoComment.getId()));
+                reportVideoCommentDTO.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(reportVideoComment.getId(), tag.id())));
+            } else {
+                reportVideoCommentDao.delete(reportVideoComment);
+            }
+        });
 
         reportVideoCommentRefDao.fetchByReportId(report.getId())
                                 .forEach(reportVideoCommentRef -> {

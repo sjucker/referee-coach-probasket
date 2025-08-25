@@ -161,7 +161,7 @@ export interface ReportVideoCommentReplyDTO {
 
 export interface TagDTO {
     id: number;
-    tag: string;
+    name: string;
 }
 
 export type DateAsString = string;
