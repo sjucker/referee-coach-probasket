@@ -1,3 +1,16 @@
-.container {
-  padding: 16px;
+@use '../../variables';
+@use '../../responsive';
+
+.search-container {
+  display: flex;
+  flex-direction: column;
+
+  @include responsive.responsive('gt-md') {
+    flex-direction: row;
+    gap: 20px;
+  }
+}
+
+table {
+  width: 100%;
 }

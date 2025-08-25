@@ -164,6 +164,21 @@ export interface TagDTO {
     name: string;
 }
 
+export interface TagOverviewDTO {
+    gameNumber: string;
+    competition: string;
+    date: DateAsString;
+    timestampInSeconds: number;
+    comment: string;
+    youtubeId: string;
+    tags: string;
+}
+
+export interface TagSearchResultDTO {
+    items: TagOverviewDTO[];
+    total: number;
+}
+
 export type DateAsString = string;
 
 export enum UserRole {

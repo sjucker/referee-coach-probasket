@@ -69,3 +69,19 @@ mat-form-field {
 mat-card {
   margin: variables.$padding;
 }
+
+.show-gt-sm {
+  display: none;
+
+  @include responsive.responsive(gt-sm) {
+    display: table-cell;
+  }
+}
+
+.show-gt-xs {
+  display: none;
+
+  @include responsive.responsive(gt-xs) {
+    display: table-cell;
+  }
+}
