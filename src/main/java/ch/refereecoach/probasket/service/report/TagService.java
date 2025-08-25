@@ -38,7 +38,7 @@ public class TagService {
     public TagSearchResultDTO findVideoCommentsForTags(List<TagDTO> tags, int page, int pageSize) {
         var stopWatch = new StopWatch();
 
-        var tagsField = listAgg(TAG.NAME).withinGroupOrderBy(TAG.ID).as("tags");
+        var tagsField = listAgg(TAG.NAME, ", ").withinGroupOrderBy(TAG.ID).as("tags");
         var items = jooqDsl.select(REPORT_VIDEO_COMMENT.ID,
                                    REPORT_VIDEO_COMMENT.TIMESTAMP_IN_SECONDS,
                                    REPORT_VIDEO_COMMENT.COMMENT,
