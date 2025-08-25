@@ -12,7 +12,6 @@ public class BasketplanAuthenticationService {
 
         return switch (toRootLowerCase(username)) {
             case "caspar.schaudt", "stefan.jucker", "nicolas.castro", "jovan.ljubanic" -> password.equals("pass");
-            // TODO add more
             default -> false;
         };
     }

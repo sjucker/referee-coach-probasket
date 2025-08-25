@@ -253,12 +253,12 @@ public class ReportService {
     }
 
     public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, String username) {
-        var user = userService.getByBasketplanUsername(username);
+        var commenter = userService.getByBasketplanUsername(username);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
-        // TODO dürfen referee-coaches ach zu anderen reports schreiben?
-        if (!Objects.equals(report.getCoachId(), user.id()) && !Objects.equals(report.getReporteeId(), user.id())) {
-            throw new IllegalStateException("user %s is not allowed to reply to this report!".formatted(user.username()));
+        // TODO(caspar) dürfen referee-coaches ach zu anderen reports schreiben?
+        if (!Objects.equals(report.getCoachId(), commenter.id()) && !Objects.equals(report.getReporteeId(), commenter.id())) {
+            throw new IllegalStateException("user %s is not allowed to reply to this report!".formatted(commenter.username()));
         }
 
         var reportVideoComments = reportVideoCommentDao.fetchByReportId(report.getId()).stream().collect(toMap(ReportVideoComment::getId, identity()));
@@ -279,7 +279,7 @@ public class ReportService {
                                                                               reply.commentId(),
                                                                               reply.reply(),
                                                                               DateUtil.now(),
-                                                                              user.id()));
+                                                                              commenter.id()));
                 totalRepliesAdded.incrementAndGet();
             } else {
                 log.error("reply to unknown comment id %d".formatted(reply.commentId()));
@@ -295,7 +295,7 @@ public class ReportService {
                                                                comment.timestampInSeconds(),
                                                                comment.comment(),
                                                                DateUtil.now(),
-                                                               user.id(),
+                                                               commenter.id(),
                                                                false);
             reportVideoCommentDao.insert(newReportVideoComment);
             totalVideoCommentsAdded.incrementAndGet();
@@ -306,7 +306,22 @@ public class ReportService {
                      .forEach(id -> reportVideoCommentRefDao.insert(new ReportVideoCommentRef(id, newReportVideoComment.getId(), false)));
         });
 
-        // TODO send mail to relevant recipients
+        if (totalRepliesAdded.get() > 0 || totalVideoCommentsAdded.get() > 0) {
+            reportIds.stream()
+                     .filter(id -> !Objects.equals(id, report.getId()))
+                     .forEach(id -> {
+                         var otherReport = reportDao.fetchOneById(id);
+                         var referee = userService.getById(otherReport.getReporteeId());
+
+                         mailService.sendNewDiscussionMail(commenter.fullName(), referee, otherReport);
+                     });
+
+            if (!Objects.equals(report.getCoachId(), commenter.id())) {
+                // send to coach as well
+                var coach = userService.getById(report.getCoachId());
+                mailService.sendNewDiscussionMail(commenter.fullName(), coach, report);
+            }
+        }
     }
 
     public Set<Long> getRelevantReportIds(String gameNumber, Long coachId) {
