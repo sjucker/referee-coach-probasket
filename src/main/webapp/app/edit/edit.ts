@@ -300,4 +300,8 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
         this.onChange();
         videoComment.tags.splice(videoComment.tags.indexOf(tag), 1);
     }
+
+    tagNames(videoComment: ReportVideoCommentDTO) {
+        return videoComment.tags.map(t => t.name).join(', ');
+    }
 }
