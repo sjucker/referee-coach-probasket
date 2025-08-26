@@ -38,19 +38,17 @@ public class BasketplanAuthenticationProvider implements AuthenticationProvider 
         var username = authentication.getName();
         var password = authentication.getCredentials().toString();
 
-        if (basketplanAuthenticationService.authenticate(username, password)) {
-            var login = loginDao.fetchOptionalByBasketplanUsername(username).orElseThrow(() -> {
-                log.error("basketplan-user {} not found in database", username);
-                return new UsernameNotFoundException("User not found");
-            });
+        var personId = basketplanAuthenticationService.authenticate(username, password).orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
-            login.setLastLogin(now());
-            loginDao.update(login);
+        var login = loginDao.fetchOptionalById(personId).orElseThrow(() -> {
+            log.error("basketplan-user {} with personId {} not found in database", username, personId);
+            return new UsernameNotFoundException("User not found");
+        });
 
-            return new UsernamePasswordAuthenticationToken(username, password, getAuthorities(login));
-        } else {
-            throw new BadCredentialsException("Invalid username or password");
-        }
+        login.setLastLogin(now());
+        loginDao.update(login);
+
+        return new UsernamePasswordAuthenticationToken(username, password, getAuthorities(login));
     }
 
     private List<GrantedAuthority> getAuthorities(Login login) {

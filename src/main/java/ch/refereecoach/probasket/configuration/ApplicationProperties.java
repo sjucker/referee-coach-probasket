@@ -16,4 +16,5 @@ public class ApplicationProperties {
     private String bccMail;
     private String ccMail;
     private String jwtSecret;
+    private String basketplanApiKey;
 }
