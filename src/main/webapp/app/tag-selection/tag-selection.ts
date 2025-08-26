@@ -21,6 +21,7 @@ export class TagSelection implements OnInit {
     allTags: TagDTO[] = [];
 
     readonly initialSelectedTags = input<TagDTO[]>([]);
+    readonly disabled = input(false);
 
     selectedTags: TagDTO[] = [];
 
@@ -29,7 +30,7 @@ export class TagSelection implements OnInit {
 
     filteredTags: TagDTO[] = [];
     tagController = new FormControl('');
-    
+
     ngOnInit(): void {
         this.availableTags().subscribe({
             next: value => {

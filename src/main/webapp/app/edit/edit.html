@@ -134,7 +134,8 @@
                                     <app-tag-selection [availableTags]="availableTags"
                                                        [initialSelectedTags]="videoComment.tags"
                                                        (removed)="removeTag(videoComment, $event)"
-                                                       (selected)="selectTag(videoComment, $event)"></app-tag-selection>
+                                                       (selected)="selectTag(videoComment, $event)"
+                                                       [disabled]="videoComment.reference"></app-tag-selection>
                                 </mat-card-content>
                                 <mat-card-actions class="actions-container">
                                     <button (click)="jumpTo(videoComment.timestampInSeconds)" mat-stroked-button>
