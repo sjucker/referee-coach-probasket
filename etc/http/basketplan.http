@@ -1,0 +1,7 @@
+GET https://www.basketplan.ch/showRefereeDataXML.do?federationId=10&validAfterDate=2024-05-01&xmlView=ref
+refApiKey: {{basketplan-api-key}}
+
+###
+
+GET https://www.basketplan.ch/authorizeUserXML.do?userName={{basketplan-username}}&password={{basketplan-password-md5}}&xmlView=ref
+refApiKey: {{basketplan-api-key}}
