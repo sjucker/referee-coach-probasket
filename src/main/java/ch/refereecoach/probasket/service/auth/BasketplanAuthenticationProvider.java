@@ -5,6 +5,7 @@ import ch.refereecoach.probasket.jooq.tables.pojos.Login;
 import ch.refereecoach.probasket.service.basketplan.BasketplanAuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,17 +39,22 @@ public class BasketplanAuthenticationProvider implements AuthenticationProvider 
         var username = authentication.getName();
         var password = authentication.getCredentials().toString();
 
-        var personId = basketplanAuthenticationService.authenticate(username, password).orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+        var userId = basketplanAuthenticationService.authenticate(username, password).orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
-        var login = loginDao.fetchOptionalById(personId).orElseThrow(() -> {
-            log.error("basketplan-user {} with personId {} not found in database", username, personId);
+        var login = loginDao.fetchOptionalById(userId).orElseThrow(() -> {
+            log.error("basketplan-user {} with userId {} not found in database", username, userId);
             return new UsernameNotFoundException("User not found");
         });
+
+        if (!login.getActive()) {
+            log.error("basketplan-user {} with userId {} is not active", username, userId);
+            throw new AccountExpiredException("User not active");
+        }
 
         login.setLastLogin(now());
         loginDao.update(login);
 
-        return new UsernamePasswordAuthenticationToken(username, password, getAuthorities(login));
+        return new UsernamePasswordAuthenticationToken(login.getId(), password, getAuthorities(login));
     }
 
     private List<GrantedAuthority> getAuthorities(Login login) {

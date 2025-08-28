@@ -23,14 +23,14 @@ public class JwtService {
     private final JwtEncoder encoder;
 
     public String generateJwtToken(Authentication authentication) {
-        var userPrincipal = (String) authentication.getPrincipal();
+        var userId = (Long) authentication.getPrincipal();
 
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
                                  .issuer("self")
                                  .issuedAt(now)
                                  .expiresAt(now.plus(365, DAYS))
-                                 .subject(userPrincipal)
+                                 .subject(String.valueOf(userId))
                                  .claim(CLAIM_AUTHORITIES, authentication.getAuthorities().stream()
                                                                          .map(GrantedAuthority::getAuthority)
                                                                          .toList())

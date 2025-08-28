@@ -17,4 +17,5 @@ public class ApplicationProperties {
     private String ccMail;
     private String jwtSecret;
     private String basketplanApiKey;
+    private Integer federationId;
 }

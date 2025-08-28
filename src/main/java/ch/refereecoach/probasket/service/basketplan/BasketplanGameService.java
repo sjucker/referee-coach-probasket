@@ -1,7 +1,8 @@
 package ch.refereecoach.probasket.service.basketplan;
 
-import ch.refereecoach.probasket.common.OfficiatingMode;
+import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
+import ch.refereecoach.probasket.service.report.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,14 +16,20 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
+import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_3PO;
+import static ch.refereecoach.probasket.util.XmlUtil.getAttributeValue;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
+import static org.apache.commons.lang3.math.NumberUtils.toLong;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BasketplanService {
+public class BasketplanGameService {
 
     private static final String SEARCH_GAMES_URL = "https://www.basketplan.ch/showSearchGames.do?actionType=searchGames&gameNumber=%s&xmlView=true&perspective=de_default";
+
+    private final UserService userService;
 
     public Optional<BasketplanGameDTO> findGameByNumber(String gameNumber) {
         try {
@@ -46,10 +53,13 @@ public class BasketplanService {
                     log.error("referees not available for game {}", gameNumber);
                 }
 
+                var referee1 = getReferee(gameNode, "referee1Id");
+                var referee2 = getReferee(gameNode, "referee2Id");
+                var referee3 = getReferee(gameNode, "referee3Id");
+
                 return Optional.of(new BasketplanGameDTO(
                         gameNumber,
-                        // TODO oder eher fullName?
-                        getAttributeValue(leagueHoldingNode, "name").orElse("?"),
+                        getAttributeValue(leagueHoldingNode, "fullName").orElse("?"),
                         LocalDate.parse(getAttributeValue(gameNode, "date").orElseThrow()),
                         "%s - %s".formatted(getAttributeValue(resultNode, "homeTeamScore").orElse("?"),
                                             getAttributeValue(resultNode, "guestTeamScore").orElse("?")),
@@ -57,13 +67,10 @@ public class BasketplanService {
                         Integer.valueOf(getAttributeValue(homeTeamNode, "id").orElseThrow()),
                         getAttributeValue(guestTeamNode, "name").orElseThrow(),
                         Integer.valueOf(getAttributeValue(guestTeamNode, "id").orElseThrow()),
-                        // TODO
-                        OfficiatingMode.OFFICIATING_2PO,
-                        // TODO
-                        4L, "Jovan Ljubanic", 3L, "Nicolas Castro", null, null,
-//                        getReferee(gameNode, "referee1Name"),
-//                        getReferee(gameNode, "referee2Name"),
-//                        getReferee(gameNode, "referee3Name"),
+                        getAttributeValue(gameNode, "referee3Id").isPresent() ? OFFICIATING_3PO : OFFICIATING_2PO,
+                        referee1.map(UserDTO::id).orElse(null), referee1.map(UserDTO::fullName).orElse(null),
+                        referee2.map(UserDTO::id).orElse(null), referee2.map(UserDTO::fullName).orElse(null),
+                        referee3.map(UserDTO::id).orElse(null), referee3.map(UserDTO::fullName).orElse(null),
                         getAttributeValue(gameNode, "videoLink").orElse(null)
                 ));
             }
@@ -75,8 +82,16 @@ public class BasketplanService {
         return Optional.empty();
     }
 
-    private Optional<String> getAttributeValue(Node parentNode, String name) {
-        var node = parentNode.getAttributes().getNamedItem(name);
-        return node != null ? Optional.ofNullable(node.getNodeValue()) : Optional.empty();
+    private Optional<UserDTO> getReferee(Node gameNode, String name) {
+        Optional<String> refereeId = getAttributeValue(gameNode, name);
+        if (refereeId.isPresent()) {
+            Optional<UserDTO> referee = userService.findById(toLong(refereeId.get()));
+            if (referee.isEmpty()) {
+                log.error("referee '{}' not found in database", refereeId.get());
+            }
+            return referee;
+        }
+        return Optional.empty();
     }
+
 }

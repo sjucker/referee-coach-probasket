@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
+import static org.apache.commons.lang3.math.NumberUtils.toLong;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
@@ -50,7 +51,7 @@ public class ReportEndpoint {
                                                         @RequestParam int pageSize) {
         log.info("GET /api/report?from={}&to={}&filter={}&page={}&pageSize={}", from, to, filter, page, pageSize);
 
-        return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, jwt.getSubject()));
+        return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, toLong(jwt.getSubject())));
     }
 
     @GetMapping("/referee/{externalId}")
@@ -60,7 +61,7 @@ public class ReportEndpoint {
         log.info("GET /api/report/{} {}", externalId, jwt.getSubject());
 
         try {
-            return ResponseEntity.of(reportSearchService.findRefereeReportByExternalId(externalId, jwt.getSubject()));
+            return ResponseEntity.of(reportSearchService.findRefereeReportByExternalId(externalId, toLong(jwt.getSubject())));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(FORBIDDEN).build();
         }
@@ -73,8 +74,7 @@ public class ReportEndpoint {
                                              @RequestBody @Valid RefereeReportDTO dto) {
         log.info("PUT /api/report/{} {}", externalId, jwt.getSubject());
 
-        reportService.updateRefereeReport(externalId, dto, jwt.getSubject());
-
+        reportService.updateRefereeReport(externalId, dto, toLong(jwt.getSubject()));
         return ResponseEntity.ok().build();
     }
 
@@ -84,7 +84,7 @@ public class ReportEndpoint {
                                                                      @RequestBody @Valid CreateRefereeReportDTO dto) {
         log.info("POST /api/report/referee {} {}", dto, jwt.getSubject());
 
-        return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), jwt.getSubject()));
+        return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), toLong(jwt.getSubject())));
     }
 
     @PostMapping(value = "/referee/{externalId}/finish")
@@ -93,7 +93,7 @@ public class ReportEndpoint {
                                              @PathVariable String externalId) {
         log.info("POST /api/report/referee/{}/finish {}", externalId, jwt.getSubject());
 
-        reportService.finishRefereeReport(externalId, jwt.getSubject());
+        reportService.finishRefereeReport(externalId, toLong(jwt.getSubject()));
 
         return ResponseEntity.ok().build();
     }
@@ -105,7 +105,7 @@ public class ReportEndpoint {
                                                                    @RequestBody @Valid CopyRefereeReportDTO dto) {
         log.info("POST /api/report/referee/{}/copy {} {}", externalId, dto, jwt.getSubject());
 
-        return ResponseEntity.ok(reportService.copyReport(externalId, dto, jwt.getSubject()));
+        return ResponseEntity.ok(reportService.copyReport(externalId, dto, toLong(jwt.getSubject())));
     }
 
     @PostMapping(value = "/referee/{externalId}/discussion")
@@ -114,7 +114,7 @@ public class ReportEndpoint {
                                                     @PathVariable String externalId,
                                                     @RequestBody @Valid CreateRefereeReportDiscussionReplyDTO dto) {
         log.info("POST /api/report/referee/{}/discussion {} {}", externalId, dto, jwt.getSubject());
-        reportService.saveDiscussionReply(externalId, dto, jwt.getSubject());
+        reportService.saveDiscussionReply(externalId, dto, toLong(jwt.getSubject()));
 
         return ResponseEntity.ok().build();
     }

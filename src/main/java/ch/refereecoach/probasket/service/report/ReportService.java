@@ -23,7 +23,7 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentTag;
-import ch.refereecoach.probasket.service.basketplan.BasketplanService;
+import ch.refereecoach.probasket.service.basketplan.BasketplanGameService;
 import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -61,20 +61,20 @@ public class ReportService {
     private final ReportVideoCommentTagDao reportVideoCommentTagDao;
     private final ReportVideoCommentRefDao reportVideoCommentRefDao;
     private final ReportVideoCommentReplyDao reportVideoCommentReplyDao;
-    private final BasketplanService basketplanService;
+    private final BasketplanGameService basketplanGameService;
     private final UserService userService;
     private final MailService mailService;
 
-    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, String username) {
-        var coach = userService.getByBasketplanUsername(username);
+    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, Long userId) {
+        var coach = userService.getById(userId);
         var reportee = userService.getById(reporteeId);
 
         var reportType = videoUrl == null ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
         if (!coach.hasRequiredRole(reportType)) {
-            throw new IllegalStateException("user %s is not a coach!".formatted(coach.username()));
+            throw new IllegalStateException("user %s is not a coach!".formatted(coach.fullName()));
         }
-        var game = basketplanService.findGameByNumber(gameNumber)
-                                    .orElseThrow(() -> new IllegalArgumentException("game %s not found".formatted(gameNumber)));
+        var game = basketplanGameService.findGameByNumber(gameNumber)
+                                        .orElseThrow(() -> new IllegalArgumentException("game %s not found".formatted(gameNumber)));
 
         if (!game.containsReferee(reporteeId)) {
             throw new IllegalArgumentException("reportee %d not found in game %s".formatted(reporteeId, gameNumber));
@@ -137,11 +137,11 @@ public class ReportService {
         return uuid;
     }
 
-    public void updateRefereeReport(String externalId, RefereeReportDTO dto, String username) {
-        var coach = userService.getByBasketplanUsername(username);
+    public void updateRefereeReport(String externalId, RefereeReportDTO dto, Long userId) {
+        var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
         if (!report.getCoachId().equals(coach.id())) {
-            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
         }
 
         if (report.getFinishedAt() != null) {
@@ -219,12 +219,12 @@ public class ReportService {
         reportDao.update(report);
     }
 
-    public void finishRefereeReport(String externalId, String username) {
-        var coach = userService.getByBasketplanUsername(username);
+    public void finishRefereeReport(String externalId, Long userId) {
+        var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
         if (!report.getCoachId().equals(coach.id())) {
-            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
         }
 
         if (report.getFinishedAt() != null) {
@@ -238,15 +238,15 @@ public class ReportService {
         mailService.sendFinishedReportMail(report);
     }
 
-    public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, String username) {
-        var coach = userService.getByBasketplanUsername(username);
+    public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, Long userId) {
+        var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
         if (!report.getCoachId().equals(coach.id())) {
-            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.username()));
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
         }
 
-        var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), username);
+        var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), userId);
 
         // copy source video-comments as references
         reportVideoCommentRefDao.insert(reportVideoCommentDao.fetchByReportId(report.getId()).stream()
@@ -256,13 +256,13 @@ public class ReportService {
         return newReport;
     }
 
-    public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, String username) {
-        var commenter = userService.getByBasketplanUsername(username);
+    public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, Long userId) {
+        var commenter = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
         // TODO(caspar) dürfen referee-coaches ach zu anderen reports schreiben?
         if (!Objects.equals(report.getCoachId(), commenter.id()) && !Objects.equals(report.getReporteeId(), commenter.id())) {
-            throw new IllegalStateException("user %s is not allowed to reply to this report!".formatted(commenter.username()));
+            throw new IllegalStateException("user %s is not allowed to reply to this report!".formatted(commenter.fullName()));
         }
 
         var reportVideoComments = reportVideoCommentDao.fetchByReportId(report.getId()).stream().collect(toMap(ReportVideoComment::getId, identity()));

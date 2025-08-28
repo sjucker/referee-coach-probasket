@@ -61,7 +61,7 @@ public class BasketplanAuthenticationService {
                 log.warn("Basketplan authorize call returned empty body");
             }
         } catch (Exception e) {
-            log.warn("Failed to call Basketplan authorize endpoint via WebClient", e);
+            log.error("Failed to call Basketplan authorize endpoint via WebClient", e);
         }
 
         return Optional.empty();

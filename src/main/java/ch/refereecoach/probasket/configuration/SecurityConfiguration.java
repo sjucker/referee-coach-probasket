@@ -90,7 +90,7 @@ public class SecurityConfiguration {
     }
 
     private List<SimpleGrantedAuthority> getCurrentAuthorities(Jwt jwt) {
-        var login = userService.findByBasketplanUsername(jwt.getSubject())
+        var login = userService.findById(Long.valueOf(jwt.getSubject()))
                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + jwt.getSubject()));
 
         var currentAuthorities = new ArrayList<SimpleGrantedAuthority>();

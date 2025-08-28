@@ -57,8 +57,8 @@ public class ReportSearchService {
     private final ReportDao reportDao;
     private final UserService userService;
 
-    public Optional<RefereeReportDTO> findRefereeReportByExternalId(String externalId, String username) {
-        var user = userService.getByBasketplanUsername(username);
+    public Optional<RefereeReportDTO> findRefereeReportByExternalId(String externalId, Long userId) {
+        var user = userService.getById(userId);
 
         if (reportDao.fetchOptionalByExternalId(externalId).isEmpty()) {
             return Optional.empty();
@@ -69,7 +69,7 @@ public class ReportSearchService {
                    .where(REPORT.EXTERNAL_ID.eq(externalId).and(getUserCondition(user)))
                    .fetchOptional()
                    .isEmpty()) {
-            log.error("user {} tried to access report {} but is not allowed to!", username, externalId);
+            log.error("user {} tried to access report {} but is not allowed to!", user.fullName(), externalId);
             throw new IllegalArgumentException("not allowed!");
         }
 
@@ -204,10 +204,10 @@ public class ReportSearchService {
     // TODO findTrainerReport
     // TODO findGameDiscussion
 
-    public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, String username) {
+    public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, Long userId) {
         var stopWatch = new StopWatch();
 
-        var user = userService.getByBasketplanUsername(username);
+        var user = userService.getById(userId);
 
         var condition = REPORT.GAME_DATE.ge(from).and(REPORT.GAME_DATE.le(to));
         if (isNotBlank(filter)) {
@@ -243,8 +243,8 @@ public class ReportSearchService {
 
         var count = jooqDsl.fetchCount(REPORT, condition);
 
-        log.info("search for from={}, to={}, filter={}, page={}, pageSize={}, username={} took {}",
-                 from, to, filter, page, pageSize, username, stopWatch);
+        log.info("search for from={}, to={}, filter={}, page={}, pageSize={}, user={} took {}",
+                 from, to, filter, page, pageSize, user.fullName(), stopWatch);
 
         return new ReportSearchResultDTO(items, count);
     }

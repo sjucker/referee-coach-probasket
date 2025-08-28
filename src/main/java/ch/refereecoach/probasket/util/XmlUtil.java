@@ -19,4 +19,9 @@ public class XmlUtil {
         return Optional.empty();
     }
 
+    public static Optional<String> getAttributeValue(Node parentNode, String name) {
+        var node = parentNode.getAttributes().getNamedItem(name);
+        return node != null ? Optional.ofNullable(node.getNodeValue()) : Optional.empty();
+    }
+
 }

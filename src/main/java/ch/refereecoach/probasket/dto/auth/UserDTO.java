@@ -5,7 +5,6 @@ import ch.refereecoach.probasket.common.ReportType;
 import jakarta.validation.constraints.NotNull;
 
 public record UserDTO(@NotNull Long id,
-                      @NotNull String username,
                       @NotNull String firstName,
                       @NotNull String lastName,
                       @NotNull String email,

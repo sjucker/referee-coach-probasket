@@ -17,16 +17,6 @@ public class UserService {
 
     private final LoginDao loginDao;
 
-    public UserDTO getByBasketplanUsername(String username) {
-        return findByBasketplanUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("user %s not found".formatted(username)));
-    }
-
-    public Optional<UserDTO> findByBasketplanUsername(String username) {
-        return loginDao.fetchOptionalByBasketplanUsername(username)
-                       .map(UserService::toDTO);
-    }
-
     public UserDTO getById(Long id) {
         return findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("user %s not found".formatted(id)));
@@ -38,11 +28,10 @@ public class UserService {
 
     private static UserDTO toDTO(Login it) {
         return new UserDTO(it.getId(),
-                           it.getBasketplanUsername(),
                            it.getFirstname(),
                            it.getLastname(),
                            it.getEmail(),
-                           Rank.valueOf(it.getRank()),
+                           Rank.of(it.getRank()).orElse(null),
                            it.getRefereeCoach(),
                            it.getReferee(),
                            it.getTrainerCoach(),

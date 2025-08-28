@@ -5,3 +5,8 @@ refApiKey: {{basketplan-api-key}}
 
 GET https://www.basketplan.ch/authorizeUserXML.do?userName={{basketplan-username}}&password={{basketplan-password-md5}}&xmlView=ref
 refApiKey: {{basketplan-api-key}}
+
+
+###
+
+GET https://www.basketplan.ch/showSearchGames.do?actionType=searchGames&gameNumber=24-06515&xmlView=true&perspective=de_default
