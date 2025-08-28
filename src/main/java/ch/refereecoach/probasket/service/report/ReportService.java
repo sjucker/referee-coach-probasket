@@ -317,13 +317,13 @@ public class ReportService {
                          var otherReport = reportDao.fetchOneById(id);
                          var referee = userService.getById(otherReport.getReporteeId());
 
-                         mailService.sendNewDiscussionMail(commenter.fullName(), referee, otherReport);
+                         mailService.sendNewDiscussionMail(commenter, referee, otherReport);
                      });
 
             if (!Objects.equals(report.getCoachId(), commenter.id())) {
                 // send to coach as well
                 var coach = userService.getById(report.getCoachId());
-                mailService.sendNewDiscussionMail(commenter.fullName(), coach, report);
+                mailService.sendNewDiscussionMail(commenter, coach, report);
             }
         }
     }

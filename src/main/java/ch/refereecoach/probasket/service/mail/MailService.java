@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,9 +43,13 @@ public class MailService {
             simpleMessage.setBcc(properties.getBccMail());
 
             if (properties.isOverrideRecipient()) {
-                simpleMessage.setTo(properties.getOverrideRecipientMail());
+                var to = properties.getOverrideRecipientMail();
+                if (isBlank(to)) {
+                    to = coach.email();
+                }
+                simpleMessage.setTo(to);
                 simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(reportee.email()));
-                log.info("override recipient mail: {}", properties.getOverrideRecipientMail());
+                log.info("override recipient mail: {}", to);
             } else {
                 simpleMessage.setTo(reportee.email());
                 // make sure that copy-receiver does not receive mail twice when he is the coach
@@ -98,25 +104,25 @@ public class MailService {
         };
     }
 
-    public void sendNewDiscussionMail(String commenter, UserDTO user, Report report) {
+    public void sendNewDiscussionMail(UserDTO commenter, UserDTO recipient, Report report) {
         var simpleMessage = new SimpleMailMessage();
         try {
-            log.info("discussion replies for referee-report with ID {}, send email to {}", report.getId(), user.email());
+            log.info("discussion replies for referee-report with ID {}, send email to {}", report.getId(), recipient.email());
 
             simpleMessage.setSubject("New Video Report Discussion");
             simpleMessage.setFrom(environment.getRequiredProperty("spring.mail.username"));
             simpleMessage.setBcc(properties.getBccMail());
 
             if (properties.isOverrideRecipient()) {
-                simpleMessage.setTo(properties.getOverrideRecipientMail());
-                simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(user.email()));
+                var to = properties.getOverrideRecipientMail();
+                if (isBlank(to)) {
+                    to = commenter.email();
+                }
+                simpleMessage.setTo(to);
+                simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(recipient.email()));
                 log.info("override recipient mail: {}", properties.getOverrideRecipientMail());
             } else {
-                simpleMessage.setTo(user.email());
-                // make sure that copy-receiver does not receive mail twice when he is the coach
-                simpleMessage.setCc(Stream.of(user.email(), properties.getCcMail())
-                                          .distinct()
-                                          .toArray(String[]::new));
+                simpleMessage.setTo(recipient.email());
             }
 
             simpleMessage.setText("""
@@ -125,7 +131,7 @@ public class MailService {
                                           %s added new replies to a video report.
                                           
                                           Please visit: %s/#/discuss/%s
-                                          """.formatted(user.firstName(), commenter, properties.getBaseUrl(), report.getExternalId()));
+                                          """.formatted(recipient.firstName(), commenter.fullName(), properties.getBaseUrl(), report.getExternalId()));
 
             mailSender.send(simpleMessage);
         } catch (MailException e) {
