@@ -89,7 +89,7 @@ public class BasketplanUserSyncService {
                              .forEach(entry -> {
                                  var login = entry.getValue();
                                  // make sure yours truly can still login even if not active anymore
-                                 if (!login.getAdmin()) {
+                                 if (!login.getAdmin() && login.getActive()) {
                                      login.setActive(false);
                                      loginDao.update(login);
                                      log.info("deactivated referee %s %s (%d)".formatted(login.getFirstname(), login.getLastname(), login.getId()));
