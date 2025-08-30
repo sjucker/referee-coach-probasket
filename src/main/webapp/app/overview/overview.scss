@@ -11,3 +11,18 @@
     gap: variables.$padding;
   }
 }
+
+.reports-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  table {
+    min-width: 600px;
+    border-collapse: separate;
+  }
+
+  .current-user {
+    color: var(--mat-sys-primary);
+  }
+}

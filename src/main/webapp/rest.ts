@@ -8,12 +8,12 @@ export interface LoginRequestDTO {
 export interface LoginResponseDTO {
     token: string;
     username: string;
+    userId: number;
     roles: UserRole[];
 }
 
 export interface UserDTO {
     id: number;
-    username: string;
     firstName: string;
     lastName: string;
     email: string;

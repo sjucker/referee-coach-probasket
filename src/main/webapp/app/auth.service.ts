@@ -13,13 +13,16 @@ export class AuthService {
 
     private readonly tokenKey = 'probasket-token';
     private readonly usernameKey = 'probasket-username';
+    private readonly userIdKey = 'probasket-user-id';
     private readonly rolesKey = 'probasket-roles';
 
     private readonly _token = signal<string | null>(this.readValue(this.tokenKey));
     private readonly _username = signal<string | null>(this.readValue(this.usernameKey));
+    private readonly _userId = signal<number | null>(this.readValue(this.userIdKey) ? parseInt(this.readValue(this.userIdKey)!) : null);
     private readonly _roles = signal<string[]>(this.readRoles());
 
     readonly token = computed(() => this._token());
+    readonly userId = computed(() => this._userId());
     readonly username = computed(() => this._username());
     readonly roles = computed(() => this._roles());
     readonly isAuthenticated = computed(() => !!this._token());
@@ -38,6 +41,9 @@ export class AuthService {
                 this._username.set(res.username);
                 this.storeValue(this.usernameKey, res.username);
 
+                this._userId.set(res.userId);
+                this.storeValue(this.userIdKey, res.userId.toString());
+
                 this._roles.set(res.roles);
                 this.storeValue(this.rolesKey, res.roles.join(','))
             })
@@ -50,6 +56,9 @@ export class AuthService {
 
         this._username.set(null);
         this.storeValue(this.usernameKey, null);
+
+        this._userId.set(null);
+        this.storeValue(this.userIdKey, null);
 
         this._roles.set([]);
         this.storeValue(this.rolesKey, null);

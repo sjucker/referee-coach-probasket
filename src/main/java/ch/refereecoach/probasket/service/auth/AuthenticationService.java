@@ -22,7 +22,7 @@ public class AuthenticationService {
 
     public LoginResponseDTO authenticate(String username, String password) throws AuthenticationException {
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return new LoginResponseDTO(jwtService.generateJwtToken(authentication), username, roles(authentication));
+        return new LoginResponseDTO(jwtService.generateJwtToken(authentication), username, (Long) authentication.getPrincipal(), roles(authentication));
     }
 
     private static List<UserRole> roles(Authentication authentication) {

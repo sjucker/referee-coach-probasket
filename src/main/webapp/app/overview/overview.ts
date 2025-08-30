@@ -318,7 +318,7 @@ export class Overview implements OnInit {
 
     get displayedColumns(): string[] {
         if (this.auth.isRefereeCoach() || this.auth.isTrainerCoach()) {
-            return ['finished', 'date', 'type', 'gameNumber', 'competition', 'teams', 'coach', 'reportee', 'edit', 'view', 'copy', 'delete'];
+            return ['finished', 'date', 'gameNumber', 'competition', 'teams', 'coach', 'reportee', 'edit', 'view', 'copy', 'delete'];
         } else {
             return ['date', 'gameNumber', 'competition', 'teams', 'coach', 'view'];
         }
@@ -335,5 +335,9 @@ export class Overview implements OnInit {
 
     isCoaching(dto: ReportOverviewDTO): boolean {
         return dto.type !== ReportType.GAME_DISCUSSION;
+    }
+
+    isCurrentUserCoachOf(dto: ReportOverviewDTO): boolean {
+        return this.auth.userId() === dto.coachId;
     }
 }
