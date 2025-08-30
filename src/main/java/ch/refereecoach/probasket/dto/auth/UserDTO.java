@@ -13,7 +13,8 @@ public record UserDTO(@NotNull Long id,
                       boolean referee,
                       boolean trainerCoach,
                       boolean trainer,
-                      boolean admin) {
+                      boolean admin,
+                      boolean active) {
 
     public boolean hasRequiredRole(ReportType reportType) {
         return switch (reportType) {

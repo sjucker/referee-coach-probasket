@@ -26,7 +26,7 @@ public class UserService {
         return loginDao.fetchOptionalById(id).map(UserService::toDTO);
     }
 
-    private static UserDTO toDTO(Login it) {
+    public static UserDTO toDTO(Login it) {
         return new UserDTO(it.getId(),
                            it.getFirstname(),
                            it.getLastname(),
@@ -36,6 +36,7 @@ public class UserService {
                            it.getReferee(),
                            it.getTrainerCoach(),
                            it.getTrainer(),
-                           it.getAdmin());
+                           it.getAdmin(),
+                           it.getActive());
     }
 }

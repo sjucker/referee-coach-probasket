@@ -12,6 +12,13 @@ export interface LoginResponseDTO {
     roles: UserRole[];
 }
 
+export interface UpdateUserRolesDTO {
+    refereeCoach: boolean;
+    referee: boolean;
+    trainerCoach: boolean;
+    trainer: boolean;
+}
+
 export interface UserDTO {
     id: number;
     firstName: string;
@@ -23,6 +30,11 @@ export interface UserDTO {
     trainerCoach: boolean;
     trainer: boolean;
     admin: boolean;
+}
+
+export interface UsersSearchResultDTO {
+    items: UserDTO[];
+    total: number;
 }
 
 export interface BasketplanGameDTO {

@@ -28,6 +28,12 @@
                 <mat-icon>search</mat-icon>
                 <span>Tag Search</span>
             </button>
+            @if (auth.isAdmin()) {
+                <button type="button" mat-menu-item [routerLink]="['/', PATH_ADMIN]">
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span>Admin</span>
+                </button>
+            }
         </mat-menu>
     </mat-toolbar-row>
 </mat-toolbar>
