@@ -9,6 +9,17 @@
   `mvn clean test-compile -Djooq-codegen-skip=false`
   Or use the run configuration `generate jOOQ code`.
 
+## Releases
+
+* `npm run release`
+* Answer the prompts:
+    * next version: normally "patch"
+    * commit: yes
+    * tag: yes
+    * push: yes
+* To install release in production, merge the corresponding tag into main branch:
+    * `git merge <TAG>`, e.g. `git merge 1.2.10`
+
 ## Updates
 
 * Update Maven Parent
