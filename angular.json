@@ -28,7 +28,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/main/webapp/favicon.svg"
             ],
             "styles": [
               "src/main/webapp/styles.scss"
