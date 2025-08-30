@@ -65,7 +65,7 @@ public class ReportService {
     private final UserService userService;
     private final MailService mailService;
 
-    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, Long userId) {
+    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, long userId) {
         var coach = userService.getById(userId);
         var reportee = userService.getById(reporteeId);
 
@@ -137,7 +137,7 @@ public class ReportService {
         return uuid;
     }
 
-    public void updateRefereeReport(String externalId, RefereeReportDTO dto, Long userId) {
+    public void updateRefereeReport(String externalId, RefereeReportDTO dto, long userId) {
         var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
         if (!report.getCoachId().equals(coach.id())) {
@@ -219,7 +219,19 @@ public class ReportService {
         reportDao.update(report);
     }
 
-    public void finishRefereeReport(String externalId, Long userId) {
+    public void deleteRefereeReport(String externalId, long userId) {
+        var coach = userService.getById(userId);
+        var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+
+        if (coach.admin() || (report.getFinishedAt() == null && Objects.equals(report.getCoachId(), coach.id()))) {
+            reportDao.delete(report);
+        } else {
+            log.error("user ({}) tried to delete video report ({}), but is not authorized to do so", coach, report);
+            throw new IllegalStateException("user is not allowed to delete this video-report!");
+        }
+    }
+
+    public void finishRefereeReport(String externalId, long userId) {
         var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
@@ -238,7 +250,7 @@ public class ReportService {
         mailService.sendFinishedReportMail(report);
     }
 
-    public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, Long userId) {
+    public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, long userId) {
         var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 
@@ -256,7 +268,7 @@ public class ReportService {
         return newReport;
     }
 
-    public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, Long userId) {
+    public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, long userId) {
         var commenter = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
 

@@ -34,6 +34,7 @@ import {MatIcon} from "@angular/material/icon";
 import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
 import {CopyReportDialog, CopyReportDialogData} from "./copy-report-dialog";
+import {ConfirmDeleteDialog} from "./confirm-delete-dialog";
 
 interface RefereeSelection {
     id: number,
@@ -312,8 +313,35 @@ export class Overview implements OnInit {
     }
 
     delete(dto: ReportOverviewDTO) {
-// TODO
-        console.debug('delete', dto);
+        this.dialog.open(ConfirmDeleteDialog, {
+            data: {
+                title: 'Confirm Deletion',
+                message: `Delete report for ${dto.reportee} (game ${dto.gameNumber})?`,
+            }
+        }).afterClosed().subscribe((confirmed: boolean) => {
+            if (confirmed) {
+                this.tableLoading.set(true);
+                this.http.delete<void>(`/api/report/referee/${dto.externalId}`).subscribe({
+                    next: () => {
+                        this.snackBar.open('Report deleted', undefined, {
+                            duration: 3000,
+                            horizontalPosition: 'center',
+                            verticalPosition: 'top'
+                        });
+                        this.loadReports();
+                    },
+                    error: (err) => {
+                        this.tableLoading.set(false);
+                        const msg = err?.status === 403 ? 'Not allowed to delete this report' : 'Deletion failed';
+                        this.snackBar.open(msg, undefined, {
+                            duration: 3000,
+                            horizontalPosition: 'center',
+                            verticalPosition: 'top'
+                        });
+                    }
+                });
+            }
+        });
     }
 
     get displayedColumns(): string[] {

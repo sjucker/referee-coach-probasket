@@ -17,6 +17,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,6 +76,17 @@ public class ReportEndpoint {
         log.info("PUT /api/report/{} {}", externalId, jwt.getSubject());
 
         reportService.updateRefereeReport(externalId, dto, toLong(jwt.getSubject()));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "/referee/{externalId}")
+    @Secured({"REFEREE_COACH", "ADMIN"})
+    public ResponseEntity<Void> deleteReport(@AuthenticationPrincipal Jwt jwt,
+                                             @PathVariable String externalId) {
+        log.info("DELETE /api/report/referee/{} {}", externalId, jwt.getSubject());
+
+        reportService.deleteRefereeReport(externalId, toLong(jwt.getSubject()));
+
         return ResponseEntity.ok().build();
     }
 
