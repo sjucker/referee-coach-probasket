@@ -45,14 +45,16 @@ public class ReportEndpoint {
 
     @GetMapping
     public ResponseEntity<ReportSearchResultDTO> search(@AuthenticationPrincipal Jwt jwt,
-                                                        @RequestParam @DateTimeFormat(iso = DATE) LocalDate from,
-                                                        @RequestParam @DateTimeFormat(iso = DATE) LocalDate to,
-                                                        @RequestParam String filter,
-                                                        @RequestParam int page,
-                                                        @RequestParam int pageSize) {
-        log.info("GET /api/report?from={}&to={}&filter={}&page={}&pageSize={}", from, to, filter, page, pageSize);
+                                                       @RequestParam @DateTimeFormat(iso = DATE) LocalDate from,
+                                                       @RequestParam @DateTimeFormat(iso = DATE) LocalDate to,
+                                                       @RequestParam String filter,
+                                                       @RequestParam int page,
+                                                       @RequestParam int pageSize,
+                                                       @RequestParam String sortBy,
+                                                       @RequestParam String sortOrder) {
+        log.info("GET /api/report?from={}&to={}&filter={}&page={}&pageSize={}&sortBy={}&sortOrder={}", from, to, filter, page, pageSize, sortBy, sortOrder);
 
-        return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, toLong(jwt.getSubject())));
+        return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, sortBy, sortOrder, toLong(jwt.getSubject())));
     }
 
     @GetMapping("/referee/{externalId}")

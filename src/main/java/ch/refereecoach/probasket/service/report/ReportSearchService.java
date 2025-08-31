@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
@@ -204,7 +205,7 @@ public class ReportSearchService {
     // TODO findTrainerReport
     // TODO findGameDiscussion
 
-    public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, Long userId) {
+    public ReportSearchResultDTO search(LocalDate from, LocalDate to, String filter, int page, int pageSize, String sortBy, String sortOrder, Long userId) {
         var stopWatch = new StopWatch();
 
         var user = userService.getById(userId);
@@ -220,7 +221,7 @@ public class ReportSearchService {
 
         var items = jooqDsl.selectFrom(REPORT)
                            .where(condition)
-                           .orderBy(REPORT.GAME_DATE.desc(), REPORT.GAME_NUMBER.asc(), REPORT.REPORTEE_ID.asc())
+                           .orderBy(getSortOrder(sortBy, sortOrder))
                            .offset(page * pageSize)
                            .limit(pageSize)
                            .fetch(it -> new ReportOverviewDTO(
@@ -247,6 +248,16 @@ public class ReportSearchService {
                  from, to, filter, page, pageSize, user.fullName(), stopWatch);
 
         return new ReportSearchResultDTO(items, count);
+    }
+
+    private static SortField<?>[] getSortOrder(String sortBy, String sortOrder) {
+        boolean desc = "desc".equalsIgnoreCase(sortOrder);
+        return switch (sortBy) {
+            case "gameNumber" -> desc ? new SortField[]{REPORT.GAME_NUMBER.desc()} : new SortField[]{REPORT.GAME_NUMBER.asc()};
+            case "coach" -> desc ? new SortField[]{REPORT.COACH_NAME.desc()} : new SortField[]{REPORT.COACH_NAME.asc()};
+            case "reportee" -> desc ? new SortField[]{REPORT.REPORTEE_NAME.desc()} : new SortField[]{REPORT.REPORTEE_NAME.asc()};
+            default -> desc ? new SortField[]{REPORT.GAME_DATE.desc(), REPORT.GAME_NUMBER.asc()} : new SortField[]{REPORT.GAME_DATE.asc(), REPORT.GAME_NUMBER.asc()};
+        };
     }
 
     private Condition getUserCondition(UserDTO user) {

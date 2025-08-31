@@ -24,6 +24,7 @@ import {MatOption, MatSelect} from "@angular/material/select";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {MatSortModule, Sort} from '@angular/material/sort';
 import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
 import {PATH_EDIT, PATH_VIEW} from "../app.routes";
@@ -44,7 +45,7 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatSortModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -72,6 +73,9 @@ export class Overview implements OnInit {
     protected readonly textFilter = signal<string>('');
     protected readonly pageIndex = signal(0);
     protected readonly pageSize = signal(10);
+
+    protected readonly sortBy = signal<string>('date');
+    protected readonly sortOrder = signal<'asc' | 'desc'>('desc');
 
     protected readonly reports = signal<ReportOverviewDTO[]>([]);
     protected readonly totalReports = signal(0);
@@ -114,7 +118,9 @@ export class Overview implements OnInit {
             to: this.toDate().toISODate(),
             filter: this.textFilter(),
             page: this.pageIndex(),
-            pageSize: this.pageSize()
+            pageSize: this.pageSize(),
+            sortBy: this.sortBy(),
+            sortOrder: this.sortOrder()
         };
         sessionStorage.setItem(Overview.STORAGE_KEY, JSON.stringify(state));
     }
@@ -123,7 +129,7 @@ export class Overview implements OnInit {
 
         const raw = sessionStorage.getItem(Overview.STORAGE_KEY);
         if (!raw) return;
-        const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number };
+        const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 
         if (parsed.from) {
             const f = DateTime.fromISO(parsed.from);
@@ -141,6 +147,12 @@ export class Overview implements OnInit {
         }
         if (typeof parsed.pageSize === 'number' && parsed.pageSize > 0) {
             this.pageSize.set(parsed.pageSize);
+        }
+        if (typeof parsed.sortBy === 'string') {
+            this.sortBy.set(parsed.sortBy);
+        }
+        if (parsed.sortOrder === 'asc' || parsed.sortOrder === 'desc') {
+            this.sortOrder.set(parsed.sortOrder);
         }
     }
 
@@ -162,7 +174,9 @@ export class Overview implements OnInit {
             .set('to', toIso!)
             .set('filter', filter)
             .set('page', page)
-            .set('pageSize', pagesize);
+            .set('pageSize', pagesize)
+            .set('sortBy', this.sortBy())
+            .set('sortOrder', this.sortOrder());
 
         this.http.get<ReportSearchResultDTO>('/api/report', {params}).subscribe({
             next: result => {
@@ -185,11 +199,16 @@ export class Overview implements OnInit {
         this.loadReports();
     }
 
-    private toIsoDate(d: Date): string {
-        const year = d.getFullYear();
-        const month = (d.getMonth() + 1).toString().padStart(2, '0');
-        const day = d.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    onMatSortChange($event: Sort) {
+        if ($event.direction === '') {
+            this.sortOrder.set('desc');
+            this.sortBy.set('date');
+        } else {
+            this.sortOrder.set($event.direction);
+            this.sortBy.set($event.active);
+        }
+        this.pageIndex.set(0);
+        this.loadReports();
     }
 
     searchGame(): void {
