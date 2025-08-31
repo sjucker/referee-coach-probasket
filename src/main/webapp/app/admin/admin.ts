@@ -17,10 +17,11 @@ import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
 import {UpdateUserRolesDTO, UserDTO, UsersSearchResultDTO} from "../../rest";
 import {LoadingBar} from "../components/loading-bar/loading-bar";
 import {MatIconModule} from "@angular/material/icon";
+import {MatSortModule, Sort} from "@angular/material/sort";
 
 @Component({
     selector: 'app-admin',
-    imports: [CommonModule, FormsModule, Header, MatCardModule, MatTableModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule],
+    imports: [CommonModule, FormsModule, Header, MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule],
     templateUrl: './admin.html',
     styleUrl: './admin.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +38,8 @@ export class AdminPage {
     protected readonly loading = signal(false);
     protected readonly error = signal<string | null>(null);
     protected readonly textFilter = signal<string>('');
+    protected readonly sortBy = signal<string>('lastName');
+    protected readonly sortOrder = signal<'asc' | 'desc'>('asc');
 
     protected readonly canEdit = computed(() => this.auth.isAdmin());
 
@@ -59,7 +62,9 @@ export class AdminPage {
         const params = new HttpParams()
             .set('page', this.pageIndex())
             .set('pageSize', this.pageSize())
-            .set('filter', this.textFilter());
+            .set('filter', this.textFilter())
+            .set('sortBy', this.sortBy())
+            .set('sortOrder', this.sortOrder());
 
         this.http.get<UsersSearchResultDTO>('/api/admin/users', {params}).subscribe({
             next: (res) => {
@@ -103,5 +108,17 @@ export class AdminPage {
 
     get displayedColumns(): string[] {
         return ['name', 'email', 'rank', 'active', 'refereeCoach', 'referee', 'trainerCoach', 'trainer', 'actions'];
+    }
+
+    onMatSortChange($event: Sort) {
+        if ($event.direction === '') {
+            this.sortOrder.set('asc');
+            this.sortBy.set('lastName');
+        } else {
+            this.sortOrder.set($event.direction);
+            this.sortBy.set($event.active);
+        }
+        this.pageIndex.set(0);
+        this.load();
     }
 }

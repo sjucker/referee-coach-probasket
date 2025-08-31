@@ -3,7 +3,9 @@ package ch.refereecoach.probasket.dto.auth;
 import ch.refereecoach.probasket.common.Rank;
 import ch.refereecoach.probasket.common.ReportType;
 import jakarta.validation.constraints.NotNull;
+import lombok.experimental.FieldNameConstants;
 
+@FieldNameConstants
 public record UserDTO(@NotNull Long id,
                       @NotNull String firstName,
                       @NotNull String lastName,

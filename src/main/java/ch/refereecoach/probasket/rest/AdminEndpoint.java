@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
+
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
@@ -31,9 +33,11 @@ public class AdminEndpoint {
     @Secured({"ADMIN"})
     public ResponseEntity<UsersSearchResultDTO> users(@RequestParam int page,
                                                       @RequestParam int pageSize,
-                                                      @RequestParam(required = false, defaultValue = "") String filter) {
-        log.info("GET /api/admin/users?page={}&pageSize={}&filter={}", page, pageSize, filter);
-        return ResponseEntity.ok(adminUserService.searchUsers(page, pageSize, filter));
+                                                      @RequestParam(required = false, defaultValue = "") String filter,
+                                                      @RequestParam(required = false, defaultValue = lastName) String sortBy,
+                                                      @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        log.info("GET /api/admin/users?page={}&pageSize={}&filter={}&sortBy={}&sortOrder={}", page, pageSize, filter, sortBy, sortOrder);
+        return ResponseEntity.ok(adminUserService.searchUsers(page, pageSize, filter, sortBy, sortOrder));
     }
 
     @PutMapping("/users/{id}/roles")
