@@ -81,6 +81,7 @@ public class ReportSearchService {
                                              REPORT_COMMENT.COMMENT,
                                              REPORT_COMMENT.SCORE,
                                              REPORT.REPORTEE_RANK,
+                                             REPORT.GAME_REFEREE3_ID,
                                              multiset(select(REPORT_CRITERIA.ID,
                                                              REPORT_CRITERIA.TYPE,
                                                              REPORT_CRITERIA.STATE
