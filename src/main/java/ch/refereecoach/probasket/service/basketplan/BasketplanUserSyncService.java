@@ -6,14 +6,17 @@ import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
+import static ch.refereecoach.probasket.common.Rank.RK;
 import static ch.refereecoach.probasket.util.DateUtil.today;
 import static ch.refereecoach.probasket.util.XmlUtil.getAttributeValue;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -59,15 +62,18 @@ public class BasketplanUserSyncService {
                 var refereeList = doc.getDocumentElement().getElementsByTagName("PersonXMLReferee");
                 var receivedIds = new ArrayList<Long>();
                 for (var i = 0; i < refereeList.getLength(); i++) {
-                    var node = refereeList.item(i);
+                    var node = (Element) refereeList.item(i);
 
                     var id = getAttributeValue(node, "id").map(Long::valueOf).orElse(null);
                     var email = getAttributeValue(node, "email").orElse(null);
                     var familyName = getAttributeValue(node, "familyName").orElse(null);
                     var firstName = getAttributeValue(node, "firstName").orElse(null);
                     var active = getAttributeValue(node, "active").map(Boolean::parseBoolean).orElse(false);
-                    // TODO determine rank
-                    var rank = Rank.RG1;
+
+                    var refereeAuthorisation = node.getElementsByTagName("refereeAuthorisation").item(0);
+                    var rank = getAttributeValue(refereeAuthorisation, "highestRefereeQualificationId")
+                            .map(it -> Rank.fromQualificationId(NumberUtils.toInt(it)))
+                            .orElse(RK);
 
                     if (id != null && email != null && familyName != null && firstName != null) {
                         var existing = existingPerId.get(id);
@@ -76,6 +82,7 @@ public class BasketplanUserSyncService {
                             existing.setFirstname(firstName);
                             existing.setLastname(familyName);
                             existing.setActive(active);
+                            existing.setRank(rank.name());
                             loginDao.update(existing);
                         } else {
                             loginDao.insert(new Login(id, firstName, familyName, email, null, false, true, false, false, false, rank.name(), active));

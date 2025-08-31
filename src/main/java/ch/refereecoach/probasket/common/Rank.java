@@ -22,4 +22,18 @@ public enum Rank {
             return Optional.empty();
         }
     }
+
+    public static Rank fromQualificationId(int id) {
+        if (id >= 48) {
+            return Rank.RG1;
+        } else if (id >= 46) {
+            return Rank.RG2;
+        } else if (id >= 44) {
+            return Rank.RG3;
+        } else if (id >= 42) {
+            return Rank.RG4;
+        } else {
+            return Rank.RK;
+        }
+    }
 }
