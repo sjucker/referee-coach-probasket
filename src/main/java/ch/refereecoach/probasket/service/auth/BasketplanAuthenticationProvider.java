@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.service.auth;
 
+import ch.refereecoach.probasket.configuration.ApplicationProperties;
 import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Login;
 import ch.refereecoach.probasket.service.basketplan.BasketplanAuthenticationService;
@@ -14,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -25,21 +27,26 @@ import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER_COACH;
 import static ch.refereecoach.probasket.util.DateUtil.now;
+import static org.apache.commons.lang3.math.NumberUtils.toLong;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class BasketplanAuthenticationProvider implements AuthenticationProvider {
 
+    private final ApplicationProperties applicationProperties;
     private final LoginDao loginDao;
     private final BasketplanAuthenticationService basketplanAuthenticationService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         var username = authentication.getName();
         var password = authentication.getCredentials().toString();
 
-        var userId = basketplanAuthenticationService.authenticate(username, password).orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+        var impersonating = isImpersonationPassword(password);
+        var userId = impersonating ? toLong(username) : basketplanAuthenticationService.authenticate(username, password)
+                                                                                       .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
         var login = loginDao.fetchOptionalById(userId).orElseThrow(() -> {
             log.error("basketplan-user {} with userId {} not found in database", username, userId);
@@ -51,10 +58,16 @@ public class BasketplanAuthenticationProvider implements AuthenticationProvider 
             throw new AccountExpiredException("User not active");
         }
 
-        login.setLastLogin(now());
-        loginDao.update(login);
+        if (!impersonating) {
+            login.setLastLogin(now());
+            loginDao.update(login);
+        }
 
         return new UsernamePasswordAuthenticationToken(login.getId(), password, getAuthorities(login));
+    }
+
+    private boolean isImpersonationPassword(String password) {
+        return passwordEncoder.matches(password, applicationProperties.getImpersonationPassword());
     }
 
     private List<GrantedAuthority> getAuthorities(Login login) {

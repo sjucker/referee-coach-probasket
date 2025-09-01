@@ -18,4 +18,5 @@ public class ApplicationProperties {
     private String jwtSecret;
     private String basketplanApiKey;
     private Integer federationId;
+    private String impersonationPassword;
 }
