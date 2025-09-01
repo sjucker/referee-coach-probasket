@@ -51,6 +51,9 @@
                                 </mat-card-header>
                                 <mat-card-content>
                                     <p>{{ videoComment.comment }}</p>
+                                    @if (videoComment.tags.length > 0) {
+                                        <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
+                                    }
                                     @if (videoComment.replies.length > 0) {
                                         <hr/>
                                     }

@@ -4,6 +4,7 @@
 .comment,
 .reply {
   white-space: pre-line;
+  padding-left: variables.$padding;
 }
 
 .new-reply,
@@ -56,6 +57,10 @@
         border: solid 1px var(--mat-sys-error);
       }
     }
+  }
+
+  .tags-container {
+    font-size: var(--mat-sys-label-medium-size);
   }
 }
 

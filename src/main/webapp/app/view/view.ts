@@ -121,4 +121,8 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
     discuss() {
         this.router.navigate([PATH_DISCUSS, this.report()!.externalId]).catch(err => console.error(err));
     }
+
+    tagNames(videoComment: ReportVideoCommentDTO) {
+        return videoComment.tags.map(t => t.name).join(', ');
+    }
 }

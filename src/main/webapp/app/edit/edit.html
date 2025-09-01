@@ -138,7 +138,7 @@
                                                            (selected)="selectTag(videoComment, $event)"></app-tag-selection>
                                     } @else {
                                         @if (videoComment.tags.length > 0) {
-                                            <div>Tags: {{ tagNames(videoComment) }}</div>
+                                            <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
                                         }
                                     }
                                 </mat-card-content>

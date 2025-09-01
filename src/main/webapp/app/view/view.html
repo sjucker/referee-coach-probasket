@@ -69,15 +69,13 @@
                                     <mat-card-title class="title-container">
                                         <div>Video Comment #{{ i + 1 }}</div>
                                         @if (requiresReply(videoComment)) {
-                                            <mat-icon
-                                                    class="important"
-                                                    matTooltip="This comment requires a reply from you. Switch to the discussion-mode to do so.">
+                                            <mat-icon class="important"
+                                                      matTooltip="This comment requires a reply from you. Switch to the discussion-mode to do so.">
                                                 priority_high
                                             </mat-icon>
                                         }
                                         @if (flaggedForReply(videoComment)) {
-                                            <mat-icon
-                                                    matTooltip="This comment requires a reply from the referee. Switch to the discussion-mode to view it.">
+                                            <mat-icon matTooltip="This comment requires a reply from the referee. Switch to the discussion-mode to view it.">
                                                 priority_high
                                             </mat-icon>
                                         }
@@ -85,6 +83,9 @@
                                 </mat-card-header>
                                 <mat-card-content>
                                     <p>{{ videoComment.comment }}</p>
+                                    @if (videoComment.tags.length > 0) {
+                                        <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
+                                    }
                                 </mat-card-content>
                                 <mat-card-actions>
                                     <button (click)="play(videoComment.timestampInSeconds)" mat-stroked-button>

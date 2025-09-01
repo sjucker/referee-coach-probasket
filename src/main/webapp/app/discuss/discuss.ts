@@ -206,7 +206,7 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
                     id: 0,
                     reply: reply,
                     createdBy: 'New Reply',
-                    createdAt: DateTime.now().toISODate(),
+                    createdAt: DateTime.now().toISO(),
                     createdById: dto.reporteeId,
                 });
 
@@ -250,5 +250,9 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
                 });
             }
         })
+    }
+
+    tagNames(videoComment: ReportVideoCommentDTO) {
+        return videoComment.tags.map(t => t.name).join(', ');
     }
 }
