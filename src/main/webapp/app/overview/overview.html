@@ -71,6 +71,12 @@
                 <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
                 <mat-datepicker #pickerTo></mat-datepicker>
             </mat-form-field>
+
+            @if (auth.isAdmin()) {
+                <button mat-icon-button (click)="export()" [disabled]="exporting()">
+                    <mat-icon>cloud_download</mat-icon>
+                </button>
+            }
         </div>
 
         @if (tableError()) {

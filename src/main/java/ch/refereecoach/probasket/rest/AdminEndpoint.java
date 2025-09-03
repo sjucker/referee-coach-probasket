@@ -4,9 +4,12 @@ import ch.refereecoach.probasket.dto.auth.UpdateUserRolesDTO;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.auth.UsersSearchResultDTO;
 import ch.refereecoach.probasket.service.admin.AdminUserService;
+import ch.refereecoach.probasket.service.export.ExportService;
+import ch.refereecoach.probasket.util.ExportUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,7 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @Slf4j
 @CrossOrigin(origins = "*")
@@ -28,6 +35,7 @@ import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
 public class AdminEndpoint {
 
     private final AdminUserService adminUserService;
+    private final ExportService exportService;
 
     @GetMapping("/users")
     @Secured({"ADMIN"})
@@ -50,5 +58,14 @@ public class AdminEndpoint {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/export")
+    @Secured({"ADMIN"})
+    public ResponseEntity<Resource> export() throws IOException {
+        log.info("GET /api/admin/export");
+        var out = new ByteArrayOutputStream();
+        exportService.export(out);
+        return ExportUtil.export(out.toByteArray(), APPLICATION_OCTET_STREAM_VALUE);
     }
 }

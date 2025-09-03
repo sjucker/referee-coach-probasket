@@ -36,6 +36,7 @@ import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
 import {CopyReportDialog, CopyReportDialogData} from "./copy-report-dialog";
 import {ConfirmDeleteDialog} from "./confirm-delete-dialog";
+import {saveAs} from "file-saver";
 
 interface RefereeSelection {
     id: number,
@@ -82,10 +83,11 @@ export class Overview implements OnInit {
     protected readonly tableLoading = signal(false);
     protected readonly tableError = signal<string | null>(null);
 
-    protected readonly loading = computed(() => this.searching() || this.creating() || this.tableLoading());
+    protected readonly loading = computed(() => this.searching() || this.creating() || this.tableLoading() || this.exporting());
     protected readonly creating = signal(false);
     protected readonly error = signal<string | null>(null);
     protected readonly searching = signal(false);
+    protected readonly exporting = signal(false);
     protected readonly problemDescription = signal<string | null>(null);
 
     protected readonly form = this.fb.nonNullable.group({
@@ -386,5 +388,23 @@ export class Overview implements OnInit {
 
     isCurrentUserCoachOf(dto: ReportOverviewDTO): boolean {
         return this.auth.userId() === dto.coachId;
+    }
+
+    export() {
+        this.exporting.set(true);
+        this.http.get(`/api/admin/export`, {responseType: 'blob'}).subscribe({
+            next: response => {
+                this.exporting.set(false);
+                saveAs(response, "export.xlsx");
+            },
+            error: () => {
+                this.exporting.set(false);
+                this.snackBar.open("An unexpected error occurred, export could not be created!", undefined, {
+                    duration: 3000,
+                    horizontalPosition: "center",
+                    verticalPosition: "top"
+                })
+            }
+        })
     }
 }
