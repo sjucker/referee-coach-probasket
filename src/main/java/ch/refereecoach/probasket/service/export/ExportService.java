@@ -102,6 +102,7 @@ public class ExportService {
                                       ).convertFrom(it -> it.map(mapping(CommentScore::of)))
                              )
                       .from(REPORT)
+                      .where(REPORT.FINISHED_AT.isNotNull())
                       .orderBy(REPORT.GAME_DATE.desc(), REPORT.GAME_NUMBER.desc(), REPORT.REPORTEE_NAME.desc())
                       .fetch(it -> {
                           var report = it.value1();
