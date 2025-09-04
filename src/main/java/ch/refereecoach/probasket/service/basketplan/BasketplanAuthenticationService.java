@@ -15,6 +15,7 @@ import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
 @Slf4j
@@ -54,7 +55,12 @@ public class BasketplanAuthenticationService {
                     return Optional.ofNullable(personId).map(Long::valueOf);
                 } else {
                     var message = getAttributeInElement(doc, "AuthorizeUserResponse", "message").orElse("");
-                    log.info("Basketplan authentication failed for user {} with message: {}", username, message);
+                    if (contains(message, "wrong type")) {
+                        // for now, log this on error, so we can inform the user
+                        log.error("Basketplan authentication failed for user {} with message: {}", username, message);
+                    } else {
+                        log.warn("Basketplan authentication failed for user {} with message: {}", username, message);
+                    }
                     return Optional.empty();
                 }
             } else {
