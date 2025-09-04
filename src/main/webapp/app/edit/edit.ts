@@ -57,6 +57,7 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     protected readonly videoHeight = signal<number | null>(null);
 
     protected readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly asport = viewChild<ElementRef>('asportPlayer');
     protected readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
     protected readonly videoCommentsContainer = viewChild<ElementRef<HTMLDivElement>>('videoCommentsContainer');
 
@@ -90,6 +91,12 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         document.body.appendChild(tag);
+
+        window.addEventListener('message', (event) => {
+            if (event.data.message === 'playerInfo') {
+                console.log(event);
+            }
+        });
     }
 
     ngAfterViewInit(): void {
@@ -230,10 +237,12 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     }
 
     addVideoComment(): void {
+        this.onChange();
+
         this.report()!.videoComments.push({
             comment: '',
             requiresReply: false,
-            timestampInSeconds: Math.round(this.youtube()!.getCurrentTime()),
+            timestampInSeconds: Math.round(this.getCurrentVideoTime()),
             createdAt: '',
             createdBy: '',
             createdById: 0,
@@ -248,6 +257,21 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
                 videoCommentsContainer.nativeElement.scrollTop = videoCommentsContainer.nativeElement.scrollHeight;
             }
         }, 200);
+    }
+
+    private getCurrentVideoTime() {
+        if (this.report()!.youtubeId) {
+            return this.youtube()!.getCurrentTime();
+        } else {
+            // this.asport()!.addEventListener('message', (event) => {
+            //     console.log(event);
+            // })
+            this.asport()!.nativeElement.contentWindow.postMessage({command: 'setPosition', seconds: '1200'}, '*');
+            this.asport()!.nativeElement.contentWindow.postMessage({command: 'play'}, '*');
+            this.asport()!.nativeElement.contentWindow.postMessage({command: 'getPlayerInfo'}, '*');
+            return 0
+        }
+
     }
 
     deleteComment(videoComment: ReportVideoCommentDTO) {

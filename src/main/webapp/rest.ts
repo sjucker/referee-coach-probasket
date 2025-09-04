@@ -102,7 +102,7 @@ export interface RefereeReportDTO {
     reporteeName: string;
     game: BasketplanGameDTO;
     youtubeId?: string;
-    asportId?: string;
+    asportId?: number;
     score?: number;
     finished: boolean;
     userIsReportee: boolean;
@@ -183,7 +183,8 @@ export interface TagOverviewDTO {
     date: DateAsString;
     timestampInSeconds: number;
     comment: string;
-    youtubeId: string;
+    youtubeId?: string;
+    asportId?: number;
     tags: string;
 }
 
