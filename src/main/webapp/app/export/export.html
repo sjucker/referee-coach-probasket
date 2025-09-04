@@ -1,0 +1,17 @@
+<app-header></app-header>
+<app-loading-bar [show]="exporting()"></app-loading-bar>
+
+<mat-card appearance="outlined">
+  <mat-card-content class="export-container">
+      <mat-form-field appearance="fill" class="from-field">
+        <mat-label>From</mat-label>
+        <input matInput [matDatepicker]="picker" [ngModel]="cutoffDate()" (ngModelChange)="cutoffDate.set($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-flat-button (click)="export()" [disabled]="exporting()">
+        Export
+      </button>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,17 @@
+@use '../../variables';
+@use '../../responsive';
+
+.export-container {
+  display: flex;
+  flex-direction: column;
+
+  @include responsive.responsive('gt-sm') {
+    flex-direction: row;
+    gap: variables.$padding;
+    align-items: center;
+  }
+
+  mat-form-field {
+    width: inherit;
+  }
+}

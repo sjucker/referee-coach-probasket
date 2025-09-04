@@ -22,16 +22,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/cdk": "20.2.1",
-    "@angular/common": "20.2.3",
-    "@angular/compiler": "20.2.3",
-    "@angular/core": "20.2.3",
-    "@angular/forms": "20.2.3",
-    "@angular/material": "20.2.1",
-    "@angular/material-luxon-adapter": "20.2.1",
-    "@angular/platform-browser": "20.2.3",
-    "@angular/router": "20.2.3",
-    "@angular/youtube-player": "20.2.1",
+    "@angular/cdk": "20.2.2",
+    "@angular/common": "20.2.4",
+    "@angular/compiler": "20.2.4",
+    "@angular/core": "20.2.4",
+    "@angular/forms": "20.2.4",
+    "@angular/material": "20.2.2",
+    "@angular/material-luxon-adapter": "20.2.2",
+    "@angular/platform-browser": "20.2.4",
+    "@angular/router": "20.2.4",
+    "@angular/youtube-player": "20.2.2",
     "file-saver": "2.0.5",
     "luxon": "3.7.1",
     "release-it": "19.0.4",
@@ -40,14 +40,14 @@
     "zone.js": "0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "20.2.1",
-    "@angular/cli": "20.2.1",
-    "@angular/compiler-cli": "20.2.3",
+    "@angular/build": "20.2.2",
+    "@angular/cli": "20.2.2",
+    "@angular/compiler-cli": "20.2.4",
     "@types/file-saver": "2.0.7",
     "@types/luxon": "3.7.1",
     "angular-eslint": "20.2.0",
     "eslint": "9.34.0",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.41.0"
+    "typescript-eslint": "8.42.0"
   }
 }

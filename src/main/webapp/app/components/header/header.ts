@@ -3,7 +3,7 @@ import {MatToolbar, MatToolbarRow} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
 import {AuthService} from "../../auth.service";
 import {NavigationEnd, Router, RouterLink} from "@angular/router";
-import {PATH_ADMIN, PATH_LOGIN, PATH_OVERVIEW, PATH_TAG_SEARCH} from "../../app.routes";
+import {PATH_ADMIN, PATH_EXPORT, PATH_LOGIN, PATH_OVERVIEW, PATH_TAG_SEARCH} from "../../app.routes";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatIcon} from "@angular/material/icon";
 import {toSignal} from '@angular/core/rxjs-interop';
@@ -29,6 +29,7 @@ export class Header {
     protected readonly PATH_OVERVIEW = PATH_OVERVIEW;
     protected readonly PATH_TAG_SEARCH = PATH_TAG_SEARCH;
     protected readonly PATH_ADMIN = PATH_ADMIN;
+    protected readonly PATH_EXPORT = PATH_EXPORT;
 
     protected readonly auth = inject(AuthService);
     protected readonly isOverview = computed(() => this.currentUrl().startsWith('/' + PATH_OVERVIEW));

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
@@ -62,10 +63,10 @@ public class AdminEndpoint {
 
     @GetMapping("/export")
     @Secured({"ADMIN"})
-    public ResponseEntity<Resource> export() throws IOException {
-        log.info("GET /api/admin/export");
+    public ResponseEntity<Resource> export(@RequestParam LocalDate from) throws IOException {
+        log.info("GET /api/admin/export?from={}", from);
         var out = new ByteArrayOutputStream();
-        exportService.export(out);
+        exportService.export(out, from);
         return ExportUtil.export(out.toByteArray(), APPLICATION_OCTET_STREAM_VALUE);
     }
 }

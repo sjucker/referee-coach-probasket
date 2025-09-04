@@ -30,6 +30,7 @@ export interface UserDTO {
     trainerCoach: boolean;
     trainer: boolean;
     admin: boolean;
+    active: boolean;
 }
 
 export interface UsersSearchResultDTO {
