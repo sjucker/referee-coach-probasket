@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
@@ -22,19 +22,19 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 import {GameInfo} from "../components/game-info/game-info";
-import {YouTubePlayer} from "@angular/youtube-player";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {TagSelection} from "../tag-selection/tag-selection";
 import {Observable, of, share} from "rxjs";
+import {VideoPlayer} from "../components/video-player/video-player";
 
 @Component({
     selector: 'app-edit',
-    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo, YouTubePlayer, MatCheckbox, TagSelection],
+    imports: [Header, LoadingBar, MatCardModule, MatButtonModule, MatFormFieldModule, FormsModule, MatInput, CdkTextareaAutosize, MatRadioGroup, MatRadioButton, MatTooltipModule, Score, DecimalPipe, MatIconModule, MatDialogModule, GameInfo, MatCheckbox, TagSelection, VideoPlayer],
     templateUrl: './edit.html',
     styleUrl: './edit.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDestroy {
+export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
     private readonly dialog = inject(MatDialog);
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
@@ -56,7 +56,8 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
     protected readonly videoWidth = signal<number | null>(null);
     protected readonly videoHeight = signal<number | null>(null);
 
-    protected readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly videoPlayer = viewChild<VideoPlayer>('videoPlayer');
+
     protected readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
     protected readonly videoCommentsContainer = viewChild<ElementRef<HTMLDivElement>>('videoCommentsContainer');
 
@@ -82,14 +83,6 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
         });
 
         this.availableTags = this.http.get<TagDTO[]>(`/api/tag`).pipe(share())
-    }
-
-    ngOnInit(): void {
-        // This code loads the IFrame Player API code asynchronously, according to the instructions at
-        // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.body.appendChild(tag);
     }
 
     ngAfterViewInit(): void {
@@ -223,17 +216,13 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
         return this.report()!.comments.every(comment => !!comment.comment && comment.comment.length > 0);
     }
 
+    async addVideoComment(): Promise<void> {
+        this.onChange();
 
-    jumpTo(time: number): void {
-        this.youtube()!.seekTo(time, true);
-        this.youtube()!.playVideo();
-    }
-
-    addVideoComment(): void {
         this.report()!.videoComments.push({
             comment: '',
             requiresReply: false,
-            timestampInSeconds: Math.round(this.youtube()!.getCurrentTime()),
+            timestampInSeconds: Math.round(await this.videoPlayer()!.getCurrentVideoTime()),
             createdAt: '',
             createdBy: '',
             createdById: 0,
@@ -303,5 +292,9 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnInit, OnDes
 
     tagNames(videoComment: ReportVideoCommentDTO) {
         return videoComment.tags.map(t => t.name).join(', ');
+    }
+
+    jumpTo(timestampInSeconds: number) {
+        this.videoPlayer()!.jumpTo(timestampInSeconds);
     }
 }

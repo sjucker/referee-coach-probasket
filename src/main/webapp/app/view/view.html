@@ -56,11 +56,12 @@
             </mat-card-header>
             <mat-card-content>
                 <div class="video-container">
-                    <div>
-                        <youtube-player #youtubePlayer
-                                        [videoId]="report.youtubeId"
-                                        [width]="videoWidth()"
-                                        [height]="videoHeight()"></youtube-player>
+                    <div class="video-player-container">
+                        <app-video-player #videoPlayer
+                                          [youtubeId]="report.youtubeId"
+                                          [asportId]="report.asportId"
+                                          [videoWidth]="videoWidth()"
+                                          [videoHeight]="videoHeight()"/>
                     </div>
                     <div class="video-comments-container">
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {

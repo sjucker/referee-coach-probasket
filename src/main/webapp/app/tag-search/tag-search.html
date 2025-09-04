@@ -11,10 +11,11 @@
 
             </div>
             <div style="flex: 3">
-                <youtube-player #youtubePlayer
-                                [videoId]="currentVideoId()"
-                                [width]="videoWidth()"
-                                [height]="videoHeight()"></youtube-player>
+                <app-video-player #videoPlayer
+                                  [youtubeId]="youtubeId()"
+                                  [asportId]="asportId()"
+                                  [videoWidth]="videoWidth()"
+                                  [videoHeight]="videoHeight()"/>
             </div>
         </div>
         <mat-card-actions>
@@ -77,5 +78,4 @@
     </mat-card-content>
 </mat-card>
 
-<!-- here so we know the current width of the window and can resize the YouTube video accordingly -->
 <div #widthMeasurement></div>

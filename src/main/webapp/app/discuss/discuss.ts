@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -14,7 +14,6 @@ import {
 } from '../../rest';
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {GameInfo} from "../components/game-info/game-info";
-import {YouTubePlayer} from "@angular/youtube-player";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
@@ -30,14 +29,15 @@ import {MatDialog} from "@angular/material/dialog";
 import {ReplyDialog} from "./reply-dialog";
 import {DateTime} from "luxon";
 import {FinishReplyDialog, FinishReplyDialogData} from "./finish-reply-dialog";
+import {VideoPlayer} from "../components/video-player/video-player";
 
 @Component({
     selector: 'app-discuss',
-    imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, YouTubePlayer, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule, MatIconButton],
+    imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule, MatIconButton, VideoPlayer],
     templateUrl: './discuss.html',
     styleUrl: './discuss.scss',
 })
-export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsavedChanges {
+export class DiscussPage implements OnDestroy, AfterViewInit, HasUnsavedChanges {
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
@@ -54,7 +54,8 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     protected readonly saving = signal<boolean>(false);
     protected readonly showLoadingBar = computed(() => this.loading() || this.saving());
 
-    readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly videoPlayer = viewChild<VideoPlayer>('videoPlayer');
+
     readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
     protected readonly videoCommentsContainer = viewChild<ElementRef<HTMLDivElement>>('videoCommentsContainer');
 
@@ -84,14 +85,6 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
         });
     }
 
-    ngOnInit(): void {
-        // This code loads the IFrame Player API code asynchronously, according to the instructions at
-        // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.body.appendChild(tag);
-    }
-
     ngAfterViewInit(): void {
         window.addEventListener('resize', this.onResize);
         setTimeout(() => {
@@ -113,8 +106,7 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
     }
 
     play(time: number): void {
-        this.youtube()!.seekTo(time, true);
-        this.youtube()!.playVideo();
+        this.videoPlayer()!.jumpTo(time);
     }
 
     private fetchReport(externalId: string): void {
@@ -139,8 +131,8 @@ export class DiscussPage implements OnInit, OnDestroy, AfterViewInit, HasUnsaved
         this.router.navigate([PATH_VIEW, this.report()!.externalId]).catch(err => console.error(err));
     }
 
-    addVideoComment() {
-        const timestampInSeconds = Math.round(this.youtube()!.getCurrentTime());
+    async addVideoComment() {
+        const timestampInSeconds = Math.round(await this.videoPlayer()!.getCurrentVideoTime());
         const dto = this.report()!;
 
         if (dto.videoComments.some(comment => timestampInSeconds >= comment.timestampInSeconds - 3 && timestampInSeconds <= comment.timestampInSeconds + 3)) {

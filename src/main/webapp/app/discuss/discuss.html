@@ -21,10 +21,11 @@
             <mat-card-content>
                 <div class="video-container">
                     <div class="youtube-container">
-                        <youtube-player #youtubePlayer
-                                        [videoId]="report.youtubeId"
-                                        [width]="videoWidth()"
-                                        [height]="videoHeight()"></youtube-player>
+                        <app-video-player #videoPlayer
+                                          [youtubeId]="report.youtubeId"
+                                          [asportId]="report.asportId"
+                                          [videoWidth]="videoWidth()"
+                                          [videoHeight]="videoHeight()"/>
                         @if (report.userIsReportee) {
                             <button (click)="addVideoComment()" color="primary" mat-flat-button>
                                 Create additional comment for current timestamp
