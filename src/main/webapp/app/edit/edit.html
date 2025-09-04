@@ -78,7 +78,7 @@
         </mat-card>
     }
 
-    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT && report.youtubeId) {
+    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT) {
         <mat-card appearance="filled">
             <mat-card-actions class="actions-container">
                 <button mat-flat-button (click)="save()" [disabled]="saving() || !unsavedChanges()">Save</button>
@@ -93,16 +93,17 @@
             </mat-card-header>
             <mat-card-content>
                 <div class="video-container">
-                    <!-- TODO differentiate between YouTube and Asport-->
-                    <div class="youtube-container">
-                        <youtube-player #youtubePlayer
-                                        [videoId]="report.youtubeId"
-                                        [width]="videoWidth()"
-                                        [height]="videoHeight()"></youtube-player>
+                    <div class="video-player-container">
+                        <app-video-player #videoPlayer
+                                          [youtubeId]="report.youtubeId"
+                                          [asportId]="report.asportId"
+                                          [videoWidth]="videoWidth()"
+                                          [videoHeight]="videoHeight()"/>
                         <button (click)="addVideoComment()" color="primary" mat-flat-button>
                             Create comment for current timestamp
                         </button>
                     </div>
+
                     <div class="video-comments-container" #videoCommentsContainer>
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {
                             <mat-card appearance="raised">
@@ -164,5 +165,4 @@
     }
 }
 
-<!-- here so we know the current width of the window and can resize the YouTube video accordingly -->
 <div #widthMeasurement></div>

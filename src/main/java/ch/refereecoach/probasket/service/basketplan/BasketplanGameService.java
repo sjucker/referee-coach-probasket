@@ -6,6 +6,8 @@ import ch.refereecoach.probasket.service.report.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,6 +16,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
@@ -21,6 +24,7 @@ import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_3PO;
 import static ch.refereecoach.probasket.util.XmlUtil.getAttributeValue;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 import static org.apache.commons.lang3.math.NumberUtils.toLong;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Service
@@ -28,8 +32,10 @@ import static org.apache.commons.lang3.math.NumberUtils.toLong;
 public class BasketplanGameService {
 
     private static final String SEARCH_GAMES_URL = "https://www.basketplan.ch/showSearchGames.do?actionType=searchGames&gameNumber=%s&xmlView=true&perspective=de_default";
+    private static final String ASPORT_EVENTS_URL = "https://manager.asport.tv/api/v1/events?page=1&perPage=20&filters={filters}";
 
     private final UserService userService;
+    private final Builder webClientBuilder;
 
     public Optional<BasketplanGameDTO> findGameByNumber(String gameNumber) {
         try {
@@ -71,7 +77,9 @@ public class BasketplanGameService {
                         referee1.map(UserDTO::id).orElse(null), referee1.map(UserDTO::fullName).orElse(null),
                         referee2.map(UserDTO::id).orElse(null), referee2.map(UserDTO::fullName).orElse(null),
                         referee3.map(UserDTO::id).orElse(null), referee3.map(UserDTO::fullName).orElse(null),
-                        getAttributeValue(gameNode, "videoLink").orElse(null)
+                        getAttributeValue(gameNode, "videoLink")
+                                .or(() -> findAsportVideoUrl(gameNumber))
+                                .orElse(null)
                 ));
             }
 
@@ -92,6 +100,32 @@ public class BasketplanGameService {
             return referee;
         }
         return Optional.empty();
+    }
+
+    private Optional<String> findAsportVideoUrl(String gameNumber) {
+        var foo = UriComponentsBuilder.fromUriString("https://manager.asport.tv/api/v1/events")
+                                      .queryParam("filters", "{\"externalReference\":{\"basketplan\":\"%s\"}}".formatted(gameNumber))
+                                      .build();
+
+        var body = webClientBuilder.build().get()
+                                   .uri(foo.toUri())
+                                   .accept(APPLICATION_JSON)
+                                   .retrieve()
+                                   .bodyToMono(EventsResponse.class)
+                                   .block();
+
+        if (body != null && body.data.size() == 1) {
+            return Optional.ofNullable(body.data.getFirst().id)
+                           .map(("https://probasket.asport.tv/event/%d/embed")::formatted);
+        }
+
+        return Optional.empty();
+    }
+
+    private record EventsResponse(List<Event> data) {
+    }
+
+    private record Event(Long id) {
     }
 
 }

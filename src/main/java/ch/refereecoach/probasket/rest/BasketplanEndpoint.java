@@ -4,6 +4,7 @@ import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
 import ch.refereecoach.probasket.service.basketplan.BasketplanGameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,7 +27,7 @@ public class BasketplanEndpoint {
     public ResponseEntity<BasketplanGameDTO> game(@PathVariable String gameNumber) {
         log.info("GET /api/basketplan/{}", gameNumber);
 
-        return ResponseEntity.of(basketplanGameService.findGameByNumber(gameNumber));
+        return ResponseEntity.of(basketplanGameService.findGameByNumber(StringUtils.strip(gameNumber)));
     }
 }
 

@@ -4,6 +4,7 @@ import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.dto.search.TagOverviewDTO;
 import ch.refereecoach.probasket.dto.search.TagSearchResultDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.TagDao;
+import ch.refereecoach.probasket.util.AsportUtil;
 import ch.refereecoach.probasket.util.YouTubeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +71,7 @@ public class TagService {
                                    it.get(REPORT_VIDEO_COMMENT.TIMESTAMP_IN_SECONDS),
                                    it.get(REPORT_VIDEO_COMMENT.COMMENT),
                                    YouTubeUtil.parseYouTubeId(it.get(REPORT.GAME_VIDEO_URL)).orElse(null),
+                                   AsportUtil.parseAsportEventId(it.get(REPORT.GAME_VIDEO_URL)).orElse(null),
                                    it.get(tagsField)
                            ));
 

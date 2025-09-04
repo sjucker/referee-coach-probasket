@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnDestroy, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
@@ -11,17 +11,17 @@ import {MatButton, MatIconButton} from "@angular/material/button";
 import {DatePipe} from "@angular/common";
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatNoDataRow, MatRow, MatRowDef, MatTable} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
-import {YouTubePlayer} from "@angular/youtube-player";
 import {AuthService} from "../auth.service";
+import {VideoPlayer} from "../components/video-player/video-player";
 
 @Component({
     selector: 'app-tag-search',
-    imports: [Header, LoadingBar, MatPaginatorModule, TagSelection, MatCard, MatCardContent, MatCardActions, MatButton, DatePipe, MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderRow, MatHeaderRowDef, MatIcon, MatIconButton, MatRow, MatRowDef, MatTable, MatHeaderCellDef, YouTubePlayer, MatNoDataRow],
+    imports: [Header, LoadingBar, MatPaginatorModule, TagSelection, MatCard, MatCardContent, MatCardActions, MatButton, DatePipe, MatCell, MatCellDef, MatColumnDef, MatHeaderCell, MatHeaderRow, MatHeaderRowDef, MatIcon, MatIconButton, MatRow, MatRowDef, MatTable, MatHeaderCellDef, MatNoDataRow, VideoPlayer],
     templateUrl: './tag-search.html',
     styleUrl: './tag-search.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TagSearch implements AfterViewInit, OnInit, OnDestroy {
+export class TagSearch implements AfterViewInit, OnDestroy {
     private readonly http = inject(HttpClient);
     protected readonly auth = inject(AuthService);
 
@@ -31,27 +31,21 @@ export class TagSearch implements AfterViewInit, OnInit, OnDestroy {
     protected readonly showLoadingBar = computed(() => this.searching());
     protected readonly totalResults = signal(0);
 
-    protected readonly currentVideoId = signal<string | undefined>(undefined);
     protected readonly videoWidth = signal<number | null>(null);
     protected readonly videoHeight = signal<number | null>(null);
 
-    readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly videoPlayer = viewChild<VideoPlayer>('videoPlayer');
     readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
 
     protected readonly results = signal<TagOverviewDTO[]>([]);
     protected readonly availableTags: Observable<TagDTO[]> = of([]);
     protected selectedTags = signal<TagDTO[]>([]);
 
+    protected youtubeId = signal<string | undefined>(undefined);
+    protected asportId = signal<number | undefined>(undefined);
+
     constructor() {
         this.availableTags = this.http.get<TagDTO[]>(`/api/tag`).pipe(share())
-    }
-
-    ngOnInit(): void {
-        // This code loads the IFrame Player API code asynchronously, according to the instructions at
-        // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.body.appendChild(tag);
     }
 
     ngAfterViewInit(): void {
@@ -113,15 +107,15 @@ export class TagSearch implements AfterViewInit, OnInit, OnDestroy {
     }
 
     play(dto: TagOverviewDTO) {
-        this.currentVideoId.set(dto.youtubeId);
+        this.youtubeId.set(dto.youtubeId);
+        this.asportId.set(dto.asportId);
 
         const interval = setInterval(() => {
-            const youtube = this.youtube()!;
-            if (youtube.getPlayerState() === YT.PlayerState.PLAYING) {
+            const videoPlayer = this.videoPlayer();
+            if (videoPlayer) {
                 clearInterval(interval);
+                videoPlayer.jumpTo(dto.timestampInSeconds);
             }
-            youtube.seekTo(dto.timestampInSeconds, true);
-            youtube.playVideo();
         }, 500);
     }
 

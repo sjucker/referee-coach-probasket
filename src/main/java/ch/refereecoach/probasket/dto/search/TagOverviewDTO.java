@@ -9,6 +9,7 @@ public record TagOverviewDTO(@NotNull String gameNumber,
                              @NotNull LocalDate date,
                              @NotNull Long timestampInSeconds,
                              @NotNull String comment,
-                             @NotNull String youtubeId,
+                             String youtubeId,
+                             Long asportId,
                              @NotNull String tags) {
 }

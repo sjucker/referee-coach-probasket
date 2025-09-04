@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnDestroy, signal, viewChild} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
@@ -9,19 +9,19 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {GameInfo} from "../components/game-info/game-info";
 import {ScoreUtil} from "../util/score-util";
-import {YouTubePlayer} from "@angular/youtube-player";
 import {NgClass} from "@angular/common";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {PATH_DISCUSS, PATH_OVERVIEW} from "../app.routes";
+import {VideoPlayer} from "../components/video-player/video-player";
 
 @Component({
     selector: 'app-view',
-    imports: [Header, LoadingBar, MatCardModule, MatIconModule, MatButtonModule, GameInfo, YouTubePlayer, NgClass, MatTooltipModule],
+    imports: [Header, LoadingBar, MatCardModule, MatIconModule, MatButtonModule, GameInfo, NgClass, MatTooltipModule, VideoPlayer],
     templateUrl: './view.html',
     styleUrl: './view.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
+export class ViewPage implements AfterViewInit, OnDestroy {
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
@@ -35,7 +35,7 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
     protected readonly loading = signal<boolean>(true);
     protected readonly showLoadingBar = computed(() => this.loading());
 
-    readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
+    protected readonly videoPlayer = viewChild<VideoPlayer>('videoPlayer');
     readonly widthMeasurement = viewChild<ElementRef<HTMLDivElement>>('widthMeasurement');
 
     protected readonly videoWidth = signal<number | null>(null);
@@ -52,14 +52,6 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
             }
             this.fetchReport(eid);
         });
-    }
-
-    ngOnInit(): void {
-        // This code loads the IFrame Player API code asynchronously, according to the instructions at
-        // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.body.appendChild(tag);
     }
 
     ngAfterViewInit(): void {
@@ -83,8 +75,7 @@ export class ViewPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     play(time: number): void {
-        this.youtube()!.seekTo(time, true);
-        this.youtube()!.playVideo();
+        this.videoPlayer()!.jumpTo(time);
     }
 
     private fetchReport(externalId: string) {

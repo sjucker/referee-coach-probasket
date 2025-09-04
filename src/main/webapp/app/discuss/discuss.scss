@@ -23,16 +23,17 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  gap: variables.$padding;
 
   @include responsive.responsive('gt-md') {
     flex-direction: row;
-    gap: variables.$padding;
   }
 
-  .youtube-container {
+  .video-player-container {
     display: flex;
     flex-direction: column;
     gap: variables.$half-padding;
+    max-width: 720px;
   }
 
   .video-comments-container {

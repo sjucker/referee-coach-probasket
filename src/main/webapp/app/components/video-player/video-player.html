@@ -1,0 +1,16 @@
+@if (youtubeId()) {
+    <youtube-player #youtubePlayer
+                    [videoId]="youtubeId()"
+                    [width]="videoWidth()"
+                    [height]="videoHeight()"></youtube-player>
+}
+
+@if (asportId()) {
+    <iframe #asportPlayer
+            id="asportFrame"
+            [src]="asportUrl()"
+            [width]="videoWidth()"
+            [height]="videoHeight()"
+            allowfullscreen>
+    </iframe>
+}
