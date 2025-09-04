@@ -23,3 +23,7 @@ form {
     gap: variables.$half-padding;
   }
 }
+
+a {
+  color: var(--mat-sys-primary);
+}
