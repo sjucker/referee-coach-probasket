@@ -11,8 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Optional;
 
 import static ch.refereecoach.probasket.util.XmlUtil.getAttributeInElement;
-import static java.net.URLEncoder.encode;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -33,7 +31,8 @@ public class BasketplanAuthenticationService {
             var client = webClientBuilder.build();
 
             byte[] body = client.get()
-                                .uri(AUTHORIZE_URL.formatted(encode(username, UTF_8), md5Hex(password)))
+//                                .uri(AUTHORIZE_URL.formatted(encode(username, UTF_8), md5Hex(password)))
+                                .uri(AUTHORIZE_URL.formatted(username, md5Hex(password)))
                                 .accept(APPLICATION_XML)
                                 .headers(headers -> headers.set("refApiKey", applicationProperties.getBasketplanApiKey()))
                                 .retrieve()
@@ -47,7 +46,7 @@ public class BasketplanAuthenticationService {
                 var doc = db.parse(new ByteArrayInputStream(body));
                 doc.getDocumentElement().normalize();
 
-                var accessAllowed = getAttributeInElement(doc, "AuthorizeUserResponse", "accessAllowed").map(Boolean::parseBoolean).orElse(false);
+                boolean accessAllowed = getAttributeInElement(doc, "AuthorizeUserResponse", "accessAllowed").map(Boolean::parseBoolean).orElse(false);
                 if (accessAllowed) {
                     var personId = getAttributeInElement(doc, "AuthorizeUserResponse", "personId").orElse(null);
                     var personName = getAttributeInElement(doc, "AuthorizeUserResponse", "personName").orElse(null);
