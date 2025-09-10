@@ -32,7 +32,7 @@
         <npmVersion>10.9.3</npmVersion>
 
         <!-- spring boot is behind, older version does not support postgres 16.8 -->
-        <flyway.version>11.11.2</flyway.version>
+        <flyway.version>11.12.0</flyway.version>
         <poi.version>5.4.1</poi.version>
 
         <archunit.version>1.4.1</archunit.version>
@@ -41,7 +41,7 @@
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
-        <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.19.0</versions-maven-plugin.version>
         <!-- downgraded, version 3.5.3 does not execute ArchUnit test -->
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
