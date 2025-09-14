@@ -25,7 +25,9 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentTag;
 import ch.refereecoach.probasket.service.basketplan.BasketplanGameService;
 import ch.refereecoach.probasket.service.mail.MailService;
+import ch.refereecoach.probasket.util.AsportUtil;
 import ch.refereecoach.probasket.util.DateUtil;
+import ch.refereecoach.probasket.util.YouTubeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -65,11 +67,17 @@ public class ReportService {
     private final UserService userService;
     private final MailService mailService;
 
-    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, long userId) {
+    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, long userId) throws InvalidVideoUrlException {
         var coach = userService.getById(userId);
         var reportee = userService.getById(reporteeId);
 
-        var reportType = videoUrl == null ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
+        if (isNotBlank(videoUrl)) {
+            if (YouTubeUtil.parseYouTubeId(videoUrl).isEmpty() && AsportUtil.parseAsportEventId(videoUrl).isEmpty()) {
+                throw new InvalidVideoUrlException();
+            }
+        }
+
+        var reportType = isBlank(videoUrl) ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
         if (!coach.hasRequiredRole(reportType)) {
             throw new IllegalStateException("user %s is not a coach!".formatted(coach.fullName()));
         }
@@ -258,14 +266,18 @@ public class ReportService {
             throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
         }
 
-        var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), userId);
+        try {
+            var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), userId);
 
-        // copy source video-comments as references
-        reportVideoCommentRefDao.insert(reportVideoCommentDao.fetchByReportId(report.getId()).stream()
-                                                             .map(it -> new ReportVideoCommentRef(newReport.id(), it.getId(), it.getRequiresReply()))
-                                                             .toList());
+            // copy source video-comments as references
+            reportVideoCommentRefDao.insert(reportVideoCommentDao.fetchByReportId(report.getId()).stream()
+                                                                 .map(it -> new ReportVideoCommentRef(newReport.id(), it.getId(), it.getRequiresReply()))
+                                                                 .toList());
 
-        return newReport;
+            return newReport;
+        } catch (InvalidVideoUrlException e) {
+            throw new IllegalStateException("could not copy report due to invalid video-URL in source report - this should never happen...");
+        }
     }
 
     public void saveDiscussionReply(String externalId, CreateRefereeReportDiscussionReplyDTO dto, long userId) {
@@ -345,5 +357,8 @@ public class ReportService {
                         .filter(report -> Objects.equals(report.getCoachId(), coachId))
                         .map(Report::getId)
                         .collect(toSet());
+    }
+
+    public static class InvalidVideoUrlException extends Exception {
     }
 }

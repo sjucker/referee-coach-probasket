@@ -269,9 +269,15 @@ export class Overview implements OnInit {
                     this.creating.set(false);
                     this.edit(response.externalId);
                 },
-                error: () => {
+                error: err => {
                     this.creating.set(false);
-                    this.snackBar.open("An unexpected error occurred, report could not be created.", undefined, {
+                    let errorMessage;
+                    if (err.status === 400) {
+                        errorMessage = "Invalid video URL provided.";
+                    } else {
+                        errorMessage = "An unexpected error occurred, report could not be created.";
+                    }
+                    this.snackBar.open(errorMessage, undefined, {
                         duration: 3000,
                         horizontalPosition: "center",
                         verticalPosition: "top"

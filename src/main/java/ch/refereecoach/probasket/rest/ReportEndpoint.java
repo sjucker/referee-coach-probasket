@@ -45,13 +45,13 @@ public class ReportEndpoint {
 
     @GetMapping
     public ResponseEntity<ReportSearchResultDTO> search(@AuthenticationPrincipal Jwt jwt,
-                                                       @RequestParam @DateTimeFormat(iso = DATE) LocalDate from,
-                                                       @RequestParam @DateTimeFormat(iso = DATE) LocalDate to,
-                                                       @RequestParam String filter,
-                                                       @RequestParam int page,
-                                                       @RequestParam int pageSize,
-                                                       @RequestParam String sortBy,
-                                                       @RequestParam String sortOrder) {
+                                                        @RequestParam @DateTimeFormat(iso = DATE) LocalDate from,
+                                                        @RequestParam @DateTimeFormat(iso = DATE) LocalDate to,
+                                                        @RequestParam String filter,
+                                                        @RequestParam int page,
+                                                        @RequestParam int pageSize,
+                                                        @RequestParam String sortBy,
+                                                        @RequestParam String sortOrder) {
         log.info("GET /api/report?from={}&to={}&filter={}&page={}&pageSize={}&sortBy={}&sortOrder={}", from, to, filter, page, pageSize, sortBy, sortOrder);
 
         return ResponseEntity.ok(reportSearchService.search(from, to, filter, page, pageSize, sortBy, sortOrder, toLong(jwt.getSubject())));
@@ -98,7 +98,11 @@ public class ReportEndpoint {
                                                                      @RequestBody @Valid CreateRefereeReportDTO dto) {
         log.info("POST /api/report/referee {} {}", dto, jwt.getSubject());
 
-        return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), toLong(jwt.getSubject())));
+        try {
+            return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), toLong(jwt.getSubject())));
+        } catch (ReportService.InvalidVideoUrlException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping(value = "/referee/{externalId}/finish")
