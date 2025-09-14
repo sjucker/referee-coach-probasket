@@ -14,6 +14,7 @@ import ch.refereecoach.probasket.dto.report.ReportVideoCommentReplyDTO;
 import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
 import ch.refereecoach.probasket.util.AsportUtil;
+import ch.refereecoach.probasket.util.DateUtil;
 import ch.refereecoach.probasket.util.YouTubeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -319,7 +319,7 @@ public class ReportSearchService {
     }
 
     public Set<Long> findRefereeReportIdsWithMissingReplies() {
-        var dateTime = LocalDateTime.now().minusDays(2);
+        var dateTime = DateUtil.now().minusDays(2);
         var reportIds1 = jooqDsl.selectDistinct(REPORT.ID)
                                 .from(REPORT)
                                 .join(REPORT_VIDEO_COMMENT).on(REPORT.ID.eq(REPORT_VIDEO_COMMENT.REPORT_ID))
