@@ -25,8 +25,10 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
@@ -45,10 +47,13 @@ import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_TAG;
 import static ch.refereecoach.probasket.jooq.Tables.TAG;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.jooq.Records.mapping;
 import static org.jooq.impl.DSL.multiset;
+import static org.jooq.impl.DSL.notExists;
 import static org.jooq.impl.DSL.select;
+import static org.jooq.impl.DSL.selectOne;
 
 @Slf4j
 @Service
@@ -313,4 +318,36 @@ public class ReportSearchService {
                                              REPORT.GAME_REFEREE3_ID.eq(user.id())));
     }
 
+    public Set<Long> findRefereeReportIdsWithMissingReplies() {
+        var dateTime = LocalDateTime.now().minusDays(2);
+        var reportIds1 = jooqDsl.selectDistinct(REPORT.ID)
+                                .from(REPORT)
+                                .join(REPORT_VIDEO_COMMENT).on(REPORT.ID.eq(REPORT_VIDEO_COMMENT.REPORT_ID))
+                                .where(REPORT.REPORT_TYPE.eq(REFEREE_VIDEO_REPORT.name()),
+                                       REPORT.FINISHED_AT.isNotNull(),
+                                       REPORT.FINISHED_AT.lt(dateTime),
+                                       REPORT.REMINDER_SENT.isFalse(),
+                                       REPORT_VIDEO_COMMENT.REQUIRES_REPLY.isTrue(),
+                                       notExists(selectOne().from(REPORT_VIDEO_COMMENT_REPLY)
+                                                            .where(REPORT_VIDEO_COMMENT_REPLY.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID),
+                                                                   REPORT_VIDEO_COMMENT_REPLY.CREATED_BY.eq(REPORT.REPORTEE_ID))))
+                                .fetch(it -> it.get(REPORT.ID));
+
+        // check also for reference-comments
+        var reportIds2 = jooqDsl.selectDistinct(REPORT.ID)
+                                .from(REPORT)
+                                .join(REPORT_VIDEO_COMMENT_REF).on(REPORT_VIDEO_COMMENT_REF.REPORT_ID.eq(REPORT.ID))
+                                .join(REPORT_VIDEO_COMMENT).on(REPORT_VIDEO_COMMENT_REF.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
+                                .where(REPORT.REPORT_TYPE.eq(REFEREE_VIDEO_REPORT.name()),
+                                       REPORT.FINISHED_AT.isNotNull(),
+                                       REPORT.FINISHED_AT.lt(dateTime),
+                                       REPORT.REMINDER_SENT.isFalse(),
+                                       REPORT_VIDEO_COMMENT_REF.REQUIRES_REPLY.isTrue(),
+                                       notExists(selectOne().from(REPORT_VIDEO_COMMENT_REPLY)
+                                                            .where(REPORT_VIDEO_COMMENT_REPLY.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID),
+                                                                   REPORT_VIDEO_COMMENT_REPLY.CREATED_BY.eq(REPORT.REPORTEE_ID))))
+                                .fetch(it -> it.get(REPORT.ID));
+
+        return Stream.concat(reportIds1.stream(), reportIds2.stream()).collect(toSet());
+    }
 }

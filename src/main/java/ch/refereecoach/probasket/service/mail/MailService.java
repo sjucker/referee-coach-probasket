@@ -138,4 +138,39 @@ public class MailService {
             log.error("could not send email to: " + Arrays.toString(simpleMessage.getTo()), e);
         }
     }
+
+    public void sendReminderMail(UserDTO recipient, Report report) {
+        var simpleMessage = new SimpleMailMessage();
+        try {
+            log.info("reminder discussion replies for referee-report with ID {}, send email to {}", report.getId(), recipient.email());
+
+            simpleMessage.setSubject("Reminder Required Replies");
+            simpleMessage.setFrom(environment.getRequiredProperty("spring.mail.username"));
+            simpleMessage.setBcc(properties.getBccMail());
+
+            if (properties.isOverrideRecipient()) {
+                var to = properties.getOverrideRecipientMail();
+                if (isBlank(to)) {
+                    to = properties.getBccMail();
+                }
+                simpleMessage.setTo(to);
+                simpleMessage.setSubject(simpleMessage.getSubject() + " (%s)".formatted(recipient.email()));
+                log.info("override recipient mail: {}", properties.getOverrideRecipientMail());
+            } else {
+                simpleMessage.setTo(recipient.email());
+            }
+
+            simpleMessage.setText("""
+                                          Hi %s
+                                          
+                                          This is a reminder that you have not yet replied to all important comments.
+                                          
+                                          Please visit: %s/#/discuss/%s
+                                          """.formatted(recipient.firstName(), properties.getBaseUrl(), report.getExternalId()));
+
+            mailSender.send(simpleMessage);
+        } catch (MailException e) {
+            log.error("could not send email to: " + Arrays.toString(simpleMessage.getTo()), e);
+        }
+    }
 }
