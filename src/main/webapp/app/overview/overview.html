@@ -8,7 +8,7 @@
                 <form [formGroup]="form" (ngSubmit)="searchGame()" role="form">
                     <mat-form-field appearance="outline">
                         <mat-label>Game Number (e.g., 24-06531)</mat-label>
-                        <input formControlName="gameNumber" autocomplete="off" matInput name="gameNumber" type="text">
+                        <input formControlName="gameNumber" autocomplete="off" matInput name="gameNumber" type="text" [disabled]="!!game()">
                     </mat-form-field>
                     <button color="primary" mat-flat-button type="submit" [disabled]="searching() || game()">Search</button>
                 </form>
