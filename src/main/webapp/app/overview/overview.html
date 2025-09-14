@@ -19,7 +19,7 @@
                             <mat-label>YouTube/Asport URL</mat-label>
                             <input [ngModel]="videoUrl()" (ngModelChange)="videoUrl.set($event)"
                                    [disabled]="textOnlyMode()"
-                                   autocomplete="off" matInput name="youtubeUrl" type="text">
+                                   autocomplete="off" matInput name="videoUrl" type="text">
                         </mat-form-field>
                         <mat-checkbox [ngModel]="textOnlyMode()" (ngModelChange)="textOnlyMode.set($event)">No Video Comments</mat-checkbox>
                     </div>
