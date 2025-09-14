@@ -39,7 +39,7 @@
         </mat-card>
     }
 
-    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT && report.youtubeId) {
+    @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT) {
         @if (report.finished) {
             <mat-card appearance="filled">
                 <mat-card-actions class="actions-container">
