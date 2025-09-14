@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, computed, ElementRef, inject, input, OnDestroy, OnInit, viewChild} from '@angular/core';
+import {AfterViewInit, Component, computed, ElementRef, inject, input, OnDestroy, viewChild} from '@angular/core';
 import {firstValueFrom, Subject} from "rxjs";
 import {YouTubePlayer} from "@angular/youtube-player";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -11,7 +11,7 @@ import {DomSanitizer} from "@angular/platform-browser";
     templateUrl: './video-player.html',
     styleUrl: './video-player.scss'
 })
-export class VideoPlayer implements OnInit, AfterViewInit, OnDestroy {
+export class VideoPlayer implements AfterViewInit, OnDestroy {
 
     private sanitizer = inject(DomSanitizer);
 
@@ -26,16 +26,6 @@ export class VideoPlayer implements OnInit, AfterViewInit, OnDestroy {
         return this.sanitizer.bypassSecurityTrustResourceUrl(`https://arena.asport.tv/event/${this.asportId()}/embed?disableContentInfo&disableLogo&disableChromeCast`)
     });
     protected readonly asportPlayerPosition = new Subject<number>();
-
-    ngOnInit(): void {
-        if (this.youtubeId()) {
-            // This code loads the IFrame Player API code asynchronously, according to the instructions at
-            // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.body.appendChild(tag);
-        }
-    }
 
     ngAfterViewInit(): void {
         window.addEventListener('message', this.onAsportPlayerPosition());
