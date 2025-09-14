@@ -59,13 +59,14 @@ export class Overview implements OnInit {
 
     private static readonly STORAGE_KEY = 'overviewSearchParams';
 
+    protected readonly ReportType = ReportType;
+
     protected readonly game = signal<BasketplanGameDTO | null>(null);
     protected readonly videoUrl = signal<string | undefined>(undefined);
     protected readonly videoUrlInputNeeded = signal(false);
     protected readonly textOnlyMode = signal(false);
     protected readonly referees = signal<RefereeSelection[]>([]);
     protected readonly referee = signal<RefereeSelection | null>(null);
-
 
     protected readonly fromDate = signal<DateTime>(DateTime.now().minus({year: 1}));
     protected readonly toDate = signal<DateTime>(DateTime.now());
@@ -370,9 +371,9 @@ export class Overview implements OnInit {
 
     get displayedColumns(): string[] {
         if (this.auth.isRefereeCoach() || this.auth.isTrainerCoach()) {
-            return ['finished', 'date', 'gameNumber', 'competition', 'teams', 'coach', 'reportee', 'edit', 'view', 'copy', 'delete'];
+            return ['finished', 'date', 'gameNumber', 'competition', 'teams', 'coach', 'type', 'reportee', 'edit', 'view', 'copy', 'delete'];
         } else {
-            return ['date', 'gameNumber', 'competition', 'teams', 'coach', 'view'];
+            return ['date', 'gameNumber', 'competition', 'teams', 'coach', 'type', 'view'];
         }
     }
 
