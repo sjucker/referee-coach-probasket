@@ -50,10 +50,13 @@ export interface BasketplanGameDTO {
     officiatingMode?: OfficiatingMode;
     referee1Id?: number;
     referee1Name?: string;
+    referee1Rank?: Rank;
     referee2Id?: number;
     referee2Name?: string;
+    referee2Rank?: Rank;
     referee3Id?: number;
     referee3Name?: string;
+    referee3Rank?: Rank;
     videoUrl?: string;
 }
 
@@ -100,6 +103,7 @@ export interface RefereeReportDTO {
     coachName: string;
     reporteeId: number;
     reporteeName: string;
+    reporteeRank: Rank;
     game: BasketplanGameDTO;
     youtubeId?: string;
     asportId?: number;

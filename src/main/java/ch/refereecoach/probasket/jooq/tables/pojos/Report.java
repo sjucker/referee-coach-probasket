@@ -49,6 +49,9 @@ public class Report implements Serializable {
     private LocalDateTime finishedAt;
     private Long finishedBy;
     private Boolean reminderSent;
+    private String gameReferee1Rank;
+    private String gameReferee2Rank;
+    private String gameReferee3Rank;
 
     public Report() {}
 
@@ -84,6 +87,9 @@ public class Report implements Serializable {
         this.finishedAt = value.finishedAt;
         this.finishedBy = value.finishedBy;
         this.reminderSent = value.reminderSent;
+        this.gameReferee1Rank = value.gameReferee1Rank;
+        this.gameReferee2Rank = value.gameReferee2Rank;
+        this.gameReferee3Rank = value.gameReferee3Rank;
     }
 
     public Report(
@@ -117,7 +123,10 @@ public class Report implements Serializable {
         Long updatedBy,
         LocalDateTime finishedAt,
         Long finishedBy,
-        Boolean reminderSent
+        Boolean reminderSent,
+        String gameReferee1Rank,
+        String gameReferee2Rank,
+        String gameReferee3Rank
     ) {
         this.id = id;
         this.externalId = externalId;
@@ -150,6 +159,9 @@ public class Report implements Serializable {
         this.finishedAt = finishedAt;
         this.finishedBy = finishedBy;
         this.reminderSent = reminderSent;
+        this.gameReferee1Rank = gameReferee1Rank;
+        this.gameReferee2Rank = gameReferee2Rank;
+        this.gameReferee3Rank = gameReferee3Rank;
     }
 
     /**
@@ -586,6 +598,48 @@ public class Report implements Serializable {
         this.reminderSent = reminderSent;
     }
 
+    /**
+     * Getter for <code>public.report.game_referee1_rank</code>.
+     */
+    public String getGameReferee1Rank() {
+        return this.gameReferee1Rank;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee1_rank</code>.
+     */
+    public void setGameReferee1Rank(String gameReferee1Rank) {
+        this.gameReferee1Rank = gameReferee1Rank;
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee2_rank</code>.
+     */
+    public String getGameReferee2Rank() {
+        return this.gameReferee2Rank;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee2_rank</code>.
+     */
+    public void setGameReferee2Rank(String gameReferee2Rank) {
+        this.gameReferee2Rank = gameReferee2Rank;
+    }
+
+    /**
+     * Getter for <code>public.report.game_referee3_rank</code>.
+     */
+    public String getGameReferee3Rank() {
+        return this.gameReferee3Rank;
+    }
+
+    /**
+     * Setter for <code>public.report.game_referee3_rank</code>.
+     */
+    public void setGameReferee3Rank(String gameReferee3Rank) {
+        this.gameReferee3Rank = gameReferee3Rank;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -781,6 +835,24 @@ public class Report implements Serializable {
         }
         else if (!this.reminderSent.equals(other.reminderSent))
             return false;
+        if (this.gameReferee1Rank == null) {
+            if (other.gameReferee1Rank != null)
+                return false;
+        }
+        else if (!this.gameReferee1Rank.equals(other.gameReferee1Rank))
+            return false;
+        if (this.gameReferee2Rank == null) {
+            if (other.gameReferee2Rank != null)
+                return false;
+        }
+        else if (!this.gameReferee2Rank.equals(other.gameReferee2Rank))
+            return false;
+        if (this.gameReferee3Rank == null) {
+            if (other.gameReferee3Rank != null)
+                return false;
+        }
+        else if (!this.gameReferee3Rank.equals(other.gameReferee3Rank))
+            return false;
         return true;
     }
 
@@ -819,6 +891,9 @@ public class Report implements Serializable {
         result = prime * result + ((this.finishedAt == null) ? 0 : this.finishedAt.hashCode());
         result = prime * result + ((this.finishedBy == null) ? 0 : this.finishedBy.hashCode());
         result = prime * result + ((this.reminderSent == null) ? 0 : this.reminderSent.hashCode());
+        result = prime * result + ((this.gameReferee1Rank == null) ? 0 : this.gameReferee1Rank.hashCode());
+        result = prime * result + ((this.gameReferee2Rank == null) ? 0 : this.gameReferee2Rank.hashCode());
+        result = prime * result + ((this.gameReferee3Rank == null) ? 0 : this.gameReferee3Rank.hashCode());
         return result;
     }
 
@@ -857,6 +932,9 @@ public class Report implements Serializable {
         sb.append(", ").append(finishedAt);
         sb.append(", ").append(finishedBy);
         sb.append(", ").append(reminderSent);
+        sb.append(", ").append(gameReferee1Rank);
+        sb.append(", ").append(gameReferee2Rank);
+        sb.append(", ").append(gameReferee3Rank);
 
         sb.append(")");
         return sb.toString();

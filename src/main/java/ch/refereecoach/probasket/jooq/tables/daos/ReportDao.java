@@ -538,4 +538,49 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByReminderSent(Boolean... values) {
         return fetch(Report.REPORT.REMINDER_SENT, values);
     }
+
+    /**
+     * Fetch records that have <code>game_referee1_rank BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee1Rank(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE1_RANK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee1_rank IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee1Rank(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE1_RANK, values);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee2_rank BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee2Rank(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE2_RANK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee2_rank IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee2Rank(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE2_RANK, values);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee3_rank BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfGameReferee3Rank(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Report.REPORT.GAME_REFEREE3_RANK, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>game_referee3_rank IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee3Rank(String... values) {
+        return fetch(Report.REPORT.GAME_REFEREE3_RANK, values);
+    }
 }

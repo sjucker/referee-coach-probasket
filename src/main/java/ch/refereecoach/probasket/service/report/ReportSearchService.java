@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.service.report;
 
+import ch.refereecoach.probasket.common.Rank;
 import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
 
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
 import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_3PO;
+import static ch.refereecoach.probasket.common.Rank.RK;
 import static ch.refereecoach.probasket.common.ReportType.GAME_DISCUSSION;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
@@ -183,6 +185,7 @@ public class ReportSearchService {
                                                       reportRecord.getCoachName(),
                                                       reportRecord.getReporteeId(),
                                                       reportRecord.getReporteeName(),
+                                                      Rank.of(reportRecord.getReporteeRank()).orElse(RK),
                                                       new BasketplanGameDTO(reportRecord.getGameNumber(),
                                                                             reportRecord.getGameCompetition(),
                                                                             reportRecord.getGameDate(),
@@ -194,10 +197,13 @@ public class ReportSearchService {
                                                                             reportRecord.getGameReferee3Id() != null ? OFFICIATING_3PO : OFFICIATING_2PO,
                                                                             reportRecord.getGameReferee1Id(),
                                                                             reportRecord.getGameReferee1Name(),
+                                                                            Rank.of(reportRecord.getGameReferee1Rank()).orElse(null),
                                                                             reportRecord.getGameReferee2Id(),
                                                                             reportRecord.getGameReferee2Name(),
+                                                                            Rank.of(reportRecord.getGameReferee2Rank()).orElse(null),
                                                                             reportRecord.getGameReferee3Id(),
                                                                             reportRecord.getGameReferee3Name(),
+                                                                            Rank.of(reportRecord.getGameReferee3Rank()).orElse(null),
                                                                             reportRecord.getGameVideoUrl()),
                                                       YouTubeUtil.parseYouTubeId(reportRecord.getGameVideoUrl()).orElse(null),
                                                       AsportUtil.parseAsportEventId(reportRecord.getGameVideoUrl()).orElse(null),

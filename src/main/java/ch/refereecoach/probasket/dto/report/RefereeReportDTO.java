@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.dto.report;
 
+import ch.refereecoach.probasket.common.Rank;
 import ch.refereecoach.probasket.common.ReportType;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ public record RefereeReportDTO(@NotNull Long id,
                                @NotNull String coachName,
                                @NotNull Long reporteeId,
                                @NotNull String reporteeName,
+                               @NotNull Rank reporteeRank,
                                @NotNull BasketplanGameDTO game,
                                String youtubeId,
                                Long asportId,

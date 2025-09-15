@@ -2,6 +2,7 @@ package ch.refereecoach.probasket.service.report;
 
 import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaType;
+import ch.refereecoach.probasket.common.Rank;
 import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
@@ -43,6 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static ch.refereecoach.probasket.common.CriteriaState.NEUTRAL;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
+import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -106,10 +108,13 @@ public class ReportService {
         report.setGameGuestTeamId(game.guestTeamId());
         report.setGameReferee1Id(game.referee1Id());
         report.setGameReferee1Name(game.referee1Name());
+        report.setGameReferee1Rank(ofNullable(game.referee1Rank()).map(Rank::name).orElse(null));
         report.setGameReferee2Id(game.referee2Id());
         report.setGameReferee2Name(game.referee2Name());
+        report.setGameReferee2Rank(ofNullable(game.referee2Rank()).map(Rank::name).orElse(null));
         report.setGameReferee3Id(game.referee3Id());
         report.setGameReferee3Name(game.referee3Name());
+        report.setGameReferee3Rank(ofNullable(game.referee3Rank()).map(Rank::name).orElse(null));
         report.setGameVideoUrl(videoUrl);
 
         report.setOverallScore(DEFAULT_SCORE);

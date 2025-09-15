@@ -74,9 +74,9 @@ public class BasketplanGameService {
                         getAttributeValue(guestTeamNode, "name").orElseThrow(),
                         Integer.valueOf(getAttributeValue(guestTeamNode, "id").orElseThrow()),
                         getAttributeValue(gameNode, "referee3Id").isPresent() ? OFFICIATING_3PO : OFFICIATING_2PO,
-                        referee1.map(UserDTO::id).orElse(null), referee1.map(UserDTO::fullName).orElse(null),
-                        referee2.map(UserDTO::id).orElse(null), referee2.map(UserDTO::fullName).orElse(null),
-                        referee3.map(UserDTO::id).orElse(null), referee3.map(UserDTO::fullName).orElse(null),
+                        referee1.map(UserDTO::id).orElse(null), referee1.map(UserDTO::fullName).orElse(null), referee1.map(UserDTO::rank).orElse(null),
+                        referee2.map(UserDTO::id).orElse(null), referee2.map(UserDTO::fullName).orElse(null), referee2.map(UserDTO::rank).orElse(null),
+                        referee3.map(UserDTO::id).orElse(null), referee3.map(UserDTO::fullName).orElse(null), referee3.map(UserDTO::rank).orElse(null),
                         getAttributeValue(gameNode, "videoLink")
                                 .or(() -> findAsportVideoUrl(gameNumber))
                                 .orElse(null)
