@@ -68,8 +68,8 @@ export class Overview implements OnInit {
     protected readonly referees = signal<RefereeSelection[]>([]);
     protected readonly referee = signal<RefereeSelection | null>(null);
 
-    protected readonly fromDate = signal<DateTime>(DateTime.now().minus({year: 1}));
-    protected readonly toDate = signal<DateTime>(DateTime.now());
+    protected readonly fromDate = signal<DateTime>(this.getDefaultFromDate());
+    protected readonly toDate = signal<DateTime>(this.getDefaultToDate());
     protected readonly textFilter = signal<string>('');
     protected readonly pageIndex = signal(0);
     protected readonly pageSize = signal(10);
@@ -126,18 +126,23 @@ export class Overview implements OnInit {
     }
 
     private restoreSearchFromSession(): void {
-
         const raw = sessionStorage.getItem(Overview.STORAGE_KEY);
-        if (!raw) return;
+        if (!raw) {
+            return;
+        }
         const parsed = JSON.parse(raw) as { from?: string; to?: string; filter?: string; page?: number; pageSize?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' };
 
         if (parsed.from) {
             const f = DateTime.fromISO(parsed.from);
-            if (f.isValid) this.fromDate.set(f);
+            if (f.isValid) {
+                this.fromDate.set(f);
+            }
         }
         if (parsed.to) {
             const t = DateTime.fromISO(parsed.to);
-            if (t.isValid) this.toDate.set(t);
+            if (t.isValid) {
+                this.toDate.set(t);
+            }
         }
         if (typeof parsed.filter === 'string') {
             this.textFilter.set(parsed.filter);
@@ -393,4 +398,23 @@ export class Overview implements OnInit {
     isCurrentUserCoachOf(dto: ReportOverviewDTO): boolean {
         return this.auth.userId() === dto.coachId;
     }
+
+    private getDefaultFromDate(): DateTime {
+        const now = DateTime.now();
+        if (now.month > 6) {
+            return DateTime.local(now.year, 9, 1);
+        } else {
+            return DateTime.local(now.year - 1, 9, 1);
+        }
+    }
+
+    private getDefaultToDate(): DateTime {
+        const now = DateTime.now();
+        if (now.month > 6) {
+            return DateTime.local(now.year + 1, 6, 30);
+        } else {
+            return DateTime.local(now.year, 6, 30);
+        }
+    }
+
 }
