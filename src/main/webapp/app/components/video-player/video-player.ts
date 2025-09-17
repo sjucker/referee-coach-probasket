@@ -23,7 +23,7 @@ export class VideoPlayer implements AfterViewInit, OnDestroy {
     protected readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
     protected readonly asport = viewChild<ElementRef>('asportPlayer');
     protected readonly asportUrl = computed(() => {
-        return this.sanitizer.bypassSecurityTrustResourceUrl(`https://arena.asport.tv/event/${this.asportId()}/embed?disableContentInfo&disableLogo&disableChromeCast`)
+        return this.sanitizer.bypassSecurityTrustResourceUrl(`https://arena.asport.tv/event/${this.asportId()}/embed?disableContentInfo&disableLogo&disableChromeCast&debug`)
     });
     protected readonly asportPlayerPosition = new Subject<number>();
 
