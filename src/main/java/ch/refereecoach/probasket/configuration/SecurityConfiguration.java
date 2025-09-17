@@ -75,7 +75,8 @@ public class SecurityConfiguration {
                    .csrf(AbstractHttpConfigurer::disable)
                    .exceptionHandling(withDefaults())
                    .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                   .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                   .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                                                      .requestMatchers("/api/auth/**").permitAll()
                                                       .requestMatchers("/api/**").authenticated()
                                                       .anyRequest().permitAll() // to serve the Angular frontend
                                          )
