@@ -1,7 +1,22 @@
 @if (report(); as report) {
     <mat-card appearance="filled">
         <mat-card-header>
-            <mat-card-title>Game Info</mat-card-title>
+            <mat-card-title>
+                <div class="game-info-header">
+                    <div>Game Info</div>
+                    <button matButton [matMenuTriggerFor]="menu">FIBA Docs</button>
+                    <mat-menu #menu="matMenu">
+                        <a href="https://library.fibairef.basketball/doc/Z05xejI2YmIrMzJVNnY2a09hYTNZdz09" target="_blank" mat-menu-item>
+                            <mat-icon>open_in_new</mat-icon>
+                            Basic Officiating Terminology
+                        </a>
+                        <a href="https://library.fibairef.basketball/doc/MlVhTUhWZzlsaVFLaFNBWFFRSnZmUT09" target="_blank" mat-menu-item>
+                            <mat-icon>open_in_new</mat-icon>
+                            Individual Officiating Techniques (IOT)
+                        </a>
+                    </mat-menu>
+                </div>
+            </mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div class="game-info-container">
