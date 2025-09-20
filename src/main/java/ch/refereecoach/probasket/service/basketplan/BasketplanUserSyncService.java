@@ -45,7 +45,7 @@ public class BasketplanUserSyncService {
                                         .collect(toMap(Login::getId, identity()));
 
             var body = client.get()
-                             .uri(REFEREE_DATA_URL.formatted(applicationProperties.getFederationId(), today().minusYears(1).toString()))
+                             .uri(REFEREE_DATA_URL.formatted(applicationProperties.getFederationId(), today().minusYears(2).toString()))
                              .accept(APPLICATION_XML)
                              .headers(headers -> headers.set("refApiKey", applicationProperties.getBasketplanApiKey()))
                              .retrieve()
