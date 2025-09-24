@@ -30,6 +30,7 @@ import {ReplyDialog} from "./reply-dialog";
 import {DateTime} from "luxon";
 import {FinishReplyDialog, FinishReplyDialogData} from "./finish-reply-dialog";
 import {VideoPlayer} from "../components/video-player/video-player";
+import {AuthService} from "../auth.service";
 
 @Component({
     selector: 'app-discuss',
@@ -43,6 +44,7 @@ export class DiscussPage implements OnDestroy, AfterViewInit, HasUnsavedChanges 
     private readonly router = inject(Router);
     private readonly snackBar = inject(MatSnackBar);
     private readonly dialog = inject(MatDialog);
+    public readonly authService = inject(AuthService);
 
     protected readonly ReportType = ReportType;
 

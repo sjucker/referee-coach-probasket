@@ -33,6 +33,7 @@ import java.util.List;
 import static ch.refereecoach.probasket.common.UserRole.ADMIN;
 import static ch.refereecoach.probasket.common.UserRole.REFEREE;
 import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH_PLUS;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER_COACH;
 import static ch.refereecoach.probasket.service.auth.JwtService.CLAIM_AUTHORITIES;
@@ -103,6 +104,7 @@ public class SecurityConfiguration {
 
         var currentAuthorities = new ArrayList<SimpleGrantedAuthority>();
         if (login.refereeCoach()) currentAuthorities.add(new SimpleGrantedAuthority(REFEREE_COACH.name()));
+        if (login.refereeCoachPlus()) currentAuthorities.add(new SimpleGrantedAuthority(REFEREE_COACH_PLUS.name()));
         if (login.referee()) currentAuthorities.add(new SimpleGrantedAuthority(REFEREE.name()));
         if (login.trainerCoach()) currentAuthorities.add(new SimpleGrantedAuthority(TRAINER_COACH.name()));
         if (login.trainer()) currentAuthorities.add(new SimpleGrantedAuthority(TRAINER.name()));

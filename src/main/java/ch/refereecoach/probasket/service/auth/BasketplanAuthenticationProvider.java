@@ -24,6 +24,7 @@ import java.util.List;
 import static ch.refereecoach.probasket.common.UserRole.ADMIN;
 import static ch.refereecoach.probasket.common.UserRole.REFEREE;
 import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH;
+import static ch.refereecoach.probasket.common.UserRole.REFEREE_COACH_PLUS;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER;
 import static ch.refereecoach.probasket.common.UserRole.TRAINER_COACH;
 import static ch.refereecoach.probasket.util.DateUtil.now;
@@ -73,6 +74,7 @@ public class BasketplanAuthenticationProvider implements AuthenticationProvider 
     private List<GrantedAuthority> getAuthorities(Login login) {
         var authorities = new ArrayList<GrantedAuthority>();
         if (login.getRefereeCoach()) authorities.add(new SimpleGrantedAuthority(REFEREE_COACH.name()));
+        if (login.getRefereeCoachPlus()) authorities.add(new SimpleGrantedAuthority(REFEREE_COACH_PLUS.name()));
         if (login.getReferee()) authorities.add(new SimpleGrantedAuthority(REFEREE.name()));
         if (login.getTrainerCoach()) authorities.add(new SimpleGrantedAuthority(TRAINER_COACH.name()));
         if (login.getTrainer()) authorities.add(new SimpleGrantedAuthority(TRAINER.name()));

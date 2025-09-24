@@ -30,4 +30,5 @@ export class GameInfo {
 
     report = input.required<RefereeReportDTO>();
     showOverallScore = input(false);
+    refereeCoachPlus = input(false);
 }

@@ -78,6 +78,7 @@ public class AdminUserService {
         var login = loginDao.fetchOptionalById(id).orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 
         login.setRefereeCoach(dto.refereeCoach());
+        login.setRefereeCoachPlus(dto.refereeCoachPlus());
         login.setReferee(dto.referee());
         login.setTrainerCoach(dto.trainerCoach());
         login.setTrainer(dto.trainer());

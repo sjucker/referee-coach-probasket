@@ -2,14 +2,14 @@
 <app-loading-bar [show]="showLoadingBar()"/>
 
 @if (report(); as report) {
-    <app-game-info [report]="report" [showOverallScore]="true"></app-game-info>
+    <app-game-info [report]="report" [showOverallScore]="true" [refereeCoachPlus]="authService.isRefereeCoachPlus()"></app-game-info>
 
     @for (comment of report.comments; track comment.id) {
         <mat-card appearance="filled">
             <mat-card-header>
                 <mat-card-title>{{ comment.typeDescription }}</mat-card-title>
                 @if (comment.scoreRequired) {
-                    <mat-card-subtitle>Rating: {{ ScoreUtil.score(comment) }}</mat-card-subtitle>
+                    <mat-card-subtitle>Rating: {{ ScoreUtil.score(comment, authService.isRefereeCoachPlus()) }}</mat-card-subtitle>
                 }
             </mat-card-header>
             <mat-card-content class="mat-typography">

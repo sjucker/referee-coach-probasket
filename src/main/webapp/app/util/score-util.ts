@@ -3,7 +3,16 @@ export interface HasScoreDTO {
 }
 
 export class ScoreUtil {
-    public static score(dto: HasScoreDTO): string {
+    public static score(dto: HasScoreDTO, showScore: boolean): string {
+        const description = this.scoreDescription(dto);
+        if (showScore) {
+            return `${dto.score} (${description})`;
+        } else {
+            return description;
+        }
+    }
+
+    private static scoreDescription(dto: HasScoreDTO): string {
         if (dto.score) {
             if (dto.score >= 8.6) {
                 return "excellent";
@@ -21,5 +30,4 @@ export class ScoreUtil {
         }
         return "";
     }
-
 }

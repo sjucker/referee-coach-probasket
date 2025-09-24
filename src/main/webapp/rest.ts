@@ -14,6 +14,7 @@ export interface LoginResponseDTO {
 
 export interface UpdateUserRolesDTO {
     refereeCoach: boolean;
+    refereeCoachPlus: boolean;
     referee: boolean;
     trainerCoach: boolean;
     trainer: boolean;
@@ -26,6 +27,7 @@ export interface UserDTO {
     email: string;
     rank?: Rank;
     refereeCoach: boolean;
+    refereeCoachPlus: boolean;
     referee: boolean;
     trainerCoach: boolean;
     trainer: boolean;
@@ -201,6 +203,7 @@ export type DateAsString = string;
 
 export enum UserRole {
     REFEREE_COACH = "REFEREE_COACH",
+    REFEREE_COACH_PLUS = "REFEREE_COACH_PLUS",
     REFEREE = "REFEREE",
     TRAINER_COACH = "TRAINER_COACH",
     TRAINER = "TRAINER",

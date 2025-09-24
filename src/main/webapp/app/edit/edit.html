@@ -2,7 +2,7 @@
 <app-loading-bar [show]="showLoadingBar()"/>
 
 @if (report(); as report) {
-    <app-game-info [report]="report"/>
+    <app-game-info [report]="report" [refereeCoachPlus]="authService.isRefereeCoachPlus()"/>
 
     <mat-card appearance="filled">
         <mat-card-actions class="actions-container">

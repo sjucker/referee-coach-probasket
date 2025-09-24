@@ -88,6 +88,7 @@ export class AdminPage {
     save(user: UserDTO): void {
         const body: UpdateUserRolesDTO = {
             refereeCoach: user.refereeCoach,
+            refereeCoachPlus: user.refereeCoachPlus,
             referee: user.referee,
             trainerCoach: user.trainerCoach,
             trainer: user.trainer,
@@ -107,7 +108,7 @@ export class AdminPage {
     }
 
     get displayedColumns(): string[] {
-        return ['name', 'email', 'rank', 'active', 'refereeCoach', 'referee', 'trainerCoach', 'trainer', 'actions'];
+        return ['name', 'email', 'rank', 'active', 'refereeCoach', 'refereeCoachPlus', 'referee', 'trainerCoach', 'trainer', 'actions'];
     }
 
     onMatSortChange($event: Sort) {

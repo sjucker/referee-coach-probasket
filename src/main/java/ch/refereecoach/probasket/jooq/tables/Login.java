@@ -117,6 +117,11 @@ public class Login extends TableImpl<LoginRecord> {
      */
     public final TableField<LoginRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
 
+    /**
+     * The column <code>public.login.referee_coach_plus</code>.
+     */
+    public final TableField<LoginRecord, Boolean> REFEREE_COACH_PLUS = createField(DSL.name("referee_coach_plus"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
     private Login(Name alias, Table<LoginRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

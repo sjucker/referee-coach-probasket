@@ -13,6 +13,7 @@ import {NgClass} from "@angular/common";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {PATH_DISCUSS, PATH_OVERVIEW} from "../app.routes";
 import {VideoPlayer} from "../components/video-player/video-player";
+import {AuthService} from "../auth.service";
 
 @Component({
     selector: 'app-view',
@@ -25,6 +26,7 @@ export class ViewPage implements AfterViewInit, OnDestroy {
     private readonly http = inject(HttpClient);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
+    public readonly authService = inject(AuthService);
 
     protected readonly CriteriaState = CriteriaState;
     protected readonly ScoreUtil = ScoreUtil;

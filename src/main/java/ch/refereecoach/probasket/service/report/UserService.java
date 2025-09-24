@@ -33,6 +33,7 @@ public class UserService {
                            it.getEmail(),
                            Rank.of(it.getRank()).orElse(null),
                            it.getRefereeCoach(),
+                           it.getRefereeCoachPlus(),
                            it.getReferee(),
                            it.getTrainerCoach(),
                            it.getTrainer(),

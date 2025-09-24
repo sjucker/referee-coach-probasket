@@ -32,19 +32,19 @@
             </div>
             @if (report.game.officiatingMode === OfficiatingMode.OFFICIATING_3PO) {
                 <div class="game-info-container">
-                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Crew Chief: {{ report.game.referee1Name }} ({{ report.game.referee1Rank }})</span>
-                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Umpire 1: {{ report.game.referee2Name }} ({{ report.game.referee2Rank }})</span>
-                    <span [ngClass]="report.game.referee3Id === report.reporteeId ? 'reportee' : ''">Umpire 2: {{ report.game.referee3Name }} ({{ report.game.referee3Rank }})</span>
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Crew Chief: {{ report.game.referee1Name }} ({{ report.game.referee1Rank ?? '?' }})</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Umpire 1: {{ report.game.referee2Name }} ({{ report.game.referee2Rank ?? '?' }})</span>
+                    <span [ngClass]="report.game.referee3Id === report.reporteeId ? 'reportee' : ''">Umpire 2: {{ report.game.referee3Name }} ({{ report.game.referee3Rank ?? '?' }})</span>
                 </div>
             } @else {
                 <div class="game-info-container">
-                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Referee 1: {{ report.game.referee1Name }} ({{ report.game.referee1Rank }})</span>
-                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Referee 2: {{ report.game.referee2Name }} ({{ report.game.referee2Rank }})</span>
+                    <span [ngClass]="report.game.referee1Id === report.reporteeId ? 'reportee' : ''">Referee 1: {{ report.game.referee1Name }} ({{ report.game.referee1Rank ?? '?' }})</span>
+                    <span [ngClass]="report.game.referee2Id === report.reporteeId ? 'reportee' : ''">Referee 2: {{ report.game.referee2Name }} ({{ report.game.referee2Rank ?? '?' }})</span>
                 </div>
             }
 
             @if (showOverallScore()) {
-                <div class="overall-score">Overall Rating: {{ ScoreUtil.score(report) }}</div>
+                <div class="overall-score">Overall Rating: {{ ScoreUtil.score(report, refereeCoachPlus()) }}</div>
             }
         </mat-card-content>
     </mat-card>

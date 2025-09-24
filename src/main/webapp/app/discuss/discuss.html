@@ -2,7 +2,7 @@
 <app-loading-bar [show]="showLoadingBar()"/>
 
 @if (report(); as report) {
-    <app-game-info [report]="report" [showOverallScore]="false"></app-game-info>
+    <app-game-info [report]="report" [showOverallScore]="false" [refereeCoachPlus]="authService.isRefereeCoachPlus()"></app-game-info>
 
     @if (report.reportType === ReportType.REFEREE_VIDEO_REPORT) {
         <mat-card appearance="filled">

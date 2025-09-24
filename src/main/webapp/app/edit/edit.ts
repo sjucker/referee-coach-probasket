@@ -26,6 +26,7 @@ import {MatCheckbox} from "@angular/material/checkbox";
 import {TagSelection} from "../tag-selection/tag-selection";
 import {Observable, of, share} from "rxjs";
 import {VideoPlayer} from "../components/video-player/video-player";
+import {AuthService} from "../auth.service";
 
 @Component({
     selector: 'app-edit',
@@ -40,6 +41,7 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
     private readonly route = inject(ActivatedRoute);
     private readonly snackBar = inject(MatSnackBar);
     private readonly router = inject(Router);
+    public readonly authService = inject(AuthService);
 
     protected readonly OfficiatingMode = OfficiatingMode;
     protected readonly CriteriaState = CriteriaState;
