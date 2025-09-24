@@ -24,11 +24,14 @@ export class ExportPage {
     private readonly snackBar = inject(MatSnackBar);
 
     protected readonly exporting = signal(false);
-    protected readonly cutoffDate = signal<DateTime>(DateTime.now().minus({year: 1}));
+    protected readonly fromDate = signal<DateTime>(DateTime.now().minus({year: 1}));
+    protected readonly toDate = signal<DateTime>(DateTime.now());
 
     export() {
         this.exporting.set(true);
-        const params = new HttpParams().set('from', this.cutoffDate().toISODate()!);
+        const params = new HttpParams()
+            .set('from', this.fromDate().toISODate()!)
+            .set('to', this.toDate().toISODate()!);
         this.http.get(`/api/admin/export`, {responseType: 'blob', params}).subscribe({
             next: (response) => {
                 this.exporting.set(false);

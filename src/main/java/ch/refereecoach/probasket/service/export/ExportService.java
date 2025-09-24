@@ -30,7 +30,7 @@ public class ExportService {
 
     private final DSLContext jooqDsl;
 
-    public void export(OutputStream out, LocalDate from) throws IOException {
+    public void export(OutputStream out, LocalDate from, LocalDate to) throws IOException {
         try (var wb = new XSSFWorkbook()) {
             var sheet = wb.createSheet();
             wb.setSheetName(0, "Export");
@@ -42,7 +42,7 @@ public class ExportService {
             var rowIndex = 0;
             var headerRow = sheet.createRow(rowIndex++);
 
-            var gameSummaries = findForExport(from);
+            var gameSummaries = findForExport(from, to);
             var categoryTypes = gameSummaries.stream()
                                              .flatMap(it -> it.scoresPerType().keySet().stream())
                                              .filter(CategoryType::isScoreRequired)
@@ -91,7 +91,7 @@ public class ExportService {
         }
     }
 
-    private List<GameSummary> findForExport(LocalDate from) {
+    private List<GameSummary> findForExport(LocalDate from, LocalDate to) {
         return jooqDsl.select(REPORT,
                               multiset(
                                       select(REPORT_COMMENT.TYPE,
@@ -103,7 +103,8 @@ public class ExportService {
                              )
                       .from(REPORT)
                       .where(REPORT.FINISHED_AT.isNotNull(),
-                             REPORT.GAME_DATE.ge(from))
+                             REPORT.GAME_DATE.ge(from),
+                             REPORT.GAME_DATE.le(to))
                       .orderBy(REPORT.GAME_DATE.desc(), REPORT.GAME_NUMBER.desc(), REPORT.REPORTEE_NAME.desc())
                       .fetch(it -> {
                           var report = it.value1();

@@ -63,10 +63,11 @@ public class AdminEndpoint {
 
     @GetMapping("/export")
     @Secured({"ADMIN"})
-    public ResponseEntity<Resource> export(@RequestParam LocalDate from) throws IOException {
-        log.info("GET /api/admin/export?from={}", from);
+    public ResponseEntity<Resource> export(@RequestParam LocalDate from,
+                                           @RequestParam LocalDate to) throws IOException {
+        log.info("GET /api/admin/export?from={}&to={}", from, to);
         var out = new ByteArrayOutputStream();
-        exportService.export(out, from);
+        exportService.export(out, from, to);
         return ExportUtil.export(out.toByteArray(), APPLICATION_OCTET_STREAM_VALUE);
     }
 }

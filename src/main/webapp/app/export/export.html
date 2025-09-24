@@ -5,9 +5,16 @@
   <mat-card-content class="export-container">
       <mat-form-field appearance="fill" class="from-field">
         <mat-label>From</mat-label>
-        <input matInput [matDatepicker]="picker" [ngModel]="cutoffDate()" (ngModelChange)="cutoffDate.set($event)">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <input matInput [matDatepicker]="pickerFrom" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)">
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="to-field">
+        <mat-label>To</mat-label>
+        <input matInput [matDatepicker]="pickerTo" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)">
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
       </mat-form-field>
 
       <button mat-flat-button (click)="export()" [disabled]="exporting()">
