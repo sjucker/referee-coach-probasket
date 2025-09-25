@@ -23,6 +23,7 @@ import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.firstName;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.rank;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.referee;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.refereeCoach;
+import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.refereeCoachPlus;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.trainer;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.trainerCoach;
 import static ch.refereecoach.probasket.jooq.tables.Login.LOGIN;
@@ -66,6 +67,7 @@ public class AdminUserService {
             case rank -> descending ? LOGIN.RANK.desc() : LOGIN.RANK.asc();
             case active -> descending ? LOGIN.ACTIVE.desc() : LOGIN.ACTIVE.asc();
             case refereeCoach -> descending ? LOGIN.REFEREE_COACH.desc() : LOGIN.REFEREE_COACH.asc();
+            case refereeCoachPlus -> descending ? LOGIN.REFEREE_COACH_PLUS.desc() : LOGIN.REFEREE_COACH_PLUS.asc();
             case referee -> descending ? LOGIN.REFEREE.desc() : LOGIN.REFEREE.asc();
             case trainerCoach -> descending ? LOGIN.TRAINER_COACH.desc() : LOGIN.TRAINER_COACH.asc();
             case trainer -> descending ? LOGIN.TRAINER.desc() : LOGIN.TRAINER.asc();
