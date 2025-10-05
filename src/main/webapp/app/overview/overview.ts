@@ -386,9 +386,12 @@ export class Overview implements OnInit {
         return this.isCoaching(dto) && dto.userIsCoach && !dto.finished;
     }
 
+    isCopyable(dto: ReportOverviewDTO) {
+        return this.isCoaching(dto) && dto.userIsCoach;
+    }
+
     isDeletable(dto: ReportOverviewDTO): boolean {
         return this.isCoaching(dto) && (this.isEditable(dto) || this.auth.isAdmin());
-
     }
 
     isCoaching(dto: ReportOverviewDTO): boolean {
