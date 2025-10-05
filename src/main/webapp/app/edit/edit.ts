@@ -169,7 +169,9 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
 
         // TODO flag at least for comments which require a reply from referee?
 
-        this.dialog.open(FinishRefereeReportDialog).afterClosed().subscribe({
+        this.dialog.open(FinishRefereeReportDialog, {
+            data: this.report()!
+        }).afterClosed().subscribe({
             next: decision => {
                 if (decision) {
                     this.saving.set(true);
