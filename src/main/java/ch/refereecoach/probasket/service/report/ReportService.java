@@ -274,6 +274,17 @@ public class ReportService {
         try {
             var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), userId);
 
+            // copy comments
+            var sourceComments = reportCommentDao.fetchByReportId(report.getId()).stream()
+                                                 .collect(toMap(ReportComment::getType, identity()));
+
+            reportCommentDao.fetchByReportId(newReport.id()).forEach(it -> {
+                var source = sourceComments.get(it.getType());
+                it.setComment(source.getComment());
+                // do not set score, only copy source comment
+                reportCommentDao.update(it);
+            });
+
             // copy source video-comments as references
             reportVideoCommentRefDao.insert(reportVideoCommentDao.fetchByReportId(report.getId()).stream()
                                                                  .map(it -> new ReportVideoCommentRef(newReport.id(), it.getId(), it.getRequiresReply()))
