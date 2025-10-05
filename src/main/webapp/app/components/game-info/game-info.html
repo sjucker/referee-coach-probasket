@@ -46,6 +46,10 @@
             @if (showOverallScore()) {
                 <div class="overall-score">Overall Rating: {{ ScoreUtil.score(report, refereeCoachPlus()) }}</div>
             }
+
+            @if (report.internal) {
+                <div class="internal">internal Coaching</div>
+            }
         </mat-card-content>
     </mat-card>
 }

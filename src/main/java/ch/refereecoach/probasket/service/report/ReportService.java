@@ -69,14 +69,12 @@ public class ReportService {
     private final UserService userService;
     private final MailService mailService;
 
-    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, long userId) throws InvalidVideoUrlException {
+    public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, boolean internal, long userId) throws InvalidVideoUrlException {
         var coach = userService.getById(userId);
         var reportee = userService.getById(reporteeId);
 
-        if (isNotBlank(videoUrl)) {
-            if (YouTubeUtil.parseYouTubeId(videoUrl).isEmpty() && AsportUtil.parseAsportEventId(videoUrl).isEmpty()) {
-                throw new InvalidVideoUrlException();
-            }
+        if (isNotBlank(videoUrl) && YouTubeUtil.parseYouTubeId(videoUrl).isEmpty() && AsportUtil.parseAsportEventId(videoUrl).isEmpty()) {
+            throw new InvalidVideoUrlException();
         }
 
         var reportType = isBlank(videoUrl) ? REFEREE_COMMENT_REPORT : REFEREE_VIDEO_REPORT;
@@ -116,6 +114,7 @@ public class ReportService {
         report.setGameReferee3Name(game.referee3Name());
         report.setGameReferee3Rank(ofNullable(game.referee3Rank()).map(Rank::name).orElse(null));
         report.setGameVideoUrl(videoUrl);
+        report.setInternal(internal);
 
         report.setOverallScore(DEFAULT_SCORE);
 
@@ -256,11 +255,14 @@ public class ReportService {
             throw new IllegalStateException("user is not allowed to finish already finished video-report!");
         }
 
+        log.info("finishing report {} by {}", report.getExternalId(), coach.fullName());
         report.setFinishedAt(DateUtil.now());
         report.setFinishedBy(coach.id());
         reportDao.update(report);
 
-        mailService.sendFinishedReportMail(report);
+        if (!report.getInternal()) {
+            mailService.sendFinishedReportMail(report);
+        }
     }
 
     public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, long userId) {
@@ -272,7 +274,7 @@ public class ReportService {
         }
 
         try {
-            var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), userId);
+            var newReport = createRefereeReport(report.getGameNumber(), report.getGameVideoUrl(), dto.reporteeId(), report.getInternal(), userId);
 
             // copy comments
             var sourceComments = reportCommentDao.fetchByReportId(report.getId()).stream()

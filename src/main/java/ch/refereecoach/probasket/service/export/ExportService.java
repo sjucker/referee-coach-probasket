@@ -55,6 +55,7 @@ public class ExportService {
             headerRow.createCell(columnIndex++).setCellValue("Teams");
             headerRow.createCell(columnIndex++).setCellValue("Coach");
             headerRow.createCell(columnIndex++).setCellValue("Referee");
+            headerRow.createCell(columnIndex++).setCellValue("Internal");
             headerRow.createCell(columnIndex++).setCellValue("Overall Score");
             for (var categoryType : categoryTypes) {
                 headerRow.createCell(columnIndex++).setCellValue(categoryType.getDescription().apply(OFFICIATING_2PO));
@@ -73,6 +74,7 @@ public class ExportService {
                 row.createCell(columnIndex++).setCellValue(gameSummary.teams());
                 row.createCell(columnIndex++).setCellValue(gameSummary.coach());
                 row.createCell(columnIndex++).setCellValue(gameSummary.referee());
+                row.createCell(columnIndex++).setCellValue(gameSummary.internal() ? "x" : "");
                 row.createCell(columnIndex++).setCellValue(gameSummary.overallScore().doubleValue());
 
                 for (var categoryType : categoryTypes) {
@@ -111,11 +113,12 @@ public class ExportService {
                           var scores = it.value2().stream().collect(toMap(CommentScore::commentType, CommentScore::score));
                           return new GameSummary(report.getGameDate(), report.getGameNumber(), report.getGameCompetition(),
                                                  "%s - %s".formatted(report.getGameHomeTeam(), report.getGameGuestTeam()),
-                                                 report.getCoachName(), report.getReporteeName(), report.getOverallScore(), scores);
+                                                 report.getCoachName(), report.getReporteeName(), report.getOverallScore(), report.getInternal(),
+                                                 scores);
                       });
     }
 
-    private record GameSummary(LocalDate date, String gameNumber, String competition, String teams, String coach, String referee, BigDecimal overallScore,
+    private record GameSummary(LocalDate date, String gameNumber, String competition, String teams, String coach, String referee, BigDecimal overallScore, boolean internal,
                                Map<CategoryType, BigDecimal> scoresPerType) {
 
     }

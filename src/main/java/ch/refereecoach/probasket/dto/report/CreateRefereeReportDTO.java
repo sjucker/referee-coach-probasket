@@ -4,5 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateRefereeReportDTO(@NotNull String gameNumber,
                                      @NotNull Long reporteeId,
-                                     String videoUrl) {
+                                     String videoUrl,
+                                     boolean internal) {
 }

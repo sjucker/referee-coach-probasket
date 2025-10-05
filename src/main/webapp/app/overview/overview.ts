@@ -36,6 +36,7 @@ import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
 import {CopyReportDialog, CopyReportDialogData} from "./copy-report-dialog";
 import {ConfirmDeleteDialog} from "./confirm-delete-dialog";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 interface RefereeSelection {
     id: number,
@@ -44,7 +45,7 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatSortModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatSortModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe, MatTooltipModule],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -67,6 +68,7 @@ export class Overview implements OnInit {
     protected readonly textOnlyMode = signal(false);
     protected readonly referees = signal<RefereeSelection[]>([]);
     protected readonly referee = signal<RefereeSelection | null>(null);
+    protected readonly internal = signal(false);
 
     protected readonly fromDate = signal<DateTime>(this.getDefaultFromDate());
     protected readonly toDate = signal<DateTime>(this.getDefaultToDate());
@@ -268,7 +270,8 @@ export class Overview implements OnInit {
             const request: CreateRefereeReportDTO = {
                 gameNumber: this.game()!.gameNumber,
                 reporteeId: this.referee()!.id,
-                videoUrl: this.videoUrl()
+                videoUrl: this.videoUrl(),
+                internal: this.internal()
             };
             this.http.post<CreateRefereeReportResultDTO>('/api/report/referee', request).subscribe({
                 next: response => {

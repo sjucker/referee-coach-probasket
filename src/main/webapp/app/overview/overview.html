@@ -34,10 +34,17 @@
                                 }
                             </mat-select>
                         </mat-form-field>
-                        <button color="primary" mat-flat-button
-                                [disabled]="!referee() ||(!videoUrl() && !textOnlyMode()) || creating()">
-                            Start
-                        </button>
+                        <div>
+                            <button color="primary" mat-flat-button
+                                    [disabled]="!referee() ||(!videoUrl() && !textOnlyMode()) || creating()">
+                                Start
+                            </button>
+                            @if (auth.isRefereeCoachPlus()) {
+                                <mat-checkbox [ngModel]="internal()" (ngModelChange)="internal.set($event)"
+                                              [ngModelOptions]="{standalone: true}">internal
+                                </mat-checkbox>
+                            }
+                        </div>
                     </form>
                 }
                 @if (problemDescription()) {
@@ -114,7 +121,9 @@
                     <th mat-header-cell *matHeaderCellDef class="show-gt-sm"></th>
                     <td mat-cell *matCellDef="let row" class="show-gt-sm">
                         @if (row.type === ReportType.REFEREE_VIDEO_REPORT) {
-                            <i class="material-icons">videocam</i>
+                            <i class="material-icons" matTooltip="with video comments">videocam</i>
+                        } @else if (row.internal) {
+                            <i class="material-icons" matTooltip="internal coaching">lock</i>
                         }
                     </td>
                 </ng-container>

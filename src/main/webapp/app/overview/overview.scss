@@ -5,10 +5,10 @@
 .overview-filter-container {
   display: flex;
   flex-direction: column;
+  gap: variables.$padding;
 
   @include responsive.responsive(gt-sm) {
     flex-direction: row;
-    gap: variables.$padding;
   }
 }
 

@@ -19,6 +19,7 @@ public record ReportOverviewDTO(@NotNull String externalId,
                                 RefereeDTO referee1,
                                 RefereeDTO referee2,
                                 RefereeDTO referee3,
+                                boolean internal,
                                 boolean finished,
                                 boolean userIsCoach) {
 }

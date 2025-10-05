@@ -70,6 +70,7 @@ export interface CreateRefereeReportDTO {
     gameNumber: string;
     reporteeId: number;
     videoUrl?: string;
+    internal: boolean;
 }
 
 export interface CreateRefereeReportDiscussionReplyDTO {
@@ -110,6 +111,7 @@ export interface RefereeReportDTO {
     youtubeId?: string;
     asportId?: number;
     score?: number;
+    internal: boolean;
     finished: boolean;
     userIsReportee: boolean;
     comments: ReportCommentDTO[];
@@ -148,6 +150,7 @@ export interface ReportOverviewDTO {
     referee1?: RefereeDTO;
     referee2?: RefereeDTO;
     referee3?: RefereeDTO;
+    internal: boolean;
     finished: boolean;
     userIsCoach: boolean;
 }

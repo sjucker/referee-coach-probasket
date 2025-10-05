@@ -99,7 +99,7 @@ public class ReportEndpoint {
         log.info("POST /api/report/referee {} {}", dto, jwt.getSubject());
 
         try {
-            return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), toLong(jwt.getSubject())));
+            return ResponseEntity.ok(reportService.createRefereeReport(dto.gameNumber(), dto.videoUrl(), dto.reporteeId(), dto.internal(), toLong(jwt.getSubject())));
         } catch (ReportService.InvalidVideoUrlException e) {
             return ResponseEntity.badRequest().build();
         }
