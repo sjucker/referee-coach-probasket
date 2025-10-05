@@ -18,10 +18,11 @@ import {UpdateUserRolesDTO, UserDTO, UsersSearchResultDTO} from "../../rest";
 import {LoadingBar} from "../components/loading-bar/loading-bar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSortModule, Sort} from "@angular/material/sort";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @Component({
     selector: 'app-admin',
-    imports: [CommonModule, FormsModule, Header, MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule],
+    imports: [CommonModule, FormsModule, Header, MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule, MatTooltipModule],
     templateUrl: './admin.html',
     styleUrl: './admin.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

@@ -48,7 +48,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="refereeCoachPlus">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Referee Coach+</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header matTooltip="Allowed to see the actual score of each rating.">Referee Coach+</th>
                     <td mat-cell *matCellDef="let u">
                         <mat-checkbox [(ngModel)]="u.refereeCoachPlus" [disabled]="!canEdit()"></mat-checkbox>
                     </td>
