@@ -233,6 +233,11 @@ public class Report extends TableImpl<ReportRecord> {
      */
     public final TableField<ReportRecord, String> GAME_REFEREE3_RANK = createField(DSL.name("game_referee3_rank"), SQLDataType.VARCHAR(255), this, "");
 
+    /**
+     * The column <code>public.report.internal</code>.
+     */
+    public final TableField<ReportRecord, Boolean> INTERNAL = createField(DSL.name("internal"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
     private Report(Name alias, Table<ReportRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

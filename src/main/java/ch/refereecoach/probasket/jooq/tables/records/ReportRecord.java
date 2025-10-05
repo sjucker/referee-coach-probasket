@@ -498,6 +498,20 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
         return (String) get(33);
     }
 
+    /**
+     * Setter for <code>public.report.internal</code>.
+     */
+    public void setInternal(Boolean value) {
+        set(34, value);
+    }
+
+    /**
+     * Getter for <code>public.report.internal</code>.
+     */
+    public Boolean getInternal() {
+        return (Boolean) get(34);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -521,7 +535,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
     /**
      * Create a detached, initialised ReportRecord
      */
-    public ReportRecord(Long id, String externalId, String reportType, Long coachId, String coachName, Long reporteeId, String reporteeName, String reporteeRank, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, String gameReferee1Name, Long gameReferee2Id, String gameReferee2Name, Long gameReferee3Id, String gameReferee3Name, String gameVideoUrl, BigDecimal overallScore, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent, String gameReferee1Rank, String gameReferee2Rank, String gameReferee3Rank) {
+    public ReportRecord(Long id, String externalId, String reportType, Long coachId, String coachName, Long reporteeId, String reporteeName, String reporteeRank, String gameNumber, String gameCompetition, LocalDate gameDate, String gameResult, String gameHomeTeam, Integer gameHomeTeamId, String gameGuestTeam, Integer gameGuestTeamId, Long gameReferee1Id, String gameReferee1Name, Long gameReferee2Id, String gameReferee2Name, Long gameReferee3Id, String gameReferee3Name, String gameVideoUrl, BigDecimal overallScore, LocalDateTime createdAt, Long createdBy, LocalDateTime updatedAt, Long updatedBy, LocalDateTime finishedAt, Long finishedBy, Boolean reminderSent, String gameReferee1Rank, String gameReferee2Rank, String gameReferee3Rank, Boolean internal) {
         super(Report.REPORT);
 
         setId(id);
@@ -558,6 +572,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
         setGameReferee1Rank(gameReferee1Rank);
         setGameReferee2Rank(gameReferee2Rank);
         setGameReferee3Rank(gameReferee3Rank);
+        setInternal(internal);
         resetChangedOnNotNull();
     }
 
@@ -602,6 +617,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
             setGameReferee1Rank(value.getGameReferee1Rank());
             setGameReferee2Rank(value.getGameReferee2Rank());
             setGameReferee3Rank(value.getGameReferee3Rank());
+            setInternal(value.getInternal());
             resetChangedOnNotNull();
         }
     }

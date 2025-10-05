@@ -583,4 +583,19 @@ public class ReportDao extends AbstractSpringDAOImpl<ReportRecord, ch.refereecoa
     public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByGameReferee3Rank(String... values) {
         return fetch(Report.REPORT.GAME_REFEREE3_RANK, values);
     }
+
+    /**
+     * Fetch records that have <code>internal BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchRangeOfInternal(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Report.REPORT.INTERNAL, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>internal IN (values)</code>
+     */
+    public List<ch.refereecoach.probasket.jooq.tables.pojos.Report> fetchByInternal(Boolean... values) {
+        return fetch(Report.REPORT.INTERNAL, values);
+    }
 }

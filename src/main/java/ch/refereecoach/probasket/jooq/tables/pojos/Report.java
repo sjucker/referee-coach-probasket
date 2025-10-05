@@ -52,6 +52,7 @@ public class Report implements Serializable {
     private String gameReferee1Rank;
     private String gameReferee2Rank;
     private String gameReferee3Rank;
+    private Boolean internal;
 
     public Report() {}
 
@@ -90,6 +91,7 @@ public class Report implements Serializable {
         this.gameReferee1Rank = value.gameReferee1Rank;
         this.gameReferee2Rank = value.gameReferee2Rank;
         this.gameReferee3Rank = value.gameReferee3Rank;
+        this.internal = value.internal;
     }
 
     public Report(
@@ -126,7 +128,8 @@ public class Report implements Serializable {
         Boolean reminderSent,
         String gameReferee1Rank,
         String gameReferee2Rank,
-        String gameReferee3Rank
+        String gameReferee3Rank,
+        Boolean internal
     ) {
         this.id = id;
         this.externalId = externalId;
@@ -162,6 +165,7 @@ public class Report implements Serializable {
         this.gameReferee1Rank = gameReferee1Rank;
         this.gameReferee2Rank = gameReferee2Rank;
         this.gameReferee3Rank = gameReferee3Rank;
+        this.internal = internal;
     }
 
     /**
@@ -640,6 +644,20 @@ public class Report implements Serializable {
         this.gameReferee3Rank = gameReferee3Rank;
     }
 
+    /**
+     * Getter for <code>public.report.internal</code>.
+     */
+    public Boolean getInternal() {
+        return this.internal;
+    }
+
+    /**
+     * Setter for <code>public.report.internal</code>.
+     */
+    public void setInternal(Boolean internal) {
+        this.internal = internal;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -853,6 +871,12 @@ public class Report implements Serializable {
         }
         else if (!this.gameReferee3Rank.equals(other.gameReferee3Rank))
             return false;
+        if (this.internal == null) {
+            if (other.internal != null)
+                return false;
+        }
+        else if (!this.internal.equals(other.internal))
+            return false;
         return true;
     }
 
@@ -894,6 +918,7 @@ public class Report implements Serializable {
         result = prime * result + ((this.gameReferee1Rank == null) ? 0 : this.gameReferee1Rank.hashCode());
         result = prime * result + ((this.gameReferee2Rank == null) ? 0 : this.gameReferee2Rank.hashCode());
         result = prime * result + ((this.gameReferee3Rank == null) ? 0 : this.gameReferee3Rank.hashCode());
+        result = prime * result + ((this.internal == null) ? 0 : this.internal.hashCode());
         return result;
     }
 
@@ -935,6 +960,7 @@ public class Report implements Serializable {
         sb.append(", ").append(gameReferee1Rank);
         sb.append(", ").append(gameReferee2Rank);
         sb.append(", ").append(gameReferee3Rank);
+        sb.append(", ").append(internal);
 
         sb.append(")");
         return sb.toString();
