@@ -280,11 +280,11 @@ public class ReportSearchService {
 
         if (user.refereeCoach()) {
             // coach (that is not also a referee) sees all his/her reports and all other finished ones
-            if (!user.referee()) {
+            if (!user.referee() || user.refereeCoachPlus()) {
                 return REPORT.COACH_ID.eq(user.id())
                                       .or(REPORT.REPORT_TYPE.in(REFEREE_COMMENT_REPORT.name(), REFEREE_VIDEO_REPORT.name()).and(REPORT.FINISHED_AT.isNotNull()));
             } else {
-                // referee-coach sees only his/her reports and all finished ones as reportee, and all game-discussion where he/she is involved
+                // coach that is also referee sees only his/her reports and all finished ones as reportee, and all game-discussion where he/she is involved
                 return DSL.or(REPORT.COACH_ID.eq(user.id()),
                               reporteeCondition(user),
                               gameDiscussionCondition(user));
@@ -314,7 +314,7 @@ public class ReportSearchService {
     }
 
     private static Condition reporteeCondition(UserDTO user) {
-        return REPORT.REPORTEE_ID.eq(user.id()).and(REPORT.FINISHED_AT.isNotNull());
+        return REPORT.REPORTEE_ID.eq(user.id()).and(REPORT.FINISHED_AT.isNotNull()).and(REPORT.INTERNAL.isFalse());
     }
 
     private static Condition gameDiscussionCondition(UserDTO user) {
