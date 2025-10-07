@@ -18,8 +18,7 @@ import {MatInputModule} from "@angular/material/input";
                     <mat-label>Your Reply</mat-label>
                     <textarea [(ngModel)]="reply"
                               maxlength="1024"
-                              cdkAutosizeMaxRows="5"
-                              cdkAutosizeMinRows="2"
+                              rows="3"
                               cdkTextareaAutosize
                               matInput></textarea>
                 </mat-form-field>

@@ -31,8 +31,7 @@
                         <mat-label>Comment</mat-label>
                         <textarea [(ngModel)]="comment.comment"
                                   (ngModelChange)="onChange()"
-                                  cdkAutosizeMaxRows="6"
-                                  cdkAutosizeMinRows="3"
+                                  rows="4"
                                   cdkTextareaAutosize
                                   matInput></textarea>
                     </mat-form-field>
@@ -127,8 +126,7 @@
                                                   (ngModelChange)="onChange()"
                                                   [disabled]="videoComment.reference"
                                                   maxlength="1024"
-                                                  cdkAutosizeMaxRows="5"
-                                                  cdkAutosizeMinRows="1"
+                                                  rows="2"
                                                   cdkTextareaAutosize
                                                   matInput></textarea>
                                     </mat-form-field>

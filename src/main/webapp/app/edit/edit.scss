@@ -26,6 +26,7 @@
     display: grid;
     align-items: center;
     grid-template-columns: 1fr 1fr;
+    align-content: start;
 
     @include responsive.responsive('gt-sm') {
       grid-template-columns: 2fr 5fr;
