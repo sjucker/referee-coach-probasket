@@ -15,6 +15,7 @@ public class ApplicationProperties {
     private String overrideRecipientMail;
     private String bccMail;
     private String ccMail;
+    private String copyMail;
     private String jwtSecret;
     private String basketplanApiKey;
     private Integer federationId;

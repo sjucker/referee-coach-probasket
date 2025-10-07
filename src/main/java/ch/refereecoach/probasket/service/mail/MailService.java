@@ -66,6 +66,23 @@ public class MailService {
         }
     }
 
+    public void sendFinishedReportCopyMail(Report report) {
+        var simpleMessage = new SimpleMailMessage();
+        try {
+            var reportType = ReportType.valueOf(report.getReportType());
+            simpleMessage.setSubject(getSubject(reportType));
+            simpleMessage.setFrom(environment.getRequiredProperty("spring.mail.username"));
+            simpleMessage.setBcc(properties.getBccMail());
+            simpleMessage.setTo(properties.getCopyMail());
+
+            simpleMessage.setText("Neues Coaching für Spiel-Nr. %s wurde erfasst. Referee: %s, Coach: %s".formatted(report.getGameNumber(), report.getReporteeName(), report.getCoachName()));
+
+            mailSender.send(simpleMessage);
+        } catch (MailException e) {
+            log.error("could not send email to: " + Arrays.toString(simpleMessage.getTo()), e);
+        }
+    }
+
     private String getText(ReportType reportType, UserDTO reportee, String externalId) {
         return switch (reportType) {
             case REFEREE_VIDEO_REPORT -> """

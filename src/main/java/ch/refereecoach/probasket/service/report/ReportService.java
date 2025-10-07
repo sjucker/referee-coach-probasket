@@ -262,6 +262,7 @@ public class ReportService {
 
         if (!report.getInternal()) {
             mailService.sendFinishedReportMail(report);
+            mailService.sendFinishedReportCopyMail(report);
         }
     }
 
