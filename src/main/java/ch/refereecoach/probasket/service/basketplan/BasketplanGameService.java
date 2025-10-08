@@ -32,7 +32,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public class BasketplanGameService {
 
     private static final String SEARCH_GAMES_URL = "https://www.basketplan.ch/showSearchGames.do?actionType=searchGames&gameNumber=%s&xmlView=true&perspective=de_default";
-    private static final String ASPORT_EVENTS_URL = "https://manager.asport.tv/api/v1/events?page=1&perPage=20&filters={filters}";
 
     private final UserService userService;
     private final Builder webClientBuilder;

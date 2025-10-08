@@ -14,6 +14,7 @@ import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportVideoCommentReplyDTO;
 import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
+import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.util.AsportUtil;
 import ch.refereecoach.probasket.util.DateUtil;
 import ch.refereecoach.probasket.util.YouTubeUtil;
@@ -27,6 +28,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -357,5 +359,12 @@ public class ReportSearchService {
                                 .fetch(it -> it.get(REPORT.ID));
 
         return Stream.concat(reportIds1.stream(), reportIds2.stream()).collect(toSet());
+    }
+
+    public List<Report> findReportsWithMissingResult() {
+        return jooqDsl.selectFrom(REPORT)
+                      .where(REPORT.FINISHED_AT.isNotNull(),
+                             REPORT.GAME_RESULT.contains("?"))
+                      .fetchInto(Report.class);
     }
 }
