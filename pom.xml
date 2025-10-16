@@ -32,14 +32,14 @@
         <npmVersion>10.9.3</npmVersion>
 
         <!-- spring boot is behind, older version does not support postgres 16.8 -->
-        <flyway.version>11.13.2</flyway.version>
+        <flyway.version>11.14.1</flyway.version>
         <poi.version>5.4.1</poi.version>
 
         <archunit.version>1.4.1</archunit.version>
 
         <typescript-generator-maven-plugin.version>3.2.1263</typescript-generator-maven-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
         <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
