@@ -92,7 +92,7 @@ public class MailService {
                     
                     Please visit: %s/#/view/%s
                     
-                    For discussion of the comments, use the following: %s/#/discuss/%s"
+                    For discussion of the comments, use the following: %s/#/discuss/%s
                     """.formatted(reportee.firstName(),
                                   properties.getBaseUrl(),
                                   externalId,
