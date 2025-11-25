@@ -33,6 +33,9 @@
             ],
             "styles": [
               "src/main/webapp/styles.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "file-saver"
             ]
           },
           "configurations": {
