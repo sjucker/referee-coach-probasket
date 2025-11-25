@@ -6,7 +6,7 @@ import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {CommonModule} from '@angular/common';
+
 import {FormsModule} from '@angular/forms';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {AuthService} from '../auth.service';
@@ -22,7 +22,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 
 @Component({
     selector: 'app-admin',
-    imports: [CommonModule, FormsModule, Header, MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule, MatTooltipModule],
+    imports: [FormsModule, Header, MatCardModule, MatTableModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatButtonModule, MatFormFieldModule, MatInputModule, LoadingBar, MatIconModule, MatTooltipModule],
     templateUrl: './admin.html',
     styleUrl: './admin.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
