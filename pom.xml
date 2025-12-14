@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.5.8</version>
+        <relativePath/>
     </parent>
     <groupId>ch.referee-coach.probasket</groupId>
     <artifactId>referee-coach-probasket</artifactId>
@@ -32,18 +32,19 @@
         <npmVersion>10.9.3</npmVersion>
 
         <!-- spring boot is behind, older version does not support postgres 16.8 -->
-        <flyway.version>11.14.1</flyway.version>
-        <poi.version>5.4.1</poi.version>
+        <flyway.version>11.19.0</flyway.version>
+        <poi.version>5.5.1</poi.version>
 
         <archunit.version>1.4.1</archunit.version>
 
         <typescript-generator-maven-plugin.version>3.2.1263</typescript-generator-maven-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
-        <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
-        <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
+        <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
+        <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <frontend-maven-plugin.version>1.15.4</frontend-maven-plugin.version>
+        <testcontainers-jooq-codegen.version>2.0.2</testcontainers-jooq-codegen.version>
 
         <!-- start local DB using src/main/docker/postgres.yml  -->
         <db.url>jdbc:postgresql://localhost:5432/probasket</db.url>
@@ -249,14 +250,19 @@
                 <version>${testcontainers-jooq-codegen-maven-plugin.version}</version>
                 <dependencies>
                     <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
+                        <version>${testcontainers-jooq-codegen.version}</version>
+                    </dependency>
+                    <dependency>
                         <groupId>org.jooq</groupId>
                         <artifactId>jooq-codegen</artifactId>
                         <version>${jooq.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.testcontainers</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${testcontainers.version}</version>
+                        <artifactId>testcontainers-postgresql</artifactId>
+                        <version>${testcontainers-jooq-codegen.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.postgresql</groupId>
@@ -275,7 +281,7 @@
                             <skip>${jooq-codegen-skip}</skip>
                             <database>
                                 <type>POSTGRES</type>
-                                <containerImage>postgres:16.8</containerImage>
+                                <containerImage>postgres:17.5</containerImage>
                             </database>
                             <flyway/>
                             <jooq>
