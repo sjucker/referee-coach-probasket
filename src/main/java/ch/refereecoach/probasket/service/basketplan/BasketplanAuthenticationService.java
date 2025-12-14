@@ -3,6 +3,7 @@ package ch.refereecoach.probasket.service.basketplan;
 import ch.refereecoach.probasket.configuration.ApplicationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
 
@@ -13,7 +14,6 @@ import java.util.Optional;
 import static ch.refereecoach.probasket.util.XmlUtil.getAttributeInElement;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.lang3.StringUtils.contains;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
 @Slf4j
@@ -31,7 +31,6 @@ public class BasketplanAuthenticationService {
             var client = webClientBuilder.build();
 
             byte[] body = client.get()
-//                                .uri(AUTHORIZE_URL.formatted(encode(username, UTF_8), md5Hex(password)))
                                 .uri(AUTHORIZE_URL.formatted(username, md5Hex(password)))
                                 .accept(APPLICATION_XML)
                                 .headers(headers -> headers.set("refApiKey", applicationProperties.getBasketplanApiKey()))
@@ -54,7 +53,7 @@ public class BasketplanAuthenticationService {
                     return Optional.ofNullable(personId).map(Long::valueOf);
                 } else {
                     var message = getAttributeInElement(doc, "AuthorizeUserResponse", "message").orElse("");
-                    if (contains(message, "wrong type")) {
+                    if (Strings.CI.contains(message, "wrong type")) {
                         // for now, log this on error, so we can inform the user
                         log.error("Basketplan authentication failed for user {} with message: {}", username, message);
                     } else {
