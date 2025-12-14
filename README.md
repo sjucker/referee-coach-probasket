@@ -1,4 +1,7 @@
-# Referee-Coach: Probasket
+# Referee-Coach: ProBasket
+
+[![Java CI with Maven](https://github.com/sjucker/referee-coach-probasket/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/sjucker/referee-coach-probasket/actions/workflows/maven.yml)
+[![CI / CD for Angular](https://github.com/sjucker/referee-coach-probasket/actions/workflows/angular.yml/badge.svg?branch=main)](https://github.com/sjucker/referee-coach-probasket/actions/workflows/angular.yml)
 
 ## Development
 
