@@ -29,6 +29,7 @@ public class Login implements Serializable {
     private String rank;
     private Boolean active;
     private Boolean refereeCoachPlus;
+    private String username;
 
     public Login() {}
 
@@ -46,6 +47,7 @@ public class Login implements Serializable {
         this.rank = value.rank;
         this.active = value.active;
         this.refereeCoachPlus = value.refereeCoachPlus;
+        this.username = value.username;
     }
 
     public Login(
@@ -61,7 +63,8 @@ public class Login implements Serializable {
         Boolean admin,
         String rank,
         Boolean active,
-        Boolean refereeCoachPlus
+        Boolean refereeCoachPlus,
+        String username
     ) {
         this.id = id;
         this.firstname = firstname;
@@ -76,6 +79,7 @@ public class Login implements Serializable {
         this.rank = rank;
         this.active = active;
         this.refereeCoachPlus = refereeCoachPlus;
+        this.username = username;
     }
 
     /**
@@ -260,6 +264,20 @@ public class Login implements Serializable {
         this.refereeCoachPlus = refereeCoachPlus;
     }
 
+    /**
+     * Getter for <code>public.login.username</code>.
+     */
+    public String getUsername() {
+        return this.username;
+    }
+
+    /**
+     * Setter for <code>public.login.username</code>.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -347,6 +365,12 @@ public class Login implements Serializable {
         }
         else if (!this.refereeCoachPlus.equals(other.refereeCoachPlus))
             return false;
+        if (this.username == null) {
+            if (other.username != null)
+                return false;
+        }
+        else if (!this.username.equals(other.username))
+            return false;
         return true;
     }
 
@@ -367,6 +391,7 @@ public class Login implements Serializable {
         result = prime * result + ((this.rank == null) ? 0 : this.rank.hashCode());
         result = prime * result + ((this.active == null) ? 0 : this.active.hashCode());
         result = prime * result + ((this.refereeCoachPlus == null) ? 0 : this.refereeCoachPlus.hashCode());
+        result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
         return result;
     }
 
@@ -387,6 +412,7 @@ public class Login implements Serializable {
         sb.append(", ").append(rank);
         sb.append(", ").append(active);
         sb.append(", ").append(refereeCoachPlus);
+        sb.append(", ").append(username);
 
         sb.append(")");
         return sb.toString();

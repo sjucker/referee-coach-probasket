@@ -61,6 +61,7 @@ public class BasketplanAuthenticationProvider implements AuthenticationProvider 
 
         if (!impersonating) {
             login.setLastLogin(now());
+            login.setUsername(username);
             loginDao.update(login);
         }
 
