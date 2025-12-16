@@ -44,7 +44,7 @@
         <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <frontend-maven-plugin.version>1.15.4</frontend-maven-plugin.version>
-        <testcontainers-jooq-codegen.version>2.0.2</testcontainers-jooq-codegen.version>
+        <testcontainers-jooq-codegen.version>2.0.3</testcontainers-jooq-codegen.version>
 
         <!-- start local DB using src/main/docker/postgres.yml  -->
         <db.url>jdbc:postgresql://localhost:5432/probasket</db.url>
