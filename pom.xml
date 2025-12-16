@@ -28,8 +28,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <nodeVersion>v22.18.0</nodeVersion>
-        <npmVersion>10.9.3</npmVersion>
+        <nodeVersion>v24.12.0</nodeVersion>
+        <npmVersion>11.6.2</npmVersion>
 
         <!-- spring boot is behind, older version does not support postgres 16.8 -->
         <flyway.version>11.19.0</flyway.version>
