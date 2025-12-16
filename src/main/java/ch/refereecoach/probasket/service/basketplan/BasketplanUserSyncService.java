@@ -85,7 +85,7 @@ public class BasketplanUserSyncService {
                             existing.setRank(rank.name());
                             loginDao.update(existing);
                         } else {
-                            loginDao.insert(new Login(id, firstName, familyName, email, null, false, true, false, false, false, rank.name(), active, false));
+                            loginDao.insert(new Login(id, firstName, familyName, email, null, false, true, false, false, false, rank.name(), active, false, null));
                             log.info("added referee %s %s (%d)".formatted(firstName, familyName, id));
                         }
                         receivedIds.add(id);
