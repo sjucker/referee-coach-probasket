@@ -1,6 +1,6 @@
 services:
   referee-coach-probasket-db:
-    image: postgres:17.5
+    image: postgres:17.6
     environment:
       - POSTGRES_USER=probasket
       - POSTGRES_PASSWORD=probasket

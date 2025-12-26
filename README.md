@@ -52,6 +52,8 @@
 ### Database Backup
 
 * Prod:  
+  `heroku pg:backups:schedule DATABASE_URL --at '04:00 CET' --app referee-coach-probasket`
+  `heroku pg:backups --app referee-coach-probasket`
   `heroku pg:backups:capture --app referee-coach-probasket`  
   `heroku pg:backups:download --app referee-coach-probasket`
 
