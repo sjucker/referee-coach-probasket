@@ -1,140 +1,131 @@
-# Persona
-You are a dedicated Angular developer who thrives on leveraging the absolute latest features of the framework to build cutting-edge applications. You are currently immersed in Angular v20+, passionately adopting signals for reactive state management, embracing standalone components for streamlined architecture, and utilizing the new control flow for more intuitive template logic. Performance is paramount to you, who constantly seeks to optimize change detection and improve user experience through these modern Angular paradigms. When prompted, assume You are familiar with all the newest APIs and best practices, valuing clean, efficient, and maintainable code.
+### Guidelines for AI Code Agents
 
-## Examples
-These are modern examples of how to write an Angular 20 component with signals
+These guidelines are designed for AI agents working on the **Referee Coach ProBasket** project, which consists of a **Spring Boot** backend and an **Angular** frontend.
 
-```ts
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+---
 
+### 1. General Architecture
+
+- **Monorepo-like structure**: The project contains both backend (Java/Spring Boot) and frontend (Angular) in a single repository.
+    - Backend: `src/main/java`
+    - Frontend: `src/main/webapp`
+- **Database**: PostgreSQL (managed via Flyway migrations in `src/main/resources/db/migration`).
+- **Data Access**: jOOQ is used for type-safe database interactions.
+- **API**: RESTful endpoints provided by Spring Boot, consumed by Angular.
+
+---
+
+### 2. Backend (Spring Boot & jOOQ)
+
+#### Coding Standards
+
+- **Java Version**: Java 21+ (utilize records, pattern matching, and sealed classes where appropriate).
+- **Lombok**: Use `@RequiredArgsConstructor`, `@Slf4j`, and `@Data` sparingly.
+- **REST Endpoints**:
+    - Located in `ch.refereecoach.probasket.rest`.
+    - Use `@RestController` and `@RequestMapping("/api/...")`.
+    - Secure endpoints using `@Secured({"ROLE_NAME"})`.
+    - Inject the current user using `@AuthenticationPrincipal Jwt jwt`.
+- **Service Layer**:
+    - Located in `ch.refereecoach.probasket.service`.
+    - Business logic should reside here, not in controllers.
+- **Data Transfer Objects (DTOs)**:
+    - Use Java **records** for all DTOs (located in `ch.refereecoach.probasket.dto`).
+    - Use `jakarta.validation.constraints` (e.g., `@NotNull`) for input validation.
+
+### Generated Code
+
+If you cannot execute the following commands yourself, ask a developer for help.
+
+- the jooQ code generator is used to generate all Java records from the database schema, use `mvn clean test-compile -Djooq-codegen-skip=false`
+- Use `mvn typescript-generator:generate -f pom.xml` to generate TypeScript interfaces/types from Java records (resulting in `rest.ts` file used by frontend)
+
+#### jOOQ Best Practices
+
+- Use `DSLContext` for all database queries.
+- Prefer `multiset` and `mapping` for complex nested queries (see `ReportSearchService.java` for examples).
+- Use generated `Tables` and `Records` from `ch.refereecoach.probasket.jooq`.
+- Avoid raw SQL; stick to the jOOQ DSL.
+
+---
+
+### 3. Frontend (Angular 20+)
+
+#### Core Paradigms
+
+- **Standalone Components**: Do NOT use `NgModules`. All components, directives, and pipes must be standalone.
+- **Signals**: Use signals for all reactive state management (`signal`, `computed`, `effect`, `input()`, `output()`).
+- **Change Detection**: Always use `ChangeDetectionStrategy.OnPush`.
+- **Control Flow**: Use native `@if`, `@for`, and `@switch` in templates.
+
+#### Component Structure
+
+- **Organization**: Keep logic in `.ts`, styles in `.scss`, and templates in `.html`.
+- **Injection**: Use the `inject()` function instead of constructor injection.
+- **Host Bindings**: Do NOT use `@HostBinding` or `@HostListener`. Use the `host` property in the `@Component` decorator.
+- **Styles**: Use CSS class bindings instead of `ngClass`. Avoid `ngStyle`.
+
+#### Angular Material & UI
+
+- **Components**: Extensively use Angular Material (cards, buttons, form fields, signals, etc.).
+- **Forms**: Prefer **Reactive Forms** (`FormGroup`, `FormControl`).
+- **Icons**: Use `<mat-icon>`.
+
+---
+
+### 4. Workflow & Tooling
+
+- **Database Migrations**: Every schema change requires a new `.sql` file in `src/main/resources/db/migration`.
+- **Frontend/Backend Sync**: When changing the API, update both the Java DTOs and the corresponding TypeScript interfaces/types.
+- **Proxy**: The frontend uses a `proxy-config.json` to route `/api` calls to the Spring Boot backend (typically on port 8080).
+
+---
+
+### 5. Example: Modern Angular Component (Signal-based)
+
+```typescript
 
 @Component({
-    selector: '{{tag-name}}-root',
-    templateUrl: '{{tag-name}}.html',
+    selector: 'app-example',
+    templateUrl: './example.html',
+    styleUrl: './example.scss',
+    standalone: true, // Though implied in this project
+    imports: [CommonModule, MatButtonModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassName {
-    protected readonly isServerRunning = signal(true);
+export class ExampleComponent {
+    private readonly dataService = inject(DataService);
 
-    toggleServerStatus() {
-        this.isServerRunning.update(isServerRunning => !isServerRunning);
+    // State
+    readonly count = signal(0);
+    readonly doubleCount = computed(() => this.count() * 2);
+
+    // Inputs/Outputs
+    readonly label = input<string>('Default Label');
+    readonly clicked = output<number>();
+
+    increment() {
+        this.count.update(c => c + 1);
+        this.clicked.emit(this.count());
     }
 }
 ```
 
-```css
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+### 6. Example: jOOQ Multiset Query
 
-    button {
-        margin-top: 10px;
+```java
+class JooqExample {
+    public Optional<ReportDTO> getReport() {
+        return jooqDsl.select(REPORT,
+                              multiset(
+                                      select(REPORT_COMMENT.ID, REPORT_COMMENT.COMMENT)
+                                              .from(REPORT_COMMENT)
+                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
+                                      ).convertFrom(it -> it.map(mapping(ReportCommentDTO::of)))
+                             )
+                      .from(REPORT)
+                      .where(REPORT.EXTERNAL_ID.eq(externalId))
+                      .fetchOptional();
     }
 }
 ```
-
-```html
-<section class="container">
-    @if (isServerRunning()) {
-        <span>Yes, the server is running</span>
-    } @else {
-        <span>No, the server is not running</span>
-    }
-    <button (click)="toggleServerStatus()">Toggle Server Status</button>
-</section>
-```
-
-When you update a component, be sure to put the logic in the ts file, the styles in the css file and the html template in the html file.
-
-## Resources
-Here are some links to the essentials for building Angular applications. Use these to get an understanding of how some of the core functionality works
-https://angular.dev/essentials/components
-https://angular.dev/essentials/signals
-https://angular.dev/essentials/templates
-https://angular.dev/essentials/dependency-injection
-
-## Best practices & Style guide
-Here are the best practices and the style guide information.
-
-### Coding Style guide
-Here is a link to the most recent Angular style guide https://angular.dev/style-guide
-
-### TypeScript Best Practices
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
-
-### Angular Best Practices
-- Always use standalone components over `NgModules`
-- Do NOT set `standalone: true` inside the `@Component`, `@Directive` and `@Pipe` decorators
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Use `NgOptimizedImage` for all static images.
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-
-### Components
-- Keep components small and focused on a single responsibility
-- Use `input()` signal instead of decorators, learn more here https://angular.dev/guide/components/inputs
-- Use `output()` function instead of decorators, learn more here https://angular.dev/guide/components/outputs
-- Use `computed()` for derived state learn more about signals here https://angular.dev/guide/signals.
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead, for context: https://angular.dev/guide/templates/binding#css-class-and-style-property-bindings
-- DO NOT use `ngStyle`, use `style` bindings instead, for context: https://angular.dev/guide/templates/binding#css-class-and-style-property-bindings
-- Use MatFormField with MatInput for form inputs
-- Implement ErrorStateMatcher for custom form validation visualization
-- Use Material's built-in animations through BrowserAnimationsModule
-
-### State Management
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
-
-### Templates
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Use built in pipes and import pipes when being used in a template, learn more https://angular.dev/guide/templates/pipes#
-
-### Services
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
-
-### Angular Material Best Practices
-
-- Use Material's built-in color palette system
-- Define a custom theme using `@use '@angular/material' as mat;`
-- Implement consistent typography using Material's typography system
-- Use Material's spacing system ($mat-space-*) for consistent layouts
-- Prefer Material CDK for complex interactions (drag-drop, virtual scroll)
-- Use Material's breakpoint observer for responsive designs
-- Implement Material's accessibility features (ARIA labels, focus management)
-- Use Material's overlay services for modals and tooltips
-- Extend Material components using CSS custom properties
-- Use Material's form field appearance consistently throughout the app
-
-### Material Theming
-
-- Create a central theme file (_theme.scss)
-- Define primary, accent, and warn palettes
-- Use Material's typography levels consistently
-- Define custom Material component themes using `mat.define-theme()`
-- Use theme mixins for component-specific theming
-- Implement dark mode using Material's theming system
-- Use Material's elevation helpers for consistent shadow depths
-
-### Material Forms
-
-- Use MatFormField with Material form controls
-- Implement consistent error messages using MatError
-- Use Material's form field appearances (outline, fill)
-- Apply Material's built-in validators
-- Use Material's datepicker for date inputs
-- Implement Material's select components for dropdowns
-- Use Material's autocomplete for searchable dropdowns
