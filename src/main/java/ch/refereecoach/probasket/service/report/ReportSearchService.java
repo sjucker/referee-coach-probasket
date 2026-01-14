@@ -231,7 +231,8 @@ public class ReportSearchService {
             condition = condition.and(REPORT.COACH_NAME.containsIgnoreCase(filter)
                                                        .or(REPORT.REPORTEE_NAME.containsIgnoreCase(filter))
                                                        .or(REPORT.GAME_HOME_TEAM.containsIgnoreCase(filter))
-                                                       .or(REPORT.GAME_GUEST_TEAM.containsIgnoreCase(filter)));
+                                                       .or(REPORT.GAME_GUEST_TEAM.containsIgnoreCase(filter))
+                                                       .or(REPORT.GAME_NUMBER.containsIgnoreCase(filter)));
         }
         condition = condition.and(getUserCondition(user));
 
