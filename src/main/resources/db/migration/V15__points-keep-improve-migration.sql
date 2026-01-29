@@ -59,3 +59,7 @@ select id, 'IMPROVE_GAME_CONTROL', 'FALSE'
 from report_comment
 where type = 'POINTS_TO_IMPROVE';
 
+
+update report_comment
+set score = null
+where type in ('GENERAL', 'POINTS_TO_KEEP', 'POINTS_TO_IMPROVE');
