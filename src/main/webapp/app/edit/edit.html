@@ -21,7 +21,7 @@
                 <div class="title-container">
                     <h3>{{ comment.typeDescription }}</h3>
                     @if (comment.criteriaHints.length > 0) {
-                        <button mat-icon-button (click)="openCriteriaHints(comment)" matTooltip="Press for hints" aria-label="Logout">
+                        <button mat-icon-button (click)="openCriteriaHints(comment)" matTooltip="Show hints" aria-label="Show hints">
                             <mat-icon>info</mat-icon>
                         </button>
                     }
