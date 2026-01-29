@@ -7,26 +7,28 @@ import java.util.function.Function;
 
 @Getter
 public enum CategoryType {
-    GENERAL("General", false),
-    IMAGE("Image, Approach", true),
-    FOULS("Criteria: Fouls", true),
-    VIOLATIONS("Criteria: Violations", true),
-    MECHANICS(officiatingMode -> officiatingMode.getDescription() + " Mechanics & Individual Officiating Techniques", true),
-    FITNESS("Fitness Condition", true),
-    GAME_CONTROL("Game Control and Management", true),
-    POINTS_TO_KEEP("Points to Keep", false),
-    POINTS_TO_IMPROVE("Points to Improve", false);
+    GENERAL("General", "General", false),
+    IMAGE("Image, Approach", "Image", true),
+    FOULS("Criteria: Fouls", "Fouls", true),
+    VIOLATIONS("Criteria: Violations", "Violations", true),
+    MECHANICS(officiatingMode -> officiatingMode.getDescription() + " Mechanics & Individual Officiating Techniques", "Mechanics", true),
+    FITNESS("Fitness Condition", "Fitness", true),
+    GAME_CONTROL("Game Control and Management", "Game Control", true),
+    POINTS_TO_KEEP("Points to Keep", "Keep", false),
+    POINTS_TO_IMPROVE("Points to Improve", "Improve", false);
 
     private final Function<OfficiatingMode, String> description;
+    private final String shortDescription;
     private final boolean scoreRequired;
 
-    CategoryType(Function<OfficiatingMode, String> description, boolean scoreRequired) {
+    CategoryType(Function<OfficiatingMode, String> description, String shortDescription, boolean scoreRequired) {
         this.description = description;
+        this.shortDescription = shortDescription;
         this.scoreRequired = scoreRequired;
     }
 
-    CategoryType(String description, boolean scoreRequired) {
-        this(_ -> description, scoreRequired);
+    CategoryType(String description, String shortDescription, boolean scoreRequired) {
+        this(_ -> description, shortDescription, scoreRequired);
     }
 
     public List<String> getCriteriaHintsPerRank(Rank rank) {

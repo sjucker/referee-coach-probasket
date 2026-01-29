@@ -123,6 +123,7 @@ export interface ReportCommentDTO {
     type: CategoryType;
     typeDescription: string;
     criteriaHints: string[];
+    internalOnly: boolean;
     comment?: string;
     scoreRequired: boolean;
     score?: number;
@@ -132,6 +133,7 @@ export interface ReportCommentDTO {
 export interface ReportCriteriaDTO {
     id: number;
     type: CriteriaType;
+    stateType: CriteriaStateType;
     description: string;
     state?: CriteriaState;
 }
@@ -277,10 +279,29 @@ export enum CriteriaType {
     GAME_CONTROL_COACH = "GAME_CONTROL_COACH",
     GAME_CONTROL_PREVENTION = "GAME_CONTROL_PREVENTION",
     GAME_CONTROL_EOP = "GAME_CONTROL_EOP",
+    KEEP_IMAGE = "KEEP_IMAGE",
+    KEEP_FOULS = "KEEP_FOULS",
+    KEEP_VIOLATIONS = "KEEP_VIOLATIONS",
+    KEEP_MECHANICS = "KEEP_MECHANICS",
+    KEEP_FITNESS = "KEEP_FITNESS",
+    KEEP_GAME_CONTROL = "KEEP_GAME_CONTROL",
+    IMPROVE_IMAGE = "IMPROVE_IMAGE",
+    IMPROVE_FOULS = "IMPROVE_FOULS",
+    IMPROVE_VIOLATIONS = "IMPROVE_VIOLATIONS",
+    IMPROVE_MECHANICS = "IMPROVE_MECHANICS",
+    IMPROVE_FITNESS = "IMPROVE_FITNESS",
+    IMPROVE_GAME_CONTROL = "IMPROVE_GAME_CONTROL",
+}
+
+export enum CriteriaStateType {
+    RADIO = "RADIO",
+    CHECKBOX = "CHECKBOX",
 }
 
 export enum CriteriaState {
     MINUS = "MINUS",
     NEUTRAL = "NEUTRAL",
     PLUS = "PLUS",
+    TRUE = "TRUE",
+    FALSE = "FALSE",
 }

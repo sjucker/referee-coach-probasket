@@ -21,7 +21,7 @@
                 <div class="title-container">
                     <h3>{{ comment.typeDescription }}</h3>
                     @if (comment.criteriaHints.length > 0) {
-                        <button mat-icon-button (click)="openCriteriaHints(comment)" matTooltip="Hints" aria-label="Logout">
+                        <button mat-icon-button (click)="openCriteriaHints(comment)" matTooltip="Press for hints" aria-label="Logout">
                             <mat-icon>info</mat-icon>
                         </button>
                     }
@@ -37,13 +37,23 @@
                     </mat-form-field>
                     @if (comment.criteria.length > 0) {
                         <div class="criteria-container">
+                            @if (comment.internalOnly) {
+                                <div class="internal">internal</div>
+                                <div>&nbsp;</div>
+                            }
                             @for (criteria of comment.criteria; track criteria.id) {
-                                <div>{{ criteria.description }}</div>
-                                <mat-radio-group [(ngModel)]="criteria.state">
-                                    <mat-radio-button [value]="CriteriaState.MINUS" (change)="onChange()" matTooltip="negative"></mat-radio-button>
-                                    <mat-radio-button [value]="CriteriaState.NEUTRAL" (change)="onChange()" matTooltip="neutral"></mat-radio-button>
-                                    <mat-radio-button [value]="CriteriaState.PLUS" (change)="onChange()" matTooltip="positive"></mat-radio-button>
-                                </mat-radio-group>
+                                @if (criteria.stateType === CriteriaStateType.RADIO) {
+                                    <div>{{ criteria.description }}</div>
+                                    <mat-radio-group [(ngModel)]="criteria.state">
+                                        <mat-radio-button [value]="CriteriaState.MINUS" (change)="onChange()" matTooltip="negative"></mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.NEUTRAL" (change)="onChange()" matTooltip="neutral"></mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.PLUS" (change)="onChange()" matTooltip="positive"></mat-radio-button>
+                                    </mat-radio-group>
+                                } @else if (criteria.stateType === CriteriaStateType.CHECKBOX) {
+                                    <div>
+                                        <mat-checkbox [checked]="criteria.state === CriteriaState.TRUE" (change)="onCheckboxChange(criteria, $event)">{{ criteria.description }}</mat-checkbox>
+                                    </div>
+                                }
                             }
                         </div>
                     }
