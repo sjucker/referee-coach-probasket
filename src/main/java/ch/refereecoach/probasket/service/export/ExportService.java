@@ -111,7 +111,8 @@ public class ExportService {
                                       select(REPORT_COMMENT.TYPE,
                                              REPORT_COMMENT.SCORE)
                                               .from(REPORT_COMMENT)
-                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
+                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID),
+                                                     REPORT_COMMENT.SCORE.isNotNull())
                                               .orderBy(REPORT_COMMENT.ID.asc())
                                       ).convertFrom(it -> it.map(mapping(CommentScore::of))),
                               multiset(

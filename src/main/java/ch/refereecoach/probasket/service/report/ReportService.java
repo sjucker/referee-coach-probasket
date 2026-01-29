@@ -129,7 +129,7 @@ public class ReportService {
 
         Arrays.stream(CategoryType.values())
               .forEach(categoryType -> {
-                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, DEFAULT_SCORE);
+                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, categoryType.isScoreRequired() ? DEFAULT_SCORE : null);
                   reportCommentDao.insert(reportComment);
                   CriteriaType.forCategory(categoryType)
                               .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(),
