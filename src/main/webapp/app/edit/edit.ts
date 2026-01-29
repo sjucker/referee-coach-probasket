@@ -3,7 +3,7 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CriteriaState, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportType, ReportVideoCommentDTO, TagDTO} from '../../rest';
+import {CriteriaState, CriteriaStateType, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportCriteriaDTO, ReportType, ReportVideoCommentDTO, TagDTO} from '../../rest';
 import {PATH_VIEW} from '../app.routes';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -22,7 +22,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {HasUnsavedChanges} from "../can-deactivate.guard";
 import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 import {GameInfo} from "../components/game-info/game-info";
-import {MatCheckbox} from "@angular/material/checkbox";
+import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
 import {TagSelection} from "../tag-selection/tag-selection";
 import {Observable, of, share} from "rxjs";
 import {VideoPlayer} from "../components/video-player/video-player";
@@ -46,6 +46,7 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
     protected readonly OfficiatingMode = OfficiatingMode;
     protected readonly CriteriaState = CriteriaState;
     protected readonly ReportType = ReportType;
+    protected readonly CriteriaStateType = CriteriaStateType;
 
     readonly unsavedChanges = signal(false);
 
@@ -300,5 +301,10 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
 
     jumpTo(timestampInSeconds: number) {
         this.videoPlayer()!.jumpTo(timestampInSeconds);
+    }
+
+    protected onCheckboxChange(criteria: ReportCriteriaDTO, $event: MatCheckboxChange) {
+        criteria.state = $event.checked ? CriteriaState.TRUE : CriteriaState.FALSE;
+        this.onChange();
     }
 }

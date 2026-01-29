@@ -1,6 +1,8 @@
 package ch.refereecoach.probasket.service.export;
 
 import ch.refereecoach.probasket.common.CategoryType;
+import ch.refereecoach.probasket.common.CriteriaState;
+import ch.refereecoach.probasket.common.CriteriaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,9 +16,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static ch.refereecoach.probasket.common.OfficiatingMode.OFFICIATING_2PO;
+import static ch.refereecoach.probasket.common.CategoryType.POINTS_TO_IMPROVE;
+import static ch.refereecoach.probasket.common.CategoryType.POINTS_TO_KEEP;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_COMMENT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_CRITERIA;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.poi.ss.usermodel.DateUtil.getExcelDate;
 import static org.jooq.Records.mapping;
@@ -59,8 +64,10 @@ public class ExportService {
             headerRow.createCell(columnIndex++).setCellValue("Internal");
             headerRow.createCell(columnIndex++).setCellValue("Overall Score");
             for (var categoryType : categoryTypes) {
-                headerRow.createCell(columnIndex++).setCellValue(categoryType.getDescription().apply(OFFICIATING_2PO));
+                headerRow.createCell(columnIndex++).setCellValue(categoryType.getShortDescription());
             }
+            headerRow.createCell(columnIndex++).setCellValue(POINTS_TO_KEEP.getShortDescription());
+            headerRow.createCell(columnIndex++).setCellValue(POINTS_TO_IMPROVE.getShortDescription());
 
             for (var gameSummary : gameSummaries) {
                 var row = sheet.createRow(rowIndex++);
@@ -85,6 +92,9 @@ public class ExportService {
                         cell.setCellValue(gameSummary.scoresPerType().get(categoryType).doubleValue());
                     }
                 }
+
+                row.createCell(columnIndex++).setCellValue(gameSummary.pointsToKeep().stream().map(CriteriaType::getDescription).collect(joining(", ")));
+                row.createCell(columnIndex++).setCellValue(gameSummary.pointsToImprove().stream().map(CriteriaType::getDescription).collect(joining(", ")));
             }
 
             for (int i = 0; i < columnIndex; i++) {
@@ -103,7 +113,23 @@ public class ExportService {
                                               .from(REPORT_COMMENT)
                                               .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID))
                                               .orderBy(REPORT_COMMENT.ID.asc())
-                                      ).convertFrom(it -> it.map(mapping(CommentScore::of)))
+                                      ).convertFrom(it -> it.map(mapping(CommentScore::of))),
+                              multiset(
+                                      select(REPORT_CRITERIA.TYPE)
+                                              .from(REPORT_CRITERIA)
+                                              .join(REPORT_COMMENT).on(REPORT_COMMENT.ID.eq(REPORT_CRITERIA.REPORT_COMMENT_ID))
+                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID),
+                                                     REPORT_CRITERIA.STATE.eq(CriteriaState.TRUE.name()))
+                                              .orderBy(REPORT_CRITERIA.ID.asc())
+                                      ).convertFrom(it -> it.map(mapping(v -> CriteriaType.valueOf(v)))),
+                              multiset(
+                                      select(REPORT_CRITERIA.TYPE)
+                                              .from(REPORT_CRITERIA)
+                                              .join(REPORT_COMMENT).on(REPORT_COMMENT.ID.eq(REPORT_CRITERIA.REPORT_COMMENT_ID))
+                                              .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID),
+                                                     REPORT_CRITERIA.STATE.eq(CriteriaState.TRUE.name()))
+                                              .orderBy(REPORT_CRITERIA.ID.asc())
+                                      ).convertFrom(it -> it.map(mapping(v -> CriteriaType.valueOf(v))))
                              )
                       .from(REPORT)
                       .where(REPORT.FINISHED_AT.isNotNull(),
@@ -113,15 +139,17 @@ public class ExportService {
                       .fetch(it -> {
                           var report = it.value1();
                           var scores = it.value2().stream().collect(toMap(CommentScore::commentType, CommentScore::score));
+                          var pointsToKeep = it.value3().stream().filter(p -> p.getCategoryType() == POINTS_TO_KEEP).toList();
+                          var pointsToImprove = it.value3().stream().filter(p -> p.getCategoryType() == POINTS_TO_IMPROVE).toList();
                           return new GameSummary(report.getGameDate(), report.getGameNumber(), report.getGameCompetition(),
                                                  "%s - %s".formatted(report.getGameHomeTeam(), report.getGameGuestTeam()),
                                                  report.getCoachName(), report.getReporteeName(), report.getReporteeRank(), report.getOverallScore(), report.getInternal(),
-                                                 scores);
+                                                 scores, pointsToKeep, pointsToImprove);
                       });
     }
 
     private record GameSummary(LocalDate date, String gameNumber, String competition, String teams, String coach, String referee, String refereeRank, BigDecimal overallScore, boolean internal,
-                               Map<CategoryType, BigDecimal> scoresPerType) {
+                               Map<CategoryType, BigDecimal> scoresPerType, List<CriteriaType> pointsToKeep, List<CriteriaType> pointsToImprove) {
 
     }
 

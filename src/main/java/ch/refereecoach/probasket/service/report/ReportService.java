@@ -41,7 +41,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static ch.refereecoach.probasket.common.CriteriaState.NEUTRAL;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
 import static java.util.Optional.ofNullable;
@@ -133,7 +132,9 @@ public class ReportService {
                   var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, DEFAULT_SCORE);
                   reportCommentDao.insert(reportComment);
                   CriteriaType.forCategory(categoryType)
-                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(), criteriaType.name(), NEUTRAL.name())));
+                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(),
+                                                                                                   criteriaType.name(),
+                                                                                                   criteriaType.getCriteriaStateType().getDefault().name())));
               });
 
         return new CreateRefereeReportResultDTO(report.getId(), report.getExternalId());

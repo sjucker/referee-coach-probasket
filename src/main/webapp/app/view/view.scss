@@ -18,6 +18,10 @@
   gap: 0 variables.$padding;
   align-items: center;
   margin-top: variables.$padding;
+
+  .internal {
+    color: var(--mat-sys-tertiary);
+  }
 }
 
 .video-container {

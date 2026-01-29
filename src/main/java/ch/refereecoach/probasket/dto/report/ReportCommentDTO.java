@@ -1,6 +1,7 @@
 package ch.refereecoach.probasket.dto.report;
 
 import ch.refereecoach.probasket.common.CategoryType;
+import ch.refereecoach.probasket.common.CriteriaStateType;
 import ch.refereecoach.probasket.common.Rank;
 import jakarta.validation.constraints.NotNull;
 
@@ -14,6 +15,7 @@ public record ReportCommentDTO(@NotNull Long id,
                                @NotNull CategoryType type,
                                @NotNull String typeDescription,
                                @NotNull List<String> criteriaHints,
+                               boolean internalOnly,
                                String comment,
                                boolean scoreRequired,
                                BigDecimal score,
@@ -22,6 +24,9 @@ public record ReportCommentDTO(@NotNull Long id,
     public static ReportCommentDTO of(Long id, String type, String comment, BigDecimal score, String rank, Long referee3Id, List<ReportCriteriaDTO> criteria) {
         var value = CategoryType.valueOf(type);
         var officiatingMode = referee3Id != null ? OFFICIATING_3PO : OFFICIATING_2PO;
-        return new ReportCommentDTO(id, value, value.getDescription().apply(officiatingMode), value.getCriteriaHintsPerRank(Rank.valueOf(rank)), comment, value.isScoreRequired(), score, criteria);
+        // checkboxes are not presented to the referee, only -/=/+
+        var internalOnly = criteria.stream().allMatch(c -> c.stateType() == CriteriaStateType.CHECKBOX);
+        return new ReportCommentDTO(id, value, value.getDescription().apply(officiatingMode), value.getCriteriaHintsPerRank(Rank.valueOf(rank)),
+                                    internalOnly, comment, value.isScoreRequired(), score, criteria);
     }
 }

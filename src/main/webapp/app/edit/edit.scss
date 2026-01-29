@@ -34,6 +34,10 @@
   }
 }
 
+.internal {
+  color: var(--mat-sys-tertiary);
+}
+
 .checkbox-container {
   display: flex;
   justify-content: space-between;
