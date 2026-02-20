@@ -40,7 +40,7 @@
                     @if (hasCriteriaInState(comment, CriteriaState.TRUE)) {
                         <div class="criteria-container">
                             <span class="internal">internal</span>
-                            <mat-icon>thumb_up</mat-icon>
+                            <mat-icon>trending_up</mat-icon>
                             @for (criteria of comment.criteria; track criteria.id) {
                                 @if (criteria.state === CriteriaState.TRUE) {
                                     <span>{{ criteria.description }}</span>
