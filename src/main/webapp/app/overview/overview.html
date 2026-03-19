@@ -1,7 +1,42 @@
 <app-header></app-header>
 <app-loading-bar [show]="loading()"></app-loading-bar>
+@if (auth.isTrainerCoach()) {
+    <mat-card appearance="outlined">
+        <mat-card-content>
+            <div class="search-container">
+                <form [formGroup]="form" (ngSubmit)="searchGame()" role="form">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Game Number (e.g., 24-06531)</mat-label>
+                        <input formControlName="gameNumber" autocomplete="off" matInput name="gameNumber" type="text" [disabled]="!!game()">
+                    </mat-form-field>
+                    <button color="primary" mat-flat-button type="submit" [disabled]="searching() || game()">Search</button>
+                </form>
 
-@if (auth.isRefereeCoach()) {
+                @if (game()) {
+                    <form (ngSubmit)="createTrainerReport()" role="form">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Trainer</mat-label>
+                            <input [ngModel]="trainer()" (ngModelChange)="trainer.set($event)"
+                                   autocomplete="off" matInput name="trainer" type="text">
+                        </mat-form-field>
+
+                        <mat-radio-group [ngModel]="trainerTeam()">
+                            <mat-radio-button [value]="CriteriaState.MINUS" (change)="trainerTeam.set('HOME')">{{ game()?.homeTeam }}</mat-radio-button>
+                            <mat-radio-button [value]="CriteriaState.NEUTRAL" (change)="trainerTeam.set('GUEST')">{{ game()?.guestTeam }}</mat-radio-button>
+                        </mat-radio-group>
+
+                        <div>
+                            <button color="primary" mat-flat-button [disabled]="!trainer() || !trainerTeam() || creating()">
+                                Start
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+} @else if (auth.isRefereeCoach()) {
     <mat-card appearance="outlined">
         <mat-card-content>
             <div class="search-container">

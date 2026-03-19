@@ -4,6 +4,7 @@ import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
+import ch.refereecoach.probasket.dto.report.CreateTrainerReportDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
 import ch.refereecoach.probasket.service.report.ReportSearchService;
@@ -103,6 +104,15 @@ public class ReportEndpoint {
         } catch (ReportService.InvalidVideoUrlException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PostMapping(value = "/trainer")
+    @Secured({"TRAINER_COACH"})
+    public ResponseEntity<CreateRefereeReportResultDTO> createReport(@AuthenticationPrincipal Jwt jwt,
+                                                                     @RequestBody @Valid CreateTrainerReportDTO dto) {
+        log.info("POST /api/report/trainer {} {}", dto, jwt.getSubject());
+
+        return ResponseEntity.ok(reportService.createTrainerReport(dto.gameNumber(), dto.trainer(), toLong(jwt.getSubject())));
     }
 
     @PostMapping(value = "/referee/{externalId}/finish")

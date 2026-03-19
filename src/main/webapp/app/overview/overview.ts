@@ -11,6 +11,8 @@ import {
     CopyRefereeReportDTO,
     CreateRefereeReportDTO,
     CreateRefereeReportResultDTO,
+    CreateTrainerReportDTO,
+    CriteriaState,
     OfficiatingMode,
     RefereeDTO,
     ReportOverviewDTO,
@@ -37,6 +39,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {CopyReportDialog, CopyReportDialogData} from "./copy-report-dialog";
 import {ConfirmDeleteDialog} from "./confirm-delete-dialog";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 interface RefereeSelection {
     id: number,
@@ -45,7 +48,7 @@ interface RefereeSelection {
 
 @Component({
     selector: 'app-main',
-    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatSortModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe, MatTooltipModule],
+    imports: [MatCardModule, MatButtonModule, Header, LoadingBar, FormsModule, MatLabel, MatCheckbox, ReactiveFormsModule, MatSelect, MatOption, MatTableModule, MatSortModule, MatPaginatorModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatIcon, DatePipe, MatTooltipModule, MatRadioButton, MatRadioGroup],
     templateUrl: './overview.html',
     styleUrl: './overview.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -68,6 +71,8 @@ export class Overview implements OnInit {
     protected readonly textOnlyMode = signal(false);
     protected readonly referees = signal<RefereeSelection[]>([]);
     protected readonly referee = signal<RefereeSelection | null>(null);
+    protected readonly trainer = signal<string | null>(null);
+    protected readonly trainerTeam = signal<string | null>(null);
     protected readonly internal = signal(false);
 
     protected readonly fromDate = signal<DateTime>(this.getDefaultFromDate());
@@ -300,8 +305,39 @@ export class Overview implements OnInit {
                 verticalPosition: "top"
             });
         }
-
     }
+
+    createTrainerReport() {
+        if (this.game() && (this.trainer() && this.trainerTeam())) {
+            this.creating.set(true);
+            // TODO trainerTeam is not used yet, but should be used to select the correct team
+            const request: CreateTrainerReportDTO = {
+                gameNumber: this.game()!.gameNumber,
+                trainer: this.trainer()!
+            };
+            this.http.post<CreateRefereeReportResultDTO>('/api/report/trainer', request).subscribe({
+                next: response => {
+                    this.creating.set(false);
+                    this.edit(response.externalId);
+                },
+                error: () => {
+                    this.creating.set(false);
+                    this.snackBar.open("An unexpected error occurred, report could not be created.", undefined, {
+                        duration: 3000,
+                        horizontalPosition: "center",
+                        verticalPosition: "top"
+                    });
+                }
+            });
+        } else {
+            this.snackBar.open("Please search for a game or select a referee", undefined, {
+                duration: 3000,
+                horizontalPosition: "center",
+                verticalPosition: "top"
+            });
+        }
+    }
+
 
     public edit(externalId: string) {
         this.router.navigate([PATH_EDIT, externalId]).catch(err => console.error(err))
@@ -423,4 +459,5 @@ export class Overview implements OnInit {
         }
     }
 
+    protected readonly CriteriaState = CriteriaState;
 }

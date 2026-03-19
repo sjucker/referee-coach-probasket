@@ -5,5 +5,10 @@ public enum CriteriaState {
     NEUTRAL,
     PLUS,
     TRUE,
-    FALSE
+    FALSE,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    NOT_APPLICABLE
 }

@@ -35,7 +35,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
@@ -43,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
+import static ch.refereecoach.probasket.common.ReportType.TRAINER_REPORT;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -67,6 +67,65 @@ public class ReportService {
     private final BasketplanGameService basketplanGameService;
     private final UserService userService;
     private final MailService mailService;
+
+    public CreateRefereeReportResultDTO createTrainerReport(String gameNumber, String trainer, long userId) {
+        var coach = userService.getById(userId);
+
+        var reportType = TRAINER_REPORT;
+        if (!coach.hasRequiredRole(reportType)) {
+            throw new IllegalStateException("user %s is not a coach!".formatted(coach.fullName()));
+        }
+
+        var game = basketplanGameService.findGameByNumber(gameNumber)
+                                        .orElseThrow(() -> new IllegalArgumentException("game %s not found".formatted(gameNumber)));
+
+        var report = new Report();
+        report.setExternalId(getExternalId());
+        report.setReportType(reportType.name());
+        report.setCoachId(coach.id());
+        report.setCoachName(coach.fullName());
+        report.setGameNumber(game.gameNumber());
+        report.setGameCompetition(game.competition());
+        report.setGameDate(game.date());
+        report.setGameResult(game.result());
+        report.setGameHomeTeam(game.homeTeam());
+        report.setGameHomeTeamId(game.homeTeamId());
+        report.setGameGuestTeam(game.guestTeam());
+        report.setGameGuestTeamId(game.guestTeamId());
+        report.setGameReferee1Id(game.referee1Id());
+        report.setGameReferee1Name(game.referee1Name());
+        report.setGameReferee1Rank(ofNullable(game.referee1Rank()).map(Rank::name).orElse(null));
+        report.setGameReferee2Id(game.referee2Id());
+        report.setGameReferee2Name(game.referee2Name());
+        report.setGameReferee2Rank(ofNullable(game.referee2Rank()).map(Rank::name).orElse(null));
+        report.setGameReferee3Id(game.referee3Id());
+        report.setGameReferee3Name(game.referee3Name());
+        report.setGameReferee3Rank(ofNullable(game.referee3Rank()).map(Rank::name).orElse(null));
+        report.setInternal(false);
+
+        report.setOverallScore(DEFAULT_SCORE);
+        var now = DateUtil.now();
+        report.setCreatedAt(now);
+        report.setCreatedBy(coach.id());
+        report.setUpdatedAt(now);
+        report.setUpdatedBy(coach.id());
+        report.setFinishedAt(null);
+        report.setFinishedBy(null);
+        report.setReminderSent(false);
+        reportDao.insert(report);
+
+        CategoryType.forReportType(reportType)
+                    .forEach(categoryType -> {
+                        var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, categoryType.isScoreRequired() ? DEFAULT_SCORE : null);
+                        reportCommentDao.insert(reportComment);
+                        CriteriaType.forCategory(categoryType)
+                                    .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(),
+                                                                                                         criteriaType.name(),
+                                                                                                         criteriaType.getCriteriaStateType().getDefault().name())));
+                    });
+
+        return new CreateRefereeReportResultDTO(report.getId(), report.getExternalId());
+    }
 
     public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, boolean internal, long userId) throws InvalidVideoUrlException {
         var coach = userService.getById(userId);
@@ -127,15 +186,15 @@ public class ReportService {
         report.setReminderSent(false);
         reportDao.insert(report);
 
-        Arrays.stream(CategoryType.values())
-              .forEach(categoryType -> {
-                  var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, categoryType.isScoreRequired() ? DEFAULT_SCORE : null);
-                  reportCommentDao.insert(reportComment);
-                  CriteriaType.forCategory(categoryType)
-                              .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(),
-                                                                                                   criteriaType.name(),
-                                                                                                   criteriaType.getCriteriaStateType().getDefault().name())));
-              });
+        CategoryType.forReportType(reportType)
+                    .forEach(categoryType -> {
+                        var reportComment = new ReportComment(null, report.getId(), categoryType.name(), null, categoryType.isScoreRequired() ? DEFAULT_SCORE : null);
+                        reportCommentDao.insert(reportComment);
+                        CriteriaType.forCategory(categoryType)
+                                    .forEach(criteriaType -> reportCriteriaDao.insert(new ReportCriteria(null, reportComment.getId(),
+                                                                                                         criteriaType.name(),
+                                                                                                         criteriaType.getCriteriaStateType().getDefault().name())));
+                    });
 
         return new CreateRefereeReportResultDTO(report.getId(), report.getExternalId());
     }

@@ -15,7 +15,24 @@ public enum CategoryType {
     FITNESS("Fitness Condition", "Fitness", true),
     GAME_CONTROL("Game Control and Management", "Game Control", true),
     POINTS_TO_KEEP("Points to Keep", "Keep", false),
-    POINTS_TO_IMPROVE("Points to Improve", "Improve", false);
+    POINTS_TO_IMPROVE("Points to Improve", "Improve", false),
+
+    KLIMA_RESPEKT("Klima: Respekt (Gegner, eigene)", "Klima: Respekt", false),
+    KLIMA_KINDER("Klima: Emotionalität der Kinder und Jugendlichen (Stimmung – Respekt gegenüber Coach und Gegner)", "Klima: Emotionalität", false),
+    INSTRUKTIONEN_KLARHEIT("Instruktionen: Klarheit der Instruktion", "Instruktionen", false),
+    FUEHRUNG_LENKUNG("Führung: Lenkung", "Führung: Lenkung", false),
+    FUEHRUNG_WAERME("Führung: Wärme, Wertschätzung", "Führung: Wärme", false),
+    FUEHRUNG_AUTHENTIZITAET("Führung: Authentizität und natürliche Autorität", "Führung: Authentizität", false),
+    KOMMUNIKATION_ZYNISMUS("Kommunikationsstil: Zynismus / Beleidigungen", "Kommunikationsstil: Zynismus", false),
+    KOMMUNIKATION_HUMOR("Kommunikationsstil: Humor", "Kommunikationsstil: Humor", false),
+    FEEDBACK_STIL("Feedback- und Korrekturstil: Feedbackstil", "Feedbackstil", false),
+    FEEDBACK_KORREKTUREN("Feedback- und Korrekturstil: Korrekturen", "Korrekturstil", false),
+    REGELN_ZONE("Einhaltung der Verbandsregeln / -vorgaben: 2 feet in the paint (keine Zone)", "Regeln: keine Zone", false),
+    COACHING_WECHSEL("Coaching: Wechsel", "Coaching: Wechsel", false),
+    COACHING_SCHIRIS("Coaching: Umgang mit Schiris und Offiziellen", "Coaching: Umgang Schiris", false),
+    COACHING_MANAGEMENT("Coaching: Game Management", "Coaching: Game Management", false),
+    BEMERKUNG_COACH("Bemerkungen Trainer / Trainerin", "Bemerkung", false),
+    BEMERKUNG_FEEDBACK("Feedbackreaktion Trainer / Trainerin", "Feedbackreaktion", false);
 
     private final Function<OfficiatingMode, String> description;
     private final String shortDescription;
@@ -29,6 +46,37 @@ public enum CategoryType {
 
     CategoryType(String description, String shortDescription, boolean scoreRequired) {
         this(_ -> description, shortDescription, scoreRequired);
+    }
+
+    public static List<CategoryType> forReportType(ReportType reportType) {
+        return switch (reportType) {
+            case REFEREE_VIDEO_REPORT, REFEREE_COMMENT_REPORT -> List.of(GENERAL,
+                                                                         IMAGE,
+                                                                         FOULS,
+                                                                         VIOLATIONS,
+                                                                         MECHANICS,
+                                                                         FITNESS,
+                                                                         GAME_CONTROL,
+                                                                         POINTS_TO_KEEP,
+                                                                         POINTS_TO_IMPROVE);
+            case TRAINER_REPORT -> List.of(KLIMA_RESPEKT,
+                                           KLIMA_KINDER,
+                                           INSTRUKTIONEN_KLARHEIT,
+                                           FUEHRUNG_LENKUNG,
+                                           FUEHRUNG_WAERME,
+                                           FUEHRUNG_AUTHENTIZITAET,
+                                           KOMMUNIKATION_ZYNISMUS,
+                                           KOMMUNIKATION_HUMOR,
+                                           FEEDBACK_STIL,
+                                           FEEDBACK_KORREKTUREN,
+                                           REGELN_ZONE,
+                                           COACHING_WECHSEL,
+                                           COACHING_SCHIRIS,
+                                           COACHING_MANAGEMENT,
+                                           BEMERKUNG_COACH,
+                                           BEMERKUNG_FEEDBACK);
+            case GAME_DISCUSSION -> List.of();
+        };
     }
 
     public List<String> getCriteriaHintsPerRank(Rank rank) {
@@ -151,6 +199,7 @@ public enum CategoryType {
                                    "kennt Basis-Regeln",
                                    "Zusammenarbeit Tisch");
             };
+            default -> List.of();
         };
     }
 

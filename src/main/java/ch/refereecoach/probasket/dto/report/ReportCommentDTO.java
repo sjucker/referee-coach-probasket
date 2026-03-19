@@ -26,7 +26,7 @@ public record ReportCommentDTO(@NotNull Long id,
         var officiatingMode = referee3Id != null ? OFFICIATING_3PO : OFFICIATING_2PO;
         // checkboxes are not presented to the referee, only -/=/+
         var internalOnly = criteria.stream().allMatch(c -> c.stateType() == CriteriaStateType.CHECKBOX);
-        return new ReportCommentDTO(id, value, value.getDescription().apply(officiatingMode), value.getCriteriaHintsPerRank(Rank.valueOf(rank)),
+        return new ReportCommentDTO(id, value, value.getDescription().apply(officiatingMode), Rank.of(rank).map(value::getCriteriaHintsPerRank).orElse(List.of()),
                                     internalOnly, comment, value.isScoreRequired(), score, criteria);
     }
 }

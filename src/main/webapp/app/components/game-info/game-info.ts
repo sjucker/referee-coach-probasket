@@ -1,7 +1,7 @@
 import {Component, input} from '@angular/core';
 import {DatePipe, NgClass} from "@angular/common";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
-import {OfficiatingMode, RefereeReportDTO} from "../../../rest";
+import {OfficiatingMode, RefereeReportDTO, ReportType} from "../../../rest";
 import {ScoreUtil} from "../../util/score-util";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
@@ -31,4 +31,5 @@ export class GameInfo {
     report = input.required<RefereeReportDTO>();
     showOverallScore = input(false);
     refereeCoachPlus = input(false);
+    protected readonly ReportType = ReportType;
 }

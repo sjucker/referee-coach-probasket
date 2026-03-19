@@ -59,7 +59,22 @@ public enum CriteriaType {
     IMPROVE_VIOLATIONS("Violations", CategoryType.POINTS_TO_IMPROVE, CriteriaStateType.CHECKBOX),
     IMPROVE_MECHANICS("Mechanics", CategoryType.POINTS_TO_IMPROVE, CriteriaStateType.CHECKBOX),
     IMPROVE_FITNESS("Fitness", CategoryType.POINTS_TO_IMPROVE, CriteriaStateType.CHECKBOX),
-    IMPROVE_GAME_CONTROL("Game Control", CategoryType.POINTS_TO_IMPROVE, CriteriaStateType.CHECKBOX);
+    IMPROVE_GAME_CONTROL("Game Control", CategoryType.POINTS_TO_IMPROVE, CriteriaStateType.CHECKBOX),
+
+    KLIMA_RESPEKT("schlecht || sehr gut", CategoryType.KLIMA_RESPEKT, CriteriaStateType.RADIO_RANGE),
+    KLIMA_KINDER("negativ || positiv", CategoryType.KLIMA_KINDER, CriteriaStateType.RADIO_RANGE),
+    INSTRUKTIONEN_KLARHEIT("völlig unklar || völlig klar", CategoryType.INSTRUKTIONEN_KLARHEIT, CriteriaStateType.RADIO_RANGE),
+    FUEHRUNG_LENKUNG("keine Lenkung || maximale Lenkung", CategoryType.FUEHRUNG_LENKUNG, CriteriaStateType.RADIO_RANGE),
+    FUEHRUNG_WAERME("kalt, gering || warm, hoch", CategoryType.FUEHRUNG_WAERME, CriteriaStateType.RADIO_RANGE),
+    FUEHRUNG_AUTHENTIZITAET("gekünstelt || authentisch", CategoryType.FUEHRUNG_AUTHENTIZITAET, CriteriaStateType.RADIO_RANGE),
+    KOMMUNIKATION_ZYNISMUS("extrem || überhaupt nicht", CategoryType.KOMMUNIKATION_ZYNISMUS, CriteriaStateType.RADIO_RANGE),
+    KOMMUNIKATION_HUMOR("humorlos || sehr humorvoll", CategoryType.KOMMUNIKATION_HUMOR, CriteriaStateType.RADIO_RANGE),
+    FEEDBACK_STIL("destruktiv, tadeln, entmutigend || Lobend, konstruktiv, ermutigend", CategoryType.FEEDBACK_STIL, CriteriaStateType.RADIO_RANGE),
+    FEEDBACK_KORREKTUREN("korrigiert nicht || korrigiert permanent", CategoryType.FEEDBACK_KORREKTUREN, CriteriaStateType.RADIO_RANGE),
+    REGELN_ZONE("gar nicht || voll und ganz", CategoryType.REGELN_ZONE, CriteriaStateType.RADIO_RANGE),
+    COACHING_WECHSEL("nur top 5-7 || alle spielen", CategoryType.COACHING_WECHSEL, CriteriaStateType.RADIO_RANGE),
+    COACHING_SCHIRIS("desolat || bestens", CategoryType.COACHING_SCHIRIS, CriteriaStateType.RADIO_RANGE),
+    COACHING_MANAGEMENT("unbrauchbar || sehr gut", CategoryType.COACHING_MANAGEMENT, CriteriaStateType.RADIO_RANGE);
 
     private final String description;
     private final CategoryType categoryType;
