@@ -53,6 +53,14 @@
                                     <div>
                                         <mat-checkbox [checked]="criteria.state === CriteriaState.TRUE" (change)="onCheckboxChange(criteria, $event)">{{ criteria.description }}</mat-checkbox>
                                     </div>
+                                } @else if (criteria.stateType === CriteriaStateType.RADIO_RANGE) {
+                                    <mat-radio-group [(ngModel)]="criteria.state" style="display: flex; flex-direction: column;">
+                                        <mat-radio-button [value]="CriteriaState.ONE" (change)="onChange()">1 - {{ criteria1(criteria.description)}}</mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.TWO" (change)="onChange()">2</mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.THREE" (change)="onChange()">3</mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.FOUR" (change)="onChange()">4 - {{ criteria4(criteria.description)}}</mat-radio-button>
+                                        <mat-radio-button [value]="CriteriaState.NOT_APPLICABLE" (change)="onChange()">Nicht beurteilbar</mat-radio-button>
+                                    </mat-radio-group>
                                 }
                             }
                         </div>

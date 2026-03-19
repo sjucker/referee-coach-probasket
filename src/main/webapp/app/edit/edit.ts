@@ -307,4 +307,12 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
         criteria.state = $event.checked ? CriteriaState.TRUE : CriteriaState.FALSE;
         this.onChange();
     }
+
+    protected criteria1(description: string) {
+        return description.split(" || ")[0];
+    }
+
+    protected criteria4(description: string) {
+        return description.split(" || ")[1];
+    }
 }
