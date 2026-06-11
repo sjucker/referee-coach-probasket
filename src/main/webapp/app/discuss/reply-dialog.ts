@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -29,6 +29,7 @@ import {MatInputModule} from "@angular/material/input";
             <button mat-flat-button [mat-dialog-close]="reply">Reply</button>
         </mat-dialog-actions>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './reply-dialog.scss',
 })
 export class ReplyDialog {

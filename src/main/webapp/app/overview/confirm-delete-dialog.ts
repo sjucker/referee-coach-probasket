@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
 
@@ -23,6 +23,7 @@ export interface ConfirmDeleteData {
             <button color="warn" mat-flat-button [mat-dialog-close]="true">{{ data.confirmText || 'Delete' }}</button>
         </mat-dialog-actions>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styles: []
 })
 export class ConfirmDeleteDialog {

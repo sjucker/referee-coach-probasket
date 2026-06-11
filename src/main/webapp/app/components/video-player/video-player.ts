@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, computed, ElementRef, inject, input, OnDestroy, viewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, OnDestroy, viewChild} from '@angular/core';
 import {firstValueFrom, Subject} from "rxjs";
 import {YouTubePlayer} from "@angular/youtube-player";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -9,6 +9,7 @@ import {DomSanitizer} from "@angular/platform-browser";
         YouTubePlayer
     ],
     templateUrl: './video-player.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './video-player.scss'
 })
 export class VideoPlayer implements AfterViewInit, OnDestroy {

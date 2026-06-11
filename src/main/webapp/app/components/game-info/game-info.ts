@@ -1,4 +1,4 @@
-import {Component, input} from '@angular/core';
+import {Component, input, ChangeDetectionStrategy} from '@angular/core';
 import {DatePipe, NgClass} from "@angular/common";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {OfficiatingMode, RefereeReportDTO} from "../../../rest";
@@ -21,6 +21,7 @@ import {MatIconModule} from "@angular/material/icon";
         MatIconModule,
     ],
     templateUrl: './game-info.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './game-info.scss'
 })
 export class GameInfo {

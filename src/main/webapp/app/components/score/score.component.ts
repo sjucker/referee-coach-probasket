@@ -1,4 +1,4 @@
-import {Component, input, output} from '@angular/core';
+import {Component, input, output, ChangeDetectionStrategy} from '@angular/core';
 import {MatSlider, MatSliderThumb} from "@angular/material/slider";
 import {FormsModule} from "@angular/forms";
 import {HasScoreDTO, ScoreUtil} from "../../util/score-util";
@@ -11,6 +11,7 @@ import {HasScoreDTO, ScoreUtil} from "../../util/score-util";
         FormsModule
     ],
     templateUrl: './score.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './score.component.scss'
 })
 export class Score {

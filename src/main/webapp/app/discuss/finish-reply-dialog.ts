@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -30,6 +30,7 @@ export interface FinishReplyDialogData {
             <button mat-flat-button [mat-dialog-close]="true">Finish</button>
         </mat-dialog-actions>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './reply-dialog.scss',
 })
 export class FinishReplyDialog {

@@ -33,8 +33,8 @@
     * `mvn -U versions:update-properties`
 
 * Update Angular
-    * `ng update @angular/core@21 @angular/cli@21 --allow-dirty`
-    * `ng update @angular/material@21 --allow-dirty`
+    * `ng update @angular/core@22 @angular/cli@22 --allow-dirty`
+    * `ng update @angular/material@22 --allow-dirty`
     * `ncu`
     * `ncu -u`, or
     * `ncu -i` for interactive update

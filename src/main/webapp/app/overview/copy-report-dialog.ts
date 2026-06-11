@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -37,6 +37,7 @@ export interface CopyReportDialogData {
             <button mat-flat-button [mat-dialog-close]="selectedReferee">Copy</button>
         </mat-dialog-actions>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styles: []
 })
 export class CopyReportDialog implements OnInit {

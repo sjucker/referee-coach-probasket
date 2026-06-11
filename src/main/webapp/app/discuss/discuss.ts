@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, signal, viewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -36,6 +36,7 @@ import {AuthService} from "../auth.service";
     selector: 'app-discuss',
     imports: [Header, LoadingBar, GameInfo, MatButton, MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle, MatIconModule, MatTooltipModule, NgClass, DatePipe, MatFormFieldModule, CdkTextareaAutosize, MatInput, FormsModule, MatIconButton, VideoPlayer],
     templateUrl: './discuss.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './discuss.scss',
 })
 export class DiscussPage implements OnDestroy, AfterViewInit, HasUnsavedChanges {

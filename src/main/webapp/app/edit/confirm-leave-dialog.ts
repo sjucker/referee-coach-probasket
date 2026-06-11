@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
 
@@ -16,6 +16,7 @@ import {MatButtonModule} from '@angular/material/button';
             <button mat-flat-button [mat-dialog-close]="false">Stay on this page</button>
         </mat-dialog-actions>
     `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styles: []
 })
 export class ConfirmLeaveDialog {
