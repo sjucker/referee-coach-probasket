@@ -28,8 +28,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <nodeVersion>v24.13.1</nodeVersion>
-        <npmVersion>11.8.0</npmVersion>
+        <nodeVersion>v24.16.0</nodeVersion>
+        <npmVersion>11.13.0</npmVersion>
 
         <poi.version>5.5.1</poi.version>
 
