@@ -573,7 +573,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
         setGameReferee2Rank(gameReferee2Rank);
         setGameReferee3Rank(gameReferee3Rank);
         setInternal(internal);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -618,7 +618,7 @@ public class ReportRecord extends UpdatableRecordImpl<ReportRecord> {
             setGameReferee2Rank(value.getGameReferee2Rank());
             setGameReferee3Rank(value.getGameReferee3Rank());
             setInternal(value.getInternal());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

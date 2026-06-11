@@ -104,7 +104,7 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
         setReportCommentId(reportCommentId);
         setType(type);
         setState(state);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -118,7 +118,7 @@ public class ReportCriteriaRecord extends UpdatableRecordImpl<ReportCriteriaReco
             setReportCommentId(value.getReportCommentId());
             setType(value.getType());
             setState(value.getState());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

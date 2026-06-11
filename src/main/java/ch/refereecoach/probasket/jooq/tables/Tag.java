@@ -15,7 +15,6 @@ import java.util.Collection;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -24,13 +23,14 @@ import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
-import org.jooq.Select;
 import org.jooq.Stringly;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableLike;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -59,7 +59,7 @@ public class Tag extends TableImpl<TagRecord> {
     /**
      * The column <code>public.tag.id</code>.
      */
-    public final TableField<TagRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<TagRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.tag.name</code>.
@@ -134,11 +134,6 @@ public class Tag extends TableImpl<TagRecord> {
     }
 
     @Override
-    public Identity<TagRecord, Long> getIdentity() {
-        return (Identity<TagRecord, Long>) super.getIdentity();
-    }
-
-    @Override
     public UniqueKey<TagRecord> getPrimaryKey() {
         return Keys.PK__TAGS;
     }
@@ -208,7 +203,7 @@ public class Tag extends TableImpl<TagRecord> {
      */
     @Override
     public Tag where(Condition condition) {
-        return new Tag(getQualifiedName(), aliased() ? this : null, null, condition);
+        return new Tag(getQualifiedName(), aliased() ? this : null, null, Internal.condition(this, condition));
     }
 
     /**
@@ -275,7 +270,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Create an inline derived table from this table
      */
     @Override
-    public Tag whereExists(Select<?> select) {
+    public Tag whereExists(TableLike<?> select) {
         return where(DSL.exists(select));
     }
 
@@ -283,7 +278,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Create an inline derived table from this table
      */
     @Override
-    public Tag whereNotExists(Select<?> select) {
+    public Tag whereNotExists(TableLike<?> select) {
         return where(DSL.notExists(select));
     }
 }

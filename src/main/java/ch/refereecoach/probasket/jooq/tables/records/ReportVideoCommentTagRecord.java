@@ -76,7 +76,7 @@ public class ReportVideoCommentTagRecord extends UpdatableRecordImpl<ReportVideo
 
         setReportVideoCommentId(reportVideoCommentId);
         setTagId(tagId);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -88,7 +88,7 @@ public class ReportVideoCommentTagRecord extends UpdatableRecordImpl<ReportVideo
         if (value != null) {
             setReportVideoCommentId(value.getReportVideoCommentId());
             setTagId(value.getTagId());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

@@ -123,7 +123,7 @@ public class ReportVideoCommentReplyRecord extends UpdatableRecordImpl<ReportVid
         setReply(reply);
         setCreatedAt(createdAt);
         setCreatedBy(createdBy);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -138,7 +138,7 @@ public class ReportVideoCommentReplyRecord extends UpdatableRecordImpl<ReportVid
             setReply(value.getReply());
             setCreatedAt(value.getCreatedAt());
             setCreatedBy(value.getCreatedBy());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

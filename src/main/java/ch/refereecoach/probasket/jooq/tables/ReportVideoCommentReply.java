@@ -18,7 +18,6 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -27,13 +26,14 @@ import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
-import org.jooq.Select;
 import org.jooq.Stringly;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableLike;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -62,7 +62,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
     /**
      * The column <code>public.report_video_comment_reply.id</code>.
      */
-    public final TableField<ReportVideoCommentReplyRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+    public final TableField<ReportVideoCommentReplyRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column
@@ -155,11 +155,6 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
     }
 
     @Override
-    public Identity<ReportVideoCommentReplyRecord, Long> getIdentity() {
-        return (Identity<ReportVideoCommentReplyRecord, Long>) super.getIdentity();
-    }
-
-    @Override
     public UniqueKey<ReportVideoCommentReplyRecord> getPrimaryKey() {
         return Keys.PK__REPORT_VIDEO_COMMENT_REPLY;
     }
@@ -238,7 +233,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
      */
     @Override
     public ReportVideoCommentReply where(Condition condition) {
-        return new ReportVideoCommentReply(getQualifiedName(), aliased() ? this : null, null, condition);
+        return new ReportVideoCommentReply(getQualifiedName(), aliased() ? this : null, null, Internal.condition(this, condition));
     }
 
     /**
@@ -305,7 +300,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
      * Create an inline derived table from this table
      */
     @Override
-    public ReportVideoCommentReply whereExists(Select<?> select) {
+    public ReportVideoCommentReply whereExists(TableLike<?> select) {
         return where(DSL.exists(select));
     }
 
@@ -313,7 +308,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
      * Create an inline derived table from this table
      */
     @Override
-    public ReportVideoCommentReply whereNotExists(Select<?> select) {
+    public ReportVideoCommentReply whereNotExists(TableLike<?> select) {
         return where(DSL.notExists(select));
     }
 }

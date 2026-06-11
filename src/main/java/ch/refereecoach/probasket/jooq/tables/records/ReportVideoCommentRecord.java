@@ -151,7 +151,7 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
         setCreatedAt(createdAt);
         setCreatedBy(createdBy);
         setRequiresReply(requiresReply);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -168,7 +168,7 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
             setCreatedAt(value.getCreatedAt());
             setCreatedBy(value.getCreatedBy());
             setRequiresReply(value.getRequiresReply());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

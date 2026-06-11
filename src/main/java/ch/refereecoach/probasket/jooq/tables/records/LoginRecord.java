@@ -256,7 +256,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
         setActive(active);
         setRefereeCoachPlus(refereeCoachPlus);
         setUsername(username);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -280,7 +280,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
             setActive(value.getActive());
             setRefereeCoachPlus(value.getRefereeCoachPlus());
             setUsername(value.getUsername());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

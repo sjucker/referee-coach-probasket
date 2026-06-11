@@ -91,7 +91,7 @@ public class ReportVideoCommentRefRecord extends UpdatableRecordImpl<ReportVideo
         setReportId(reportId);
         setReportVideoCommentId(reportVideoCommentId);
         setRequiresReply(requiresReply);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -104,7 +104,7 @@ public class ReportVideoCommentRefRecord extends UpdatableRecordImpl<ReportVideo
             setReportId(value.getReportId());
             setReportVideoCommentId(value.getReportVideoCommentId());
             setRequiresReply(value.getRequiresReply());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

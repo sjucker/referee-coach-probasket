@@ -91,7 +91,7 @@ public class ReportLastReadRecord extends UpdatableRecordImpl<ReportLastReadReco
         setReportId(reportId);
         setUserId(userId);
         setLastReadAt(lastReadAt);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -104,7 +104,7 @@ public class ReportLastReadRecord extends UpdatableRecordImpl<ReportLastReadReco
             setReportId(value.getReportId());
             setUserId(value.getUserId());
             setLastReadAt(value.getLastReadAt());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }

@@ -121,7 +121,7 @@ public class ReportCommentRecord extends UpdatableRecordImpl<ReportCommentRecord
         setType(type);
         setComment(comment);
         setScore(score);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 
     /**
@@ -136,7 +136,7 @@ public class ReportCommentRecord extends UpdatableRecordImpl<ReportCommentRecord
             setType(value.getType());
             setComment(value.getComment());
             setScore(value.getScore());
-            resetChangedOnNotNull();
+            resetTouchedOnNotNull();
         }
     }
 }
