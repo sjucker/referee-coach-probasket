@@ -10,8 +10,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const auth = inject(AuthService);
     const router = inject(Router);
 
+    // only attach the JWT to our own API; presigned uploads/downloads go to the object store (absolute URL)
+    // and must NOT carry the Authorization header (it breaks the S3 signature and would leak the token)
+    const isOwnApi = req.url.startsWith('/') || req.url.startsWith(window.location.origin);
+
     const token = auth.token();
-    const request = token
+    const request = token && isOwnApi
         ? req.clone({setHeaders: {Authorization: `Bearer ${token}`}})
         : req;
 

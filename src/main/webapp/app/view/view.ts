@@ -118,4 +118,8 @@ export class ViewPage implements AfterViewInit, OnDestroy {
     tagNames(videoComment: ReportVideoCommentDTO) {
         return videoComment.tags.map(t => t.name).join(', ');
     }
+
+    hasSnippets(): boolean {
+        return this.report()!.videoComments.some(vc => !!vc.uploadId);
+    }
 }

@@ -34,6 +34,7 @@
                     </div>
                     <div class="video-comments-container" #videoCommentsContainer>
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                            @if (!videoComment.uploadId) {
                             <mat-card appearance="outlined" [ngClass]="{'important': requiresReply(videoComment)}">
                                 <mat-card-header>
                                     <mat-card-title class="title-container">
@@ -82,6 +83,7 @@
                                     </button>
                                 </mat-card-actions>
                             </mat-card>
+                            }
                         }
 
                         @for (newVideoComment of newComments(); track newVideoComment) {
@@ -110,6 +112,70 @@
                             </mat-card>
                         }
                     </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    }
+
+    @if (hasSnippets()) {
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>Video Snippets</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="video-comments-container">
+                    @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                        @if (videoComment.uploadId) {
+                            <mat-card appearance="outlined" [ngClass]="{'important': requiresReply(videoComment)}">
+                                <mat-card-header>
+                                    <mat-card-title class="title-container">
+                                        <div>Snippet #{{ i + 1 }}</div>
+                                        @if (requiresReply(videoComment)) {
+                                            <mat-icon class="important" matTooltip="This snippet requires a reply from you.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                        @if (flaggedForReply(videoComment)) {
+                                            <mat-icon matTooltip="This snippet requires a reply from the referee.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <app-video-player [videoUrl]="videoComment.videoUrl"
+                                                      [videoWidth]="videoWidth()"
+                                                      [videoHeight]="videoHeight()"/>
+                                    <p>{{ videoComment.comment }}</p>
+                                    @if (videoComment.tags.length > 0) {
+                                        <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
+                                    }
+                                    @if (videoComment.replies.length > 0) {
+                                        <hr/>
+                                    }
+                                    @for (reply of videoComment.replies; track reply) {
+                                        <div class="reply-container">
+                                            <div class="reply-detail-container" [class]="reply.id === 0 ? 'new-reply' : ''">
+                                                <span class="repliedBy">{{ reply.createdBy }}</span>
+                                                <span class="repliedAt">{{ reply.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                                                @if (reply.id === 0) {
+                                                    <button mat-icon-button (click)="deleteReply(videoComment, reply)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                }
+                                            </div>
+                                            <p class="reply">{{ reply.reply }}</p>
+                                        </div>
+                                    }
+                                </mat-card-content>
+                                <mat-card-actions class="actions-container">
+                                    <button (click)="reply(videoComment)" mat-stroked-button>
+                                        Reply
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        }
+                    }
                 </div>
             </mat-card-content>
         </mat-card>

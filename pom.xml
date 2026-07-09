@@ -32,6 +32,7 @@
         <npmVersion>11.13.0</npmVersion>
 
         <poi.version>5.5.1</poi.version>
+        <awssdk.version>2.31.0</awssdk.version>
 
         <archunit.version>1.4.2</archunit.version>
 
@@ -56,6 +57,17 @@
         <jooq-codegen-skip>true</jooq-codegen-skip>
         <frontend-build-skip>false</frontend-build-skip>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,6 +135,12 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- S3-compatible object storage (Heroku Bucketeer / AWS S3 / Cloudflare R2) for uploaded video snippets -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
 
         <dependency>

@@ -14,3 +14,12 @@
             allowfullscreen>
     </iframe>
 }
+
+@if (videoUrl()) {
+    <video #uploadedPlayer
+           [src]="videoUrl()"
+           [width]="videoWidth()"
+           controls
+           playsinline>
+    </video>
+}

@@ -83,6 +83,12 @@ export interface CreateRefereeReportResultDTO {
     externalId: string;
 }
 
+export interface CreateVideoUploadDTO {
+    filename: string;
+    contentType: string;
+    sizeBytes: number;
+}
+
 export interface NewReportVideoCommentDTO {
     timestampInSeconds: number;
     comment: string;
@@ -173,6 +179,9 @@ export interface ReportVideoCommentDTO {
     reference: boolean;
     replies: ReportVideoCommentReplyDTO[];
     tags: TagDTO[];
+    uploadId?: number;
+    videoUrl?: string;
+    videoFilename?: string;
 }
 
 export interface ReportVideoCommentReplyDTO {
@@ -186,6 +195,11 @@ export interface ReportVideoCommentReplyDTO {
 export interface TagDTO {
     id: number;
     name: string;
+}
+
+export interface VideoUploadDTO {
+    uploadId: number;
+    uploadUrl: string;
 }
 
 export interface TagOverviewDTO {

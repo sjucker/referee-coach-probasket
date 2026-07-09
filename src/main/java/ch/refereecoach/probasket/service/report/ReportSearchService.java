@@ -14,7 +14,9 @@ import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportVideoCommentReplyDTO;
 import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoUploadDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
+import ch.refereecoach.probasket.service.storage.VideoStorageService;
 import ch.refereecoach.probasket.util.AsportUtil;
 import ch.refereecoach.probasket.util.DateUtil;
 import ch.refereecoach.probasket.util.YouTubeUtil;
@@ -27,6 +29,7 @@ import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +51,7 @@ import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_REF;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_REPLY;
 import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_TAG;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_UPLOAD;
 import static ch.refereecoach.probasket.jooq.Tables.TAG;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 import static java.util.Comparator.comparing;
@@ -64,9 +68,14 @@ import static org.jooq.impl.DSL.selectOne;
 @RequiredArgsConstructor
 public class ReportSearchService {
 
+    // playback URLs only need to outlive the loading of the report page
+    private static final Duration DOWNLOAD_URL_TTL = Duration.ofHours(6);
+
     private final DSLContext jooqDsl;
     private final ReportDao reportDao;
     private final UserService userService;
+    private final ReportVideoUploadDao reportVideoUploadDao;
+    private final VideoStorageService videoStorageService;
 
     public Optional<RefereeReportDTO> findRefereeReportByExternalId(String externalId, Long userId) {
         var user = userService.getById(userId);
@@ -130,10 +139,13 @@ public class ReportSearchService {
                                                               .from(REPORT_VIDEO_COMMENT_TAG)
                                                               .join(TAG).on(REPORT_VIDEO_COMMENT_TAG.TAG_ID.eq(TAG.ID))
                                                               .where(REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
-                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new)))
+                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new))),
+                                             REPORT_VIDEO_UPLOAD.ID,
+                                             REPORT_VIDEO_UPLOAD.FILENAME
                                             )
                                               .from(REPORT_VIDEO_COMMENT)
                                               .join(LOGIN).on(LOGIN.ID.eq(REPORT_VIDEO_COMMENT.CREATED_BY))
+                                              .leftJoin(REPORT_VIDEO_UPLOAD).on(REPORT_VIDEO_UPLOAD.ID.eq(REPORT_VIDEO_COMMENT.REPORT_VIDEO_UPLOAD_ID))
                                               .where(REPORT_VIDEO_COMMENT.REPORT_ID.eq(REPORT.ID))
                                               .orderBy(REPORT_VIDEO_COMMENT.ID.asc())
                                       ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::of))),
@@ -162,11 +174,14 @@ public class ReportSearchService {
                                                               .from(REPORT_VIDEO_COMMENT_TAG)
                                                               .join(TAG).on(REPORT_VIDEO_COMMENT_TAG.TAG_ID.eq(TAG.ID))
                                                               .where(REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID.eq(REPORT_VIDEO_COMMENT.ID))
-                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new)))
+                                                     ).convertFrom(it -> it.map(mapping(TagDTO::new))),
+                                             REPORT_VIDEO_UPLOAD.ID,
+                                             REPORT_VIDEO_UPLOAD.FILENAME
                                             )
                                               .from(REPORT_VIDEO_COMMENT)
                                               .join(REPORT_VIDEO_COMMENT_REF).on(REPORT_VIDEO_COMMENT.ID.eq(REPORT_VIDEO_COMMENT_REF.REPORT_VIDEO_COMMENT_ID))
                                               .join(LOGIN).on(LOGIN.ID.eq(REPORT_VIDEO_COMMENT.CREATED_BY))
+                                              .leftJoin(REPORT_VIDEO_UPLOAD).on(REPORT_VIDEO_UPLOAD.ID.eq(REPORT_VIDEO_COMMENT.REPORT_VIDEO_UPLOAD_ID))
                                               .where(REPORT_VIDEO_COMMENT_REF.REPORT_ID.eq(REPORT.ID))
                                               .orderBy(REPORT_VIDEO_COMMENT.ID.asc())
                                       ).convertFrom(it -> it.map(mapping(ReportVideoCommentDTO::ofReference))))
@@ -178,6 +193,7 @@ public class ReportSearchService {
 
                           var videoComments = Stream.concat(it.value3().stream(), it.value4().stream())
                                                     .sorted(comparing(ReportVideoCommentDTO::id))
+                                                    .map(this::withPresignedVideoUrl)
                                                     .toList();
 
                           return new RefereeReportDTO(reportRecord.getId(),
@@ -216,6 +232,19 @@ public class ReportSearchService {
                                                       comments,
                                                       videoComments);
                       });
+    }
+
+    /**
+     * For a coach-uploaded snippet, generate a short-lived presigned URL so the browser can play the clip
+     * directly from the bucket. Comments without an upload are returned unchanged.
+     */
+    private ReportVideoCommentDTO withPresignedVideoUrl(ReportVideoCommentDTO videoComment) {
+        if (videoComment.uploadId() == null) {
+            return videoComment;
+        }
+        return reportVideoUploadDao.fetchOptionalById(videoComment.uploadId())
+                                   .map(upload -> videoComment.withVideoUrl(videoStorageService.createDownloadUrl(upload.getObjectKey(), DOWNLOAD_URL_TTL)))
+                                   .orElse(videoComment);
     }
 
     // TODO findTrainerReport

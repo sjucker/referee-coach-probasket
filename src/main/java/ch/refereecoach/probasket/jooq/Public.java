@@ -13,6 +13,7 @@ import ch.refereecoach.probasket.jooq.tables.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoUpload;
 import ch.refereecoach.probasket.jooq.tables.Tag;
 
 import java.util.Arrays;
@@ -83,6 +84,11 @@ public class Public extends SchemaImpl {
     public final ReportVideoCommentTag REPORT_VIDEO_COMMENT_TAG = ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG;
 
     /**
+     * The table <code>public.report_video_upload</code>.
+     */
+    public final ReportVideoUpload REPORT_VIDEO_UPLOAD = ReportVideoUpload.REPORT_VIDEO_UPLOAD;
+
+    /**
      * The table <code>public.tag</code>.
      */
     public final Tag TAG = Tag.TAG;
@@ -112,6 +118,7 @@ public class Public extends SchemaImpl {
             ReportVideoCommentRef.REPORT_VIDEO_COMMENT_REF,
             ReportVideoCommentReply.REPORT_VIDEO_COMMENT_REPLY,
             ReportVideoCommentTag.REPORT_VIDEO_COMMENT_TAG,
+            ReportVideoUpload.REPORT_VIDEO_UPLOAD,
             Tag.TAG
         );
     }

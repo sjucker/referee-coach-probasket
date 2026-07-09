@@ -118,6 +118,22 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
         return (Boolean) get(6);
     }
 
+    /**
+     * Setter for
+     * <code>public.report_video_comment.report_video_upload_id</code>.
+     */
+    public void setReportVideoUploadId(Long value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for
+     * <code>public.report_video_comment.report_video_upload_id</code>.
+     */
+    public Long getReportVideoUploadId() {
+        return (Long) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -141,7 +157,7 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
     /**
      * Create a detached, initialised ReportVideoCommentRecord
      */
-    public ReportVideoCommentRecord(Long id, Long reportId, Long timestampInSeconds, String comment, LocalDateTime createdAt, Long createdBy, Boolean requiresReply) {
+    public ReportVideoCommentRecord(Long id, Long reportId, Long timestampInSeconds, String comment, LocalDateTime createdAt, Long createdBy, Boolean requiresReply, Long reportVideoUploadId) {
         super(ReportVideoComment.REPORT_VIDEO_COMMENT);
 
         setId(id);
@@ -151,6 +167,7 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
         setCreatedAt(createdAt);
         setCreatedBy(createdBy);
         setRequiresReply(requiresReply);
+        setReportVideoUploadId(reportVideoUploadId);
         resetTouchedOnNotNull();
     }
 
@@ -168,6 +185,7 @@ public class ReportVideoCommentRecord extends UpdatableRecordImpl<ReportVideoCom
             setCreatedAt(value.getCreatedAt());
             setCreatedBy(value.getCreatedBy());
             setRequiresReply(value.getRequiresReply());
+            setReportVideoUploadId(value.getReportVideoUploadId());
             resetTouchedOnNotNull();
         }
     }

@@ -20,4 +20,18 @@ public class ApplicationProperties {
     private String basketplanApiKey;
     private Integer federationId;
     private String impersonationPassword;
+
+    private final Storage storage = new Storage();
+
+    @Getter
+    @Setter
+    public static class Storage {
+        private String bucket;
+        private String region;
+        private String accessKey;
+        private String secretKey;
+        // empty for AWS default; set for Cloudflare R2 / MinIO (S3-compatible endpoints)
+        private String endpoint;
+        private long maxUploadBytes = 104_857_600L; // 100 MB
+    }
 }

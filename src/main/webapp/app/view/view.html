@@ -79,6 +79,7 @@
                     </div>
                     <div class="video-comments-container">
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                            @if (!videoComment.uploadId) {
                             <mat-card appearance="outlined" [ngClass]="{'important': requiresReply(videoComment)}">
                                 <mat-card-header>
                                     <mat-card-title class="title-container">
@@ -108,8 +109,52 @@
                                     </button>
                                 </mat-card-actions>
                             </mat-card>
+                            }
                         }
                     </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    }
+
+    @if (hasSnippets()) {
+        <mat-card appearance="filled">
+            <mat-card-header>
+                <mat-card-title>Video Snippets</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="video-snippets-container">
+                    @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                        @if (videoComment.uploadId) {
+                            <mat-card appearance="outlined" [ngClass]="{'important': requiresReply(videoComment)}">
+                                <mat-card-header>
+                                    <mat-card-title class="title-container">
+                                        <div>Snippet #{{ i + 1 }}</div>
+                                        @if (requiresReply(videoComment)) {
+                                            <mat-icon class="important"
+                                                      matTooltip="This snippet requires a reply from you. Switch to the discussion-mode to do so.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                        @if (flaggedForReply(videoComment)) {
+                                            <mat-icon matTooltip="This snippet requires a reply from the referee. Switch to the discussion-mode to view it.">
+                                                priority_high
+                                            </mat-icon>
+                                        }
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <app-video-player [videoUrl]="videoComment.videoUrl"
+                                                      [videoWidth]="videoWidth()"
+                                                      [videoHeight]="videoHeight()"/>
+                                    <p>{{ videoComment.comment }}</p>
+                                    @if (videoComment.tags.length > 0) {
+                                        <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
+                                    }
+                                </mat-card-content>
+                            </mat-card>
+                        }
+                    }
                 </div>
             </mat-card-content>
         </mat-card>

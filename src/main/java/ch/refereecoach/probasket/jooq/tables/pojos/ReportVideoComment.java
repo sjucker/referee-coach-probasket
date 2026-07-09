@@ -23,6 +23,7 @@ public class ReportVideoComment implements Serializable {
     private LocalDateTime createdAt;
     private Long createdBy;
     private Boolean requiresReply;
+    private Long reportVideoUploadId;
 
     public ReportVideoComment() {}
 
@@ -34,6 +35,7 @@ public class ReportVideoComment implements Serializable {
         this.createdAt = value.createdAt;
         this.createdBy = value.createdBy;
         this.requiresReply = value.requiresReply;
+        this.reportVideoUploadId = value.reportVideoUploadId;
     }
 
     public ReportVideoComment(
@@ -43,7 +45,8 @@ public class ReportVideoComment implements Serializable {
         String comment,
         LocalDateTime createdAt,
         Long createdBy,
-        Boolean requiresReply
+        Boolean requiresReply,
+        Long reportVideoUploadId
     ) {
         this.id = id;
         this.reportId = reportId;
@@ -52,6 +55,7 @@ public class ReportVideoComment implements Serializable {
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.requiresReply = requiresReply;
+        this.reportVideoUploadId = reportVideoUploadId;
     }
 
     /**
@@ -152,6 +156,22 @@ public class ReportVideoComment implements Serializable {
         this.requiresReply = requiresReply;
     }
 
+    /**
+     * Getter for
+     * <code>public.report_video_comment.report_video_upload_id</code>.
+     */
+    public Long getReportVideoUploadId() {
+        return this.reportVideoUploadId;
+    }
+
+    /**
+     * Setter for
+     * <code>public.report_video_comment.report_video_upload_id</code>.
+     */
+    public void setReportVideoUploadId(Long reportVideoUploadId) {
+        this.reportVideoUploadId = reportVideoUploadId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -203,6 +223,12 @@ public class ReportVideoComment implements Serializable {
         }
         else if (!this.requiresReply.equals(other.requiresReply))
             return false;
+        if (this.reportVideoUploadId == null) {
+            if (other.reportVideoUploadId != null)
+                return false;
+        }
+        else if (!this.reportVideoUploadId.equals(other.reportVideoUploadId))
+            return false;
         return true;
     }
 
@@ -217,6 +243,7 @@ public class ReportVideoComment implements Serializable {
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
         result = prime * result + ((this.requiresReply == null) ? 0 : this.requiresReply.hashCode());
+        result = prime * result + ((this.reportVideoUploadId == null) ? 0 : this.reportVideoUploadId.hashCode());
         return result;
     }
 
@@ -231,6 +258,7 @@ public class ReportVideoComment implements Serializable {
         sb.append(", ").append(createdAt);
         sb.append(", ").append(createdBy);
         sb.append(", ").append(requiresReply);
+        sb.append(", ").append(reportVideoUploadId);
 
         sb.append(")");
         return sb.toString();

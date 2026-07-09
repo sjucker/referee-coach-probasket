@@ -12,6 +12,40 @@
   `mvn clean test-compile -Djooq-codegen-skip=false`
   Or use the run configuration `generate jOOQ code`.
 
+## Video snippet uploads (object storage)
+
+Referee-coaches can upload short video clips (recorded on their smartphone) as video-snippet comments. The
+files are stored in an **S3-compatible object store** (not in Postgres); the browser uploads and plays them
+back directly via short-lived presigned URLs, so the bytes never pass through the dyno. See
+[etc/video-upload-feature.md](etc/video-upload-feature.md) for the full design.
+
+Configured via `probasket.storage.*` (see `application.properties`).
+
+### Production (Heroku Bucketeer)
+
+* `heroku addons:create bucketeer:hobbyist --app referee-coach-probasket`
+  (provisions an AWS S3 bucket and sets `BUCKETEER_BUCKET_NAME`, `BUCKETEER_AWS_REGION`,
+  `BUCKETEER_AWS_ACCESS_KEY_ID`, `BUCKETEER_AWS_SECRET_ACCESS_KEY`).
+* Set a **bucket CORS policy** allowing `PUT` and `GET` from the app origin (`probasket.base-url`) — otherwise
+  the browser's direct upload is blocked. Example rule: allowed origins = the app URL, allowed methods =
+  `PUT,GET`, allowed headers = `*`.
+* Alternatively use Cloudflare R2 / Backblaze B2: set `STORAGE_ENDPOINT` to the endpoint plus the
+  `BUCKETEER_*` (or equivalent) credentials/bucket vars.
+
+### Local development (MinIO)
+
+* Start MinIO (S3-compatible, creates the `probasket-videos` bucket):
+  `docker compose -p referee-coach-probasket -f src/main/docker/minio.yml up`
+  (console at http://localhost:9001, user/pass `probasket`/`probasket`).
+* Add to `src/main/resources/application-local.properties`:
+  ```properties
+  probasket.storage.bucket     = probasket-videos
+  probasket.storage.region     = us-east-1
+  probasket.storage.access-key = probasket
+  probasket.storage.secret-key = probasket
+  probasket.storage.endpoint   = http://localhost:9000
+  ```
+
 ## Releases
 
 * `npm run release`

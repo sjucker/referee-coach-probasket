@@ -115,6 +115,7 @@
 
                     <div class="video-comments-container" #videoCommentsContainer>
                         @for (videoComment of report.videoComments; track videoComment; let i = $index) {
+                            @if (!videoComment.uploadId) {
                             <mat-card appearance="raised">
                                 <mat-card-content>
                                     <div class="checkbox-container">
@@ -165,12 +166,83 @@
                                     }
                                 </mat-card-actions>
                             </mat-card>
+                            }
                         }
                     </div>
                 </div>
             </mat-card-content>
         </mat-card>
     }
+
+    <mat-card appearance="filled">
+        <mat-card-header>
+            <mat-card-title>Video Snippets</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p class="snippet-hint">
+                Upload short clips you recorded at the game (e.g. on your smartphone). Tip: on iPhone, set
+                Camera &gt; Formats to &ldquo;Most Compatible&rdquo; so the clip plays in every browser.
+            </p>
+            <input #snippetFileInput type="file" accept="video/*" capture hidden (change)="onSnippetSelected($event)"/>
+            <button mat-flat-button color="primary" (click)="triggerSnippetUpload()" [disabled]="uploadingSnippet() || saving()">
+                <mat-icon>upload</mat-icon>
+                Upload video snippet
+            </button>
+
+            <div class="video-snippets-container">
+                @for (videoComment of report.videoComments; track videoComment) {
+                    @if (videoComment.uploadId) {
+                        <mat-card appearance="raised">
+                            <mat-card-content>
+                                <app-video-player [videoUrl]="videoComment.videoUrl"
+                                                  [videoWidth]="videoWidth()"
+                                                  [videoHeight]="videoHeight()"/>
+                                <div class="checkbox-container">
+                                    <mat-checkbox [(ngModel)]="videoComment.requiresReply"
+                                                  (ngModelChange)="onChange()"
+                                                  [disabled]="videoComment.reference"
+                                                  matTooltip="If selected, this snippet is highlighted and the referee must reply to it."
+                                                  matTooltipPosition="above">
+                                        Require reply from referee
+                                    </mat-checkbox>
+                                    @if (videoComment.reference) {
+                                        <mat-icon matTooltip="This snippet was copied from another report and is not editable.">
+                                            info
+                                        </mat-icon>
+                                    }
+                                </div>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Comment</mat-label>
+                                    <textarea [(ngModel)]="videoComment.comment"
+                                              (ngModelChange)="onChange()"
+                                              [disabled]="videoComment.reference"
+                                              maxlength="1024"
+                                              rows="2"
+                                              cdkTextareaAutosize
+                                              matInput></textarea>
+                                </mat-form-field>
+                                @if (!videoComment.reference) {
+                                    <app-tag-selection [availableTags]="availableTags"
+                                                       [initialSelectedTags]="videoComment.tags"
+                                                       (removed)="removeTag(videoComment, $event)"
+                                                       (selected)="selectTag(videoComment, $event)"></app-tag-selection>
+                                } @else if (videoComment.tags.length > 0) {
+                                    <div class="tags-container">Tags: {{ tagNames(videoComment) }}</div>
+                                }
+                            </mat-card-content>
+                            @if (!videoComment.reference) {
+                                <mat-card-actions class="actions-container">
+                                    <button (click)="deleteComment(videoComment)" mat-stroked-button>
+                                        Delete Snippet
+                                    </button>
+                                </mat-card-actions>
+                            }
+                        </mat-card>
+                    }
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
 }
 
 <div #widthMeasurement></div>

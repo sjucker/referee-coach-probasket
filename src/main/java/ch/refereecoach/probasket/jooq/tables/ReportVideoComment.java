@@ -11,6 +11,7 @@ import ch.refereecoach.probasket.jooq.tables.Report.ReportPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentRef.ReportVideoCommentRefPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentReply.ReportVideoCommentReplyPath;
 import ch.refereecoach.probasket.jooq.tables.ReportVideoCommentTag.ReportVideoCommentTagPath;
+import ch.refereecoach.probasket.jooq.tables.ReportVideoUpload.ReportVideoUploadPath;
 import ch.refereecoach.probasket.jooq.tables.Tag.TagPath;
 import ch.refereecoach.probasket.jooq.tables.records.ReportVideoCommentRecord;
 
@@ -76,7 +77,7 @@ public class ReportVideoComment extends TableImpl<ReportVideoCommentRecord> {
     /**
      * The column <code>public.report_video_comment.timestamp_in_seconds</code>.
      */
-    public final TableField<ReportVideoCommentRecord, Long> TIMESTAMP_IN_SECONDS = createField(DSL.name("timestamp_in_seconds"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportVideoCommentRecord, Long> TIMESTAMP_IN_SECONDS = createField(DSL.name("timestamp_in_seconds"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.report_video_comment.comment</code>.
@@ -97,6 +98,12 @@ public class ReportVideoComment extends TableImpl<ReportVideoCommentRecord> {
      * The column <code>public.report_video_comment.requires_reply</code>.
      */
     public final TableField<ReportVideoCommentRecord, Boolean> REQUIRES_REPLY = createField(DSL.name("requires_reply"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column
+     * <code>public.report_video_comment.report_video_upload_id</code>.
+     */
+    public final TableField<ReportVideoCommentRecord, Long> REPORT_VIDEO_UPLOAD_ID = createField(DSL.name("report_video_upload_id"), SQLDataType.BIGINT, this, "");
 
     private ReportVideoComment(Name alias, Table<ReportVideoCommentRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -174,7 +181,7 @@ public class ReportVideoComment extends TableImpl<ReportVideoCommentRecord> {
 
     @Override
     public List<ForeignKey<ReportVideoCommentRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_CREATED_BY, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_REPORT);
+        return Arrays.asList(Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_CREATED_BY, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_REPORT, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_UPLOAD);
     }
 
     private transient LoginPath _login;
@@ -199,6 +206,19 @@ public class ReportVideoComment extends TableImpl<ReportVideoCommentRecord> {
             _report = new ReportPath(this, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_REPORT, null);
 
         return _report;
+    }
+
+    private transient ReportVideoUploadPath _reportVideoUpload;
+
+    /**
+     * Get the implicit join path to the <code>public.report_video_upload</code>
+     * table.
+     */
+    public ReportVideoUploadPath reportVideoUpload() {
+        if (_reportVideoUpload == null)
+            _reportVideoUpload = new ReportVideoUploadPath(this, Keys.REPORT_VIDEO_COMMENT__FK__REPORT_VIDEO_COMMENT_UPLOAD, null);
+
+        return _reportVideoUpload;
     }
 
     private transient ReportVideoCommentRefPath _reportVideoCommentRef;

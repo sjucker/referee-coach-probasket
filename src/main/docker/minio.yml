@@ -1,0 +1,26 @@
+services:
+  referee-coach-probasket-minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=probasket
+      - MINIO_ROOT_PASSWORD=probasket
+    ports:
+      # S3 API
+      - "9000:9000"
+      # web console (http://localhost:9001)
+      - "9001:9001"
+
+  # creates the bucket and allows browser (CORS) uploads/downloads from the local frontend
+  referee-coach-probasket-minio-setup:
+    image: minio/mc:latest
+    depends_on:
+      - referee-coach-probasket-minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set local http://referee-coach-probasket-minio:9000 probasket probasket) do echo 'waiting for minio...' && sleep 1; done;
+      /usr/bin/mc mb --ignore-existing local/probasket-videos;
+      /usr/bin/mc anonymous set none local/probasket-videos;
+      echo 'minio bucket ready';
+      exit 0;
+      "

@@ -3,7 +3,7 @@ import {Header} from '../components/header/header';
 import {LoadingBar} from '../components/loading-bar/loading-bar';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CriteriaState, CriteriaStateType, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportCriteriaDTO, ReportType, ReportVideoCommentDTO, TagDTO} from '../../rest';
+import {CreateVideoUploadDTO, CriteriaState, CriteriaStateType, OfficiatingMode, RefereeReportDTO, ReportCommentDTO, ReportCriteriaDTO, ReportType, ReportVideoCommentDTO, TagDTO, VideoUploadDTO} from '../../rest';
 import {PATH_VIEW} from '../app.routes';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -24,7 +24,7 @@ import {FinishRefereeReportDialog} from "./finish-referee-report-dialog";
 import {GameInfo} from "../components/game-info/game-info";
 import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
 import {TagSelection} from "../tag-selection/tag-selection";
-import {Observable, of, share} from "rxjs";
+import {firstValueFrom, Observable, of, share} from "rxjs";
 import {VideoPlayer} from "../components/video-player/video-player";
 import {AuthService} from "../auth.service";
 
@@ -54,7 +54,10 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
     protected readonly report = signal<RefereeReportDTO | null>(null);
     protected readonly loading = signal<boolean>(true);
     protected readonly saving = signal(false);
-    protected readonly showLoadingBar = computed(() => this.saving() || this.loading());
+    protected readonly uploadingSnippet = signal(false);
+    protected readonly showLoadingBar = computed(() => this.saving() || this.loading() || this.uploadingSnippet());
+
+    protected readonly snippetFileInput = viewChild<ElementRef<HTMLInputElement>>('snippetFileInput');
 
     protected readonly videoWidth = signal<number | null>(null);
     protected readonly videoHeight = signal<number | null>(null);
@@ -244,9 +247,66 @@ export class EditPage implements HasUnsavedChanges, AfterViewInit, OnDestroy {
         }, 200);
     }
 
+    triggerSnippetUpload(): void {
+        this.snippetFileInput()?.nativeElement.click();
+    }
+
+    async onSnippetSelected(event: Event): Promise<void> {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        // reset so selecting the same file again re-triggers the change event
+        input.value = '';
+        if (!file) {
+            return;
+        }
+
+        const report = this.report()!;
+        const contentType = file.type || 'video/mp4';
+        this.uploadingSnippet.set(true);
+        try {
+            const request: CreateVideoUploadDTO = {filename: file.name, contentType, sizeBytes: file.size};
+            // 1. reserve an upload + get a presigned PUT url
+            const upload = await firstValueFrom(
+                this.http.post<VideoUploadDTO>(`/api/report/referee/${report.externalId}/video-upload`, request));
+            // 2. upload the file directly to the bucket (auth interceptor skips this absolute url)
+            await firstValueFrom(
+                this.http.put(upload.uploadUrl, file, {headers: {'Content-Type': contentType}}));
+            // 3. confirm the upload landed
+            await firstValueFrom(
+                this.http.post<void>(`/api/report/referee/${report.externalId}/video-upload/${upload.uploadId}/complete`, {}));
+
+            // 4. add it as a snippet comment; the report PUT (Save) persists the link
+            report.videoComments.push({
+                comment: '',
+                requiresReply: false,
+                timestampInSeconds: 0,
+                createdAt: '',
+                createdBy: '',
+                createdById: 0,
+                reference: false,
+                replies: [],
+                tags: [],
+                uploadId: upload.uploadId,
+                // play back the local file immediately; a presigned url is used after the next reload
+                videoUrl: URL.createObjectURL(file),
+                videoFilename: file.name
+            });
+            this.onChange();
+            this.displaySnackbar('Video snippet uploaded. Remember to save the report.');
+        } catch (err) {
+            console.error(err);
+            this.displaySnackbar('An unexpected error occurred, video could not be uploaded.');
+        } finally {
+            this.uploadingSnippet.set(false);
+        }
+    }
+
     deleteComment(videoComment: ReportVideoCommentDTO) {
         this.onChange();
         const report = this.report()!;
+        if (videoComment.videoUrl?.startsWith('blob:')) {
+            URL.revokeObjectURL(videoComment.videoUrl);
+        }
         report.videoComments.splice(report.videoComments.indexOf(videoComment), 1);
     }
 

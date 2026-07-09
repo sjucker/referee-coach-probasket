@@ -4,8 +4,10 @@ import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
+import ch.refereecoach.probasket.dto.report.CreateVideoUploadDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportSearchResultDTO;
+import ch.refereecoach.probasket.dto.report.VideoUploadDTO;
 import ch.refereecoach.probasket.service.report.ReportSearchService;
 import ch.refereecoach.probasket.service.report.ReportService;
 import jakarta.validation.Valid;
@@ -103,6 +105,31 @@ public class ReportEndpoint {
         } catch (ReportService.InvalidVideoUrlException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PostMapping(value = "/referee/{externalId}/video-upload")
+    @Secured({"REFEREE_COACH"})
+    public ResponseEntity<VideoUploadDTO> createVideoUpload(@AuthenticationPrincipal Jwt jwt,
+                                                            @PathVariable String externalId,
+                                                            @RequestBody @Valid CreateVideoUploadDTO dto) {
+        log.info("POST /api/report/referee/{}/video-upload {} {}", externalId, dto, jwt.getSubject());
+
+        try {
+            return ResponseEntity.ok(reportService.createVideoUpload(externalId, dto, toLong(jwt.getSubject())));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping(value = "/referee/{externalId}/video-upload/{uploadId}/complete")
+    @Secured({"REFEREE_COACH"})
+    public ResponseEntity<Void> completeVideoUpload(@AuthenticationPrincipal Jwt jwt,
+                                                    @PathVariable String externalId,
+                                                    @PathVariable Long uploadId) {
+        log.info("POST /api/report/referee/{}/video-upload/{}/complete {}", externalId, uploadId, jwt.getSubject());
+
+        reportService.completeVideoUpload(externalId, uploadId, toLong(jwt.getSubject()));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/referee/{externalId}/finish")

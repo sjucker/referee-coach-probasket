@@ -18,11 +18,13 @@ export class VideoPlayer implements AfterViewInit, OnDestroy {
 
     youtubeId = input<string | undefined>(undefined);
     asportId = input<number | undefined>(undefined);
+    videoUrl = input<string | undefined>(undefined);
     videoWidth = input<number | null>(null);
     videoHeight = input<number | null>(null);
 
     protected readonly youtube = viewChild<YouTubePlayer>('youtubePlayer');
     protected readonly asport = viewChild<ElementRef>('asportPlayer');
+    protected readonly uploaded = viewChild<ElementRef<HTMLVideoElement>>('uploadedPlayer');
     protected readonly asportUrl = computed(() => {
         return this.sanitizer.bypassSecurityTrustResourceUrl(`https://arena.asport.tv/event/${this.asportId()}/embed?disableContentInfo&disableLogo&disableChromeCast&debug`)
     });
@@ -48,18 +50,25 @@ export class VideoPlayer implements AfterViewInit, OnDestroy {
         if (this.youtubeId()) {
             this.youtube()!.seekTo(time, true);
             this.youtube()!.playVideo();
-        } else {
+        } else if (this.asportId()) {
             this.asport()!.nativeElement.contentWindow.postMessage({command: 'setPosition', seconds: time}, '*');
             this.asport()!.nativeElement.contentWindow.postMessage({command: 'play'}, '*');
+        } else if (this.videoUrl()) {
+            const video = this.uploaded()!.nativeElement;
+            video.currentTime = time;
+            void video.play();
         }
     }
 
     public async getCurrentVideoTime(): Promise<number> {
         if (this.youtubeId()) {
             return this.youtube()!.getCurrentTime();
-        } else {
+        } else if (this.asportId()) {
             this.asport()!.nativeElement.contentWindow.postMessage({command: 'getPlayerInfo'}, '*');
             return firstValueFrom(this.asportPlayerPosition);
+        } else if (this.videoUrl()) {
+            return this.uploaded()!.nativeElement.currentTime;
         }
+        return 0;
     }
 }

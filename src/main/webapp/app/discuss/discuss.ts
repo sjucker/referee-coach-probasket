@@ -250,4 +250,8 @@ export class DiscussPage implements OnDestroy, AfterViewInit, HasUnsavedChanges 
     tagNames(videoComment: ReportVideoCommentDTO) {
         return videoComment.tags.map(t => t.name).join(', ');
     }
+
+    hasSnippets(): boolean {
+        return this.report()!.videoComments.some(vc => !!vc.uploadId);
+    }
 }

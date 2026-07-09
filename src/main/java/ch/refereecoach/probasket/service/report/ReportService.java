@@ -3,13 +3,16 @@ package ch.refereecoach.probasket.service.report;
 import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaType;
 import ch.refereecoach.probasket.common.Rank;
+import ch.refereecoach.probasket.configuration.ApplicationProperties;
 import ch.refereecoach.probasket.dto.report.CopyRefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportDiscussionReplyDTO;
 import ch.refereecoach.probasket.dto.report.CreateRefereeReportResultDTO;
+import ch.refereecoach.probasket.dto.report.CreateVideoUploadDTO;
 import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
 import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
+import ch.refereecoach.probasket.dto.report.VideoUploadDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
@@ -17,6 +20,7 @@ import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentRefDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentReplyDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoCommentTagDao;
+import ch.refereecoach.probasket.jooq.tables.daos.ReportVideoUploadDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Report;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
@@ -24,8 +28,10 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentTag;
+import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoUpload;
 import ch.refereecoach.probasket.service.basketplan.BasketplanGameService;
 import ch.refereecoach.probasket.service.mail.MailService;
+import ch.refereecoach.probasket.service.storage.VideoStorageService;
 import ch.refereecoach.probasket.util.AsportUtil;
 import ch.refereecoach.probasket.util.DateUtil;
 import ch.refereecoach.probasket.util.YouTubeUtil;
@@ -35,10 +41,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
@@ -57,6 +66,9 @@ public class ReportService {
 
     private static final BigDecimal DEFAULT_SCORE = new BigDecimal("7.00");
 
+    // presigned upload URLs are used immediately by the browser after they are handed out
+    private static final Duration UPLOAD_URL_TTL = Duration.ofMinutes(15);
+
     private final ReportDao reportDao;
     private final ReportCommentDao reportCommentDao;
     private final ReportCriteriaDao reportCriteriaDao;
@@ -64,9 +76,12 @@ public class ReportService {
     private final ReportVideoCommentTagDao reportVideoCommentTagDao;
     private final ReportVideoCommentRefDao reportVideoCommentRefDao;
     private final ReportVideoCommentReplyDao reportVideoCommentReplyDao;
+    private final ReportVideoUploadDao reportVideoUploadDao;
     private final BasketplanGameService basketplanGameService;
     private final UserService userService;
     private final MailService mailService;
+    private final VideoStorageService videoStorageService;
+    private final ApplicationProperties applicationProperties;
 
     public CreateRefereeReportResultDTO createRefereeReport(String gameNumber, String videoUrl, Long reporteeId, boolean internal, long userId) throws InvalidVideoUrlException {
         var coach = userService.getById(userId);
@@ -188,9 +203,12 @@ public class ReportService {
                if (videoComment.reference()) {
                    videoCommentRefsToUpdate.put(videoComment.id(), videoComment);
                } else if (videoComment.id() == null) {
-                   // create
-                   if (videoComment.timestampInSeconds() != null && isNotBlank(videoComment.comment())) {
-                       var newVideoComment = new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply());
+                   // create: either a timestamped comment into the full-game video, or an uploaded snippet
+                   var isSnippet = videoComment.uploadId() != null;
+                   if (isSnippet || (videoComment.timestampInSeconds() != null && isNotBlank(videoComment.comment()))) {
+                       // snippets carry their own clip and have no timestamp into a full-game video
+                       var timestamp = videoComment.timestampInSeconds() != null ? videoComment.timestampInSeconds() : 0L;
+                       var newVideoComment = new ReportVideoComment(null, report.getId(), timestamp, videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply(), videoComment.uploadId());
                        reportVideoCommentDao.insert(newVideoComment);
 
                        videoComment.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(newVideoComment.getId(), tag.id())));
@@ -211,7 +229,10 @@ public class ReportService {
                 reportVideoCommentTagDao.delete(reportVideoCommentTagDao.fetchByReportVideoCommentId(reportVideoComment.getId()));
                 reportVideoCommentDTO.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(reportVideoComment.getId(), tag.id())));
             } else {
+                var uploadId = reportVideoComment.getReportVideoUploadId();
                 reportVideoCommentDao.delete(reportVideoComment);
+                // remove the uploaded clip (and its object) once the comment referencing it is gone
+                deleteVideoUpload(uploadId);
             }
         });
 
@@ -344,7 +365,8 @@ public class ReportService {
                                                                comment.comment(),
                                                                DateUtil.now(),
                                                                commenter.id(),
-                                                               false);
+                                                               false,
+                                                               null);
             reportVideoCommentDao.insert(newReportVideoComment);
             totalVideoCommentsAdded.incrementAndGet();
 
@@ -370,6 +392,81 @@ public class ReportService {
                 mailService.sendNewDiscussionMail(commenter, coach, report);
             }
         }
+    }
+
+    /**
+     * Register a coach-uploaded video snippet and hand back a short-lived presigned URL the browser uses to
+     * PUT the file directly into the bucket. The upload is linked to a video comment later, when the report
+     * is saved with a {@link ReportVideoCommentDTO} carrying the returned {@code uploadId}.
+     */
+    public VideoUploadDTO createVideoUpload(String externalId, CreateVideoUploadDTO dto, long userId) {
+        var coach = userService.getById(userId);
+        var report = reportDao.fetchOptionalByExternalId(externalId)
+                              .orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+        if (!report.getCoachId().equals(coach.id())) {
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
+        }
+        if (report.getFinishedAt() != null) {
+            throw new IllegalStateException("user is not allowed to add uploads to an already finished video-report!");
+        }
+        if (dto.contentType() == null || !dto.contentType().startsWith("video/")) {
+            throw new IllegalArgumentException("only video uploads are allowed");
+        }
+        var maxBytes = applicationProperties.getStorage().getMaxUploadBytes();
+        if (dto.sizeBytes() == null || dto.sizeBytes() <= 0 || dto.sizeBytes() > maxBytes) {
+            throw new IllegalArgumentException("invalid upload size (max %d bytes)".formatted(maxBytes));
+        }
+
+        var objectKey = buildObjectKey(report.getId(), dto.filename());
+        var upload = new ReportVideoUpload(null, objectKey, dto.filename(), dto.contentType(), dto.sizeBytes(), false, DateUtil.now(), coach.id());
+        reportVideoUploadDao.insert(upload);
+
+        var uploadUrl = videoStorageService.createUploadUrl(objectKey, dto.contentType(), UPLOAD_URL_TTL);
+        return new VideoUploadDTO(upload.getId(), uploadUrl);
+    }
+
+    /**
+     * Confirm that a previously requested upload has actually landed in the bucket.
+     */
+    public void completeVideoUpload(String externalId, Long uploadId, long userId) {
+        var coach = userService.getById(userId);
+        var report = reportDao.fetchOptionalByExternalId(externalId)
+                              .orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
+        if (!report.getCoachId().equals(coach.id())) {
+            throw new IllegalStateException("report does not belong to user %s!".formatted(coach.fullName()));
+        }
+        var upload = reportVideoUploadDao.fetchOptionalById(uploadId)
+                                         .orElseThrow(() -> new IllegalArgumentException("upload %d not found".formatted(uploadId)));
+        if (!videoStorageService.exists(upload.getObjectKey())) {
+            throw new IllegalStateException("uploaded file %s not found in storage".formatted(upload.getObjectKey()));
+        }
+        upload.setUploaded(true);
+        reportVideoUploadDao.update(upload);
+    }
+
+    private void deleteVideoUpload(Long uploadId) {
+        if (uploadId == null) {
+            return;
+        }
+        reportVideoUploadDao.fetchOptionalById(uploadId).ifPresent(upload -> {
+            try {
+                videoStorageService.delete(upload.getObjectKey());
+            } catch (RuntimeException e) {
+                log.error("could not delete video upload object {} from storage", upload.getObjectKey(), e);
+            }
+            reportVideoUploadDao.deleteById(uploadId);
+        });
+    }
+
+    private static String buildObjectKey(Long reportId, String filename) {
+        var extension = "";
+        if (filename != null) {
+            var dot = filename.lastIndexOf('.');
+            if (dot >= 0 && dot < filename.length() - 1) {
+                extension = "." + filename.substring(dot + 1).toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
+            }
+        }
+        return "reports/%d/%s%s".formatted(reportId, UUID.randomUUID(), extension);
     }
 
     public Set<Long> getRelevantReportIds(String gameNumber, Long coachId) {
