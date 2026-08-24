@@ -18,13 +18,13 @@ public enum CriteriaType {
     FITNESS_EFFECT("Wirkung", CategoryType.FITNESS, CriteriaStateType.RADIO),
 
     LEAD_OA("Lead: OA / 45°", CategoryType.MECHANICS, CriteriaStateType.RADIO),
-    LEAD_DS("Lead: DS", CategoryType.MECHANICS, CriteriaStateType.RADIO),
+    LEAD_DS("Lead: D&S", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     LEAD_CD("Lead: CD", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     LEAD_ETP("Lead: ETP", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     LEAD_AOR("Lead: AOR", CategoryType.MECHANICS, CriteriaStateType.RADIO),
 
     TRAIL_AOR("Trail: AOR", CategoryType.MECHANICS, CriteriaStateType.RADIO),
-    TRAIL_DS("Trail: DS", CategoryType.MECHANICS, CriteriaStateType.RADIO),
+    TRAIL_DS("Trail: D&S", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     TRAIL_PENETRATION("Trail: penetration / cross step", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     TRAIL_RB("Trail: RB", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     TRAIL_AOR3("Trail: AOR (i.e. Zone 3)", CategoryType.MECHANICS, CriteriaStateType.RADIO),
@@ -35,6 +35,8 @@ public enum CriteriaType {
     FOULS_RB("RB", CategoryType.FOULS, CriteriaStateType.RADIO),
     FOULS_PNR("PNR", CategoryType.FOULS, CriteriaStateType.RADIO),
     FOULS_OFF_BALL("off ball", CategoryType.FOULS, CriteriaStateType.RADIO),
+    FOULS_T("T", CategoryType.FOULS, CriteriaStateType.RADIO),
+    FOULS_DI_FL("DI / FL", CategoryType.FOULS, CriteriaStateType.RADIO),
 
     VIOLATION_TV("TV", CategoryType.VIOLATIONS, CriteriaStateType.RADIO),
     VIOLATION_DD("DD", CategoryType.VIOLATIONS, CriteriaStateType.RADIO),
