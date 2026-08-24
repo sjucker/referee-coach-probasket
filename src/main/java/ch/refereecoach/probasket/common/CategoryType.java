@@ -74,14 +74,18 @@ public enum CategoryType {
             case FOULS -> switch (rank) {
                 case RG1 -> List.of("\"das erste Foul erwischen...\"",
                                     "angepasste Interpretation (+ Mut zum \"no-call\"!)",
-                                    "AOS / RSBQ / ADV/DADV");
+                                    "AOS / RSBQ / ADV/DADV",
+                                    "(wenn nötig): zielführender Einsatz von Technischen Fouls sowie korrekte Interpretation bzgl. Disruptive / Flagrant Fouls");
                 case RG2 -> List.of("klare Linie mit minimalen Schwankungen",
                                     "PPL (PW / CW / IW / QW)",
-                                    "AOS / RSBQ");
+                                    "AOS / RSBQ",
+                                    "(wenn nötig): zielführender Einsatz von Technischen Fouls sowie korrekte Interpretation bzgl. Disruptive / Flagrant Fouls");
                 case RG3 -> List.of("erkennbare Linie, mit leichten Schwankungen, gutes Verkaufen der Entscheide",
                                     "Vor- / Nachteil werden angewendet",
-                                    "Wurf- und 1-1-Situationen \"fehlerlos\" (RTD, B/CH)");
-                case RG4 -> List.of("Foulentscheide mit korrekter Sanktion und korrektem Vorgehen (IOT)");
+                                    "Wurf- und 1-1-Situationen \"fehlerlos\" (RTD, B/CH)",
+                                    "(wenn nötig): zielführender Einsatz von Technischen Fouls sowie korrekte Interpretation bzgl. Disruptive / Flagrant Fouls");
+                case RG4 -> List.of("Foulentscheide mit korrekter Sanktion und korrektem Vorgehen (IOT)",
+                                    "(wenn nötig): zielführender Einsatz von Technischen Fouls sowie korrekte Interpretation bzgl. Disruptive / Flagrant Fouls");
                 case RK -> List.of("Foulentscheide mit korrekter Sanktion");
             };
             case VIOLATIONS -> switch (rank) {
