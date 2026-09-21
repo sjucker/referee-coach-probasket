@@ -41,12 +41,13 @@ class ApplicationPropertiesTest {
     }
 
     @Test
-    void apiKeyIsRequiredWhenGameLookupIsEnabled() {
+    void apiKeyIsNotRequiredForGameLookup() {
+        // the game lookup endpoint is public and does not send the refApiKey header
         var properties = fullyLocal();
         properties.setBasketplanGameLookupEnabled(true);
 
-        assertThat(properties.isBasketplanApiKeyRequired()).isTrue();
-        assertThatThrownBy(properties::validate).isInstanceOf(IllegalStateException.class);
+        assertThat(properties.isBasketplanApiKeyRequired()).isFalse();
+        assertThatCode(properties::validate).doesNotThrowAnyException();
     }
 
     @Test
@@ -60,7 +61,7 @@ class ApplicationPropertiesTest {
     @Test
     void blankApiKeyIsRejectedJustLikeAMissingOne() {
         var properties = fullyLocal();
-        properties.setBasketplanGameLookupEnabled(true);
+        properties.setBasketplanUserSyncEnabled(true);
         properties.setBasketplanApiKey("   ");
 
         assertThatThrownBy(properties::validate).isInstanceOf(IllegalStateException.class);

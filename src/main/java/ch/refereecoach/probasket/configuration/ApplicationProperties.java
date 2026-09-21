@@ -46,18 +46,19 @@ public class ApplicationProperties {
     }
 
     /**
-     * every basketplan call needs the api key, so it is mandatory as soon as any basketplan feature is enabled.
+     * only the authentication and the user-sync calls send the refApiKey header; the game lookup is public and
+     * therefore works without an api key.
      */
     public boolean isBasketplanApiKeyRequired() {
-        return isBasketplanAuthentication() || basketplanUserSyncEnabled || basketplanGameLookupEnabled;
+        return isBasketplanAuthentication() || basketplanUserSyncEnabled;
     }
 
     @PostConstruct
     public void validate() {
         if (isBasketplanApiKeyRequired() && isBlank(basketplanApiKey)) {
             throw new IllegalStateException(("probasket.basketplan-api-key (BASKETPLAN_API_KEY) must be set: "
-                                             + "auth-provider=%s, basketplan-user-sync-enabled=%s, basketplan-game-lookup-enabled=%s")
-                                                    .formatted(authProvider, basketplanUserSyncEnabled, basketplanGameLookupEnabled));
+                                             + "auth-provider=%s, basketplan-user-sync-enabled=%s")
+                                                    .formatted(authProvider, basketplanUserSyncEnabled));
         }
 
         log.info("authentication provider: {}, basketplan user-sync enabled: {}, basketplan game-lookup enabled: {}",
