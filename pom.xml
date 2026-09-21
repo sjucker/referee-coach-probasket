@@ -277,7 +277,7 @@
                             <skip>${jooq-codegen-skip}</skip>
                             <database>
                                 <type>POSTGRES</type>
-                                <containerImage>postgres:17.6</containerImage>
+                                <containerImage>postgres:18.3</containerImage>
                             </database>
                             <flyway/>
                             <jooq>
