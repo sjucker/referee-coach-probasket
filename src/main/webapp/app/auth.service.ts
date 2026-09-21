@@ -1,6 +1,7 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
+import {of} from 'rxjs';
 import {
     AuthConfigDTO,
     AuthProvider,
@@ -38,23 +39,25 @@ export class AuthService {
     readonly isLocalAuthentication = computed(() => this._authProvider() === AuthProvider.LOCAL);
     readonly isBasketplanAuthentication = computed(() => this._authProvider() === AuthProvider.BASKETPLAN);
 
-    constructor() {
-        this.loadAuthConfig();
-    }
-
     hasRole(role: string) {
         return this._roles().includes(role);
     }
 
     /**
-     * the login flow differs per provider, so the configuration is fetched before the user signs in.
+     * the login flow differs per provider, so the configuration is fetched before the app renders (see appConfig).
+     *
+     * this must not be called from the constructor: the request runs through authInterceptor, which injects this
+     * very service, which would be a circular dependency while the service is still being constructed.
      */
-    private loadAuthConfig() {
-        this.http.get<AuthConfigDTO>(`${this.baseUrl}/api/auth/config`).subscribe({
-            next: (res) => this._authProvider.set(res.authProvider),
-            // stay unknown rather than falling back, so no misleading hint is shown
-            error: () => this._authProvider.set(null)
-        });
+    loadAuthConfig() {
+        return this.http.get<AuthConfigDTO>(`${this.baseUrl}/api/auth/config`).pipe(
+            tap((res) => this._authProvider.set(res.authProvider)),
+            // stay unknown rather than falling back, so no misleading hint is shown - and never block the bootstrap
+            catchError(() => {
+                this._authProvider.set(null);
+                return of(null);
+            })
+        );
     }
 
     changePassword(currentPassword: string, newPassword: string) {
