@@ -8,7 +8,7 @@
             @if (auth.isLocalAuthentication()) {
                 Sign in using your Referee Coach credentials.<br/>
                 If you forgot your password, ask an administrator to reset it.
-            } @else {
+            } @else if (auth.isBasketplanAuthentication()) {
                 Sign in using your <a href="https://www.basketplan.ch" target="_blank">Basketplan</a> credentials.<br/>
                 If you forgot your password, click <a href="https://www.basketplan.ch/showSendUserPassword.do">here</a>.
             }

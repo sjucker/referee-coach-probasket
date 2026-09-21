@@ -27,15 +27,16 @@ export class AuthService {
     private readonly _username = signal<string | null>(this.readValue(this.usernameKey));
     private readonly _userId = signal<number | null>(this.readValue(this.userIdKey) ? parseInt(this.readValue(this.userIdKey)!) : null);
     private readonly _roles = signal<string[]>(this.readRoles());
-    private readonly _authProvider = signal<AuthProvider>(AuthProvider.BASKETPLAN);
+    // null until /api/auth/config answered - never guess, or the wrong login hint is shown while it is in flight
+    private readonly _authProvider = signal<AuthProvider | null>(null);
 
     readonly token = computed(() => this._token());
     readonly userId = computed(() => this._userId());
     readonly username = computed(() => this._username());
     readonly roles = computed(() => this._roles());
     readonly isAuthenticated = computed(() => !!this._token());
-    readonly authProvider = computed(() => this._authProvider());
     readonly isLocalAuthentication = computed(() => this._authProvider() === AuthProvider.LOCAL);
+    readonly isBasketplanAuthentication = computed(() => this._authProvider() === AuthProvider.BASKETPLAN);
 
     constructor() {
         this.loadAuthConfig();
@@ -51,7 +52,8 @@ export class AuthService {
     private loadAuthConfig() {
         this.http.get<AuthConfigDTO>(`${this.baseUrl}/api/auth/config`).subscribe({
             next: (res) => this._authProvider.set(res.authProvider),
-            error: () => this._authProvider.set(AuthProvider.BASKETPLAN)
+            // stay unknown rather than falling back, so no misleading hint is shown
+            error: () => this._authProvider.set(null)
         });
     }
 
