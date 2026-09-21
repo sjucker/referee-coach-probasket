@@ -77,6 +77,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                    .csrf(AbstractHttpConfigurer::disable)
+                   // without this the CORS preflight of every authenticated endpoint is rejected with 401 before
+                   // the @CrossOrigin configuration of the endpoints is ever applied
+                   .cors(withDefaults())
                    .exceptionHandling(withDefaults())
                    .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                    .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
