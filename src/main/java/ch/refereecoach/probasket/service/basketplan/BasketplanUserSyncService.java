@@ -37,6 +37,11 @@ public class BasketplanUserSyncService {
 
     @Scheduled(initialDelay = 0, fixedDelay = 24, timeUnit = HOURS)
     public void syncReferees() {
+        if (!applicationProperties.isBasketplanUserSyncEnabled()) {
+            log.info("Basketplan referee synchronization is disabled");
+            return;
+        }
+
         log.info("Synchronizing referees from basketplan");
         try {
             var client = webClientBuilder.build();
@@ -85,7 +90,7 @@ public class BasketplanUserSyncService {
                             existing.setRank(rank.name());
                             loginDao.update(existing);
                         } else {
-                            loginDao.insert(new Login(id, firstName, familyName, email, null, false, true, false, false, false, rank.name(), active, false, null));
+                            loginDao.insert(new Login(id, firstName, familyName, email, null, false, true, false, false, false, rank.name(), active, false, null, null));
                             log.info("added referee %s %s (%d)".formatted(firstName, familyName, id));
                         }
                         receivedIds.add(id);

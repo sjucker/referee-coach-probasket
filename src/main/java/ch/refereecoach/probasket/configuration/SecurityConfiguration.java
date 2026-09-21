@@ -1,6 +1,7 @@
 package ch.refereecoach.probasket.configuration;
 
 import ch.refereecoach.probasket.service.auth.BasketplanAuthenticationProvider;
+import ch.refereecoach.probasket.service.auth.LocalPasswordAuthenticationProvider;
 import ch.refereecoach.probasket.service.report.UserService;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +57,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authManager(BasketplanAuthenticationProvider provider) {
-        return new ProviderManager(provider);
+    public AuthenticationManager authManager(BasketplanAuthenticationProvider basketplanProvider,
+                                             LocalPasswordAuthenticationProvider localProvider) {
+        // only ever register the configured one: both support UsernamePasswordAuthenticationToken and would chain
+        return new ProviderManager(properties.isBasketplanAuthentication() ? basketplanProvider : localProvider);
     }
 
     @Bean
@@ -77,7 +80,7 @@ public class SecurityConfiguration {
                    .exceptionHandling(withDefaults())
                    .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                    .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
-                                                      .requestMatchers("/api/auth/**").permitAll()
+                                                      .requestMatchers("/api/auth/login", "/api/auth/config").permitAll()
                                                       .requestMatchers("/api/**").authenticated()
                                                       .anyRequest().permitAll() // to serve the Angular frontend
                                          )

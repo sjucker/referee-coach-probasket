@@ -14,7 +14,10 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {debounceTime, distinctUntilChanged, skip} from 'rxjs/operators';
-import {UpdateUserRolesDTO, UserDTO, UsersSearchResultDTO} from "../../rest";
+import {CreateUserDTO, SetPasswordDTO, UpdateUserRolesDTO, UserDTO, UsersSearchResultDTO} from "../../rest";
+import {MatDialog} from "@angular/material/dialog";
+import {CreateUserDialog} from "./create-user-dialog";
+import {SetPasswordDialog, SetPasswordDialogData} from "./set-password-dialog";
 import {LoadingBar} from "../components/loading-bar/loading-bar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSortModule, Sort} from "@angular/material/sort";
@@ -30,6 +33,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 export class AdminPage {
     private readonly http = inject(HttpClient);
     private readonly snackBar = inject(MatSnackBar);
+    private readonly dialog = inject(MatDialog);
     protected readonly auth = inject(AuthService);
 
     protected readonly users = signal<UserDTO[]>([]);
@@ -43,6 +47,8 @@ export class AdminPage {
     protected readonly sortOrder = signal<'asc' | 'desc'>('asc');
 
     protected readonly canEdit = computed(() => this.auth.isAdmin());
+    // users and passwords are only owned locally when basketplan is not the source of truth
+    protected readonly canManageUsers = computed(() => this.auth.isAdmin() && this.auth.isLocalAuthentication());
 
     constructor() {
         // Debounce search text changes
@@ -106,6 +112,38 @@ export class AdminPage {
                 this.snackBar.open('Save failed', undefined, {duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'});
             },
         });
+    }
+
+    addUser(): void {
+        this.dialog.open(CreateUserDialog).afterClosed().subscribe((dto: CreateUserDTO | null | undefined) => {
+            if (!dto) return;
+
+            this.http.post<UserDTO>('/api/admin/users', dto).subscribe({
+                next: () => {
+                    this.notify('User added');
+                    this.load();
+                },
+                error: (err) => this.notify(err?.status === 400 ? 'Username already taken' : 'Could not add user'),
+            });
+        });
+    }
+
+    setPassword(user: UserDTO): void {
+        const data: SetPasswordDialogData = {fullName: `${user.firstName} ${user.lastName}`};
+
+        this.dialog.open(SetPasswordDialog, {data}).afterClosed().subscribe((password: string | null | undefined) => {
+            if (!password) return;
+
+            const body: SetPasswordDTO = {password};
+            this.http.put<void>(`/api/admin/users/${user.id}/password`, body).subscribe({
+                next: () => this.notify('Password set'),
+                error: () => this.notify('Could not set password'),
+            });
+        });
+    }
+
+    private notify(message: string): void {
+        this.snackBar.open(message, undefined, {duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'});
     }
 
     get displayedColumns(): string[] {

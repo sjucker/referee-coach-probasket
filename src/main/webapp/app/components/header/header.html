@@ -28,6 +28,12 @@
                 <mat-icon>search</mat-icon>
                 <span>Tag Search</span>
             </button>
+            @if (auth.isLocalAuthentication()) {
+                <button type="button" mat-menu-item [routerLink]="['/', PATH_CHANGE_PASSWORD]">
+                    <mat-icon>password</mat-icon>
+                    <span>Change Password</span>
+                </button>
+            }
             @if (auth.isAdmin()) {
                 <button type="button" mat-menu-item [routerLink]="['/', PATH_ADMIN]">
                     <mat-icon>supervisor_account</mat-icon>

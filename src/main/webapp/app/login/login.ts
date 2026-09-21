@@ -29,7 +29,7 @@ import {PATH_LOGIN, PATH_OVERVIEW} from "../app.routes";
 })
 export class Login {
     private readonly fb = inject(FormBuilder);
-    private readonly auth = inject(AuthService);
+    protected readonly auth = inject(AuthService);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
 

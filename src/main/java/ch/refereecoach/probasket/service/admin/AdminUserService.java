@@ -1,10 +1,12 @@
 package ch.refereecoach.probasket.service.admin;
 
+import ch.refereecoach.probasket.dto.auth.CreateUserDTO;
 import ch.refereecoach.probasket.dto.auth.UpdateUserRolesDTO;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.auth.UsersSearchResultDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.LoginDao;
 import ch.refereecoach.probasket.jooq.tables.pojos.Login;
+import ch.refereecoach.probasket.service.auth.PasswordService;
 import ch.refereecoach.probasket.service.report.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.refereeCoach;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.refereeCoachPlus;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.trainer;
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.trainerCoach;
+import static ch.refereecoach.probasket.jooq.Sequences.LOGIN_LOCAL_ID_SEQ;
 import static ch.refereecoach.probasket.jooq.tables.Login.LOGIN;
 import static ch.refereecoach.probasket.service.report.UserService.toDTO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -37,6 +40,7 @@ public class AdminUserService {
 
     private final DSLContext jooqDsl;
     private final LoginDao loginDao;
+    private final PasswordService passwordService;
 
     public UsersSearchResultDTO searchUsers(int page, int pageSize, String filter, String sortBy, String sortOrder) {
         Condition condition = DSL.noCondition();
@@ -74,6 +78,42 @@ public class AdminUserService {
             case admin -> descending ? LOGIN.ADMIN.desc() : LOGIN.ADMIN.asc();
             default -> descending ? LOGIN.LASTNAME.desc() : LOGIN.LASTNAME.asc();
         };
+    }
+
+    /**
+     * creates a local user. only usable with local authentication - with basketplan authentication the users are
+     * owned by basketplan and created by {@code BasketplanUserSyncService}.
+     *
+     * @throws IllegalArgumentException if the username is already taken
+     */
+    public UserDTO createUser(CreateUserDTO dto) {
+        var password = passwordService.encode(dto.password());
+
+        if (!loginDao.fetchByUsername(dto.username()).isEmpty()) {
+            throw new IllegalArgumentException("Username already taken: " + dto.username());
+        }
+
+        // login.id is the basketplan personId for synced users, so local users draw from a disjoint high range
+        var id = jooqDsl.nextval(LOGIN_LOCAL_ID_SEQ);
+
+        var login = new Login();
+        login.setId(id);
+        login.setFirstname(dto.firstName());
+        login.setLastname(dto.lastName());
+        login.setEmail(dto.email());
+        login.setUsername(dto.username());
+        login.setPassword(password);
+        login.setActive(true);
+        login.setRefereeCoach(false);
+        login.setRefereeCoachPlus(false);
+        login.setReferee(false);
+        login.setTrainerCoach(false);
+        login.setTrainer(false);
+        login.setAdmin(false);
+        loginDao.insert(login);
+
+        log.info("created local user {} {} ({})", dto.firstName(), dto.lastName(), id);
+        return toDTO(login);
     }
 
     public UserDTO updateRoles(Long id, UpdateUserRolesDTO dto) {

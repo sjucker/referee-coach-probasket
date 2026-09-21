@@ -1,9 +1,12 @@
 package ch.refereecoach.probasket.rest;
 
+import ch.refereecoach.probasket.dto.auth.CreateUserDTO;
+import ch.refereecoach.probasket.dto.auth.SetPasswordDTO;
 import ch.refereecoach.probasket.dto.auth.UpdateUserRolesDTO;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.auth.UsersSearchResultDTO;
 import ch.refereecoach.probasket.service.admin.AdminUserService;
+import ch.refereecoach.probasket.service.auth.PasswordService;
 import ch.refereecoach.probasket.service.export.ExportService;
 import ch.refereecoach.probasket.util.ExportUtil;
 import jakarta.validation.Valid;
@@ -15,6 +18,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +41,7 @@ public class AdminEndpoint {
 
     private final AdminUserService adminUserService;
     private final ExportService exportService;
+    private final PasswordService passwordService;
 
     @GetMapping("/users")
     @Secured({"ADMIN"})
@@ -47,6 +52,36 @@ public class AdminEndpoint {
                                                       @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         log.info("GET /api/admin/users?page={}&pageSize={}&filter={}&sortBy={}&sortOrder={}", page, pageSize, filter, sortBy, sortOrder);
         return ResponseEntity.ok(adminUserService.searchUsers(page, pageSize, filter, sortBy, sortOrder));
+    }
+
+    @PostMapping("/users")
+    @Secured({"ADMIN"})
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid CreateUserDTO dto) {
+        log.info("POST /api/admin/users {}", dto.username());
+        try {
+            return ResponseEntity.ok(adminUserService.createUser(dto));
+        } catch (IllegalStateException e) {
+            log.warn("user creation rejected: {}", e.getMessage());
+            return ResponseEntity.status(409).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/users/{id}/password")
+    @Secured({"ADMIN"})
+    public ResponseEntity<Void> setPassword(@PathVariable Long id,
+                                            @RequestBody @Valid SetPasswordDTO dto) {
+        log.info("PUT /api/admin/users/{}/password", id);
+        try {
+            passwordService.setPassword(id, dto.password());
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            log.warn("password reset rejected: {}", e.getMessage());
+            return ResponseEntity.status(409).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/users/{id}/roles")

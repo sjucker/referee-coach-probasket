@@ -216,6 +216,20 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
         return (String) get(13);
     }
 
+    /**
+     * Setter for <code>public.login.password</code>.
+     */
+    public void setPassword(String value) {
+        set(14, value);
+    }
+
+    /**
+     * Getter for <code>public.login.password</code>.
+     */
+    public String getPassword() {
+        return (String) get(14);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -239,7 +253,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
     /**
      * Create a detached, initialised LoginRecord
      */
-    public LoginRecord(Long id, String firstname, String lastname, String email, LocalDateTime lastLogin, Boolean refereeCoach, Boolean referee, Boolean trainerCoach, Boolean trainer, Boolean admin, String rank, Boolean active, Boolean refereeCoachPlus, String username) {
+    public LoginRecord(Long id, String firstname, String lastname, String email, LocalDateTime lastLogin, Boolean refereeCoach, Boolean referee, Boolean trainerCoach, Boolean trainer, Boolean admin, String rank, Boolean active, Boolean refereeCoachPlus, String username, String password) {
         super(Login.LOGIN);
 
         setId(id);
@@ -256,6 +270,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
         setActive(active);
         setRefereeCoachPlus(refereeCoachPlus);
         setUsername(username);
+        setPassword(password);
         resetTouchedOnNotNull();
     }
 
@@ -280,6 +295,7 @@ public class LoginRecord extends UpdatableRecordImpl<LoginRecord> {
             setActive(value.getActive());
             setRefereeCoachPlus(value.getRefereeCoachPlus());
             setUsername(value.getUsername());
+            setPassword(value.getPassword());
             resetTouchedOnNotNull();
         }
     }

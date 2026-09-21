@@ -1,5 +1,22 @@
 /* eslint-disable */
 
+export interface AuthConfigDTO {
+    authProvider: AuthProvider;
+}
+
+export interface ChangePasswordDTO {
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface CreateUserDTO {
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    password: string;
+}
+
 export interface LoginRequestDTO {
     username: string;
     password: string;
@@ -10,6 +27,10 @@ export interface LoginResponseDTO {
     username: string;
     userId: number;
     roles: UserRole[];
+}
+
+export interface SetPasswordDTO {
+    password: string;
 }
 
 export interface UpdateUserRolesDTO {
@@ -206,6 +227,11 @@ export interface TagSearchResultDTO {
 
 export type DateAsString = string;
 
+export enum AuthProvider {
+    BASKETPLAN = "BASKETPLAN",
+    LOCAL = "LOCAL",
+}
+
 export enum UserRole {
     REFEREE_COACH = "REFEREE_COACH",
     REFEREE_COACH_PLUS = "REFEREE_COACH_PLUS",
@@ -270,6 +296,8 @@ export enum CriteriaType {
     FOULS_RB = "FOULS_RB",
     FOULS_PNR = "FOULS_PNR",
     FOULS_OFF_BALL = "FOULS_OFF_BALL",
+    FOULS_T = "FOULS_T",
+    FOULS_DI_FL = "FOULS_DI_FL",
     VIOLATION_TV = "VIOLATION_TV",
     VIOLATION_DD = "VIOLATION_DD",
     VIOLATION_OOB = "VIOLATION_OOB",

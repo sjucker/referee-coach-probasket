@@ -1,7 +1,14 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
-import {LoginRequestDTO, LoginResponseDTO, UserRole} from "../rest";
+import {
+    AuthConfigDTO,
+    AuthProvider,
+    ChangePasswordDTO,
+    LoginRequestDTO,
+    LoginResponseDTO,
+    UserRole
+} from "../rest";
 import {environment} from "../environments/environment";
 
 
@@ -20,15 +27,37 @@ export class AuthService {
     private readonly _username = signal<string | null>(this.readValue(this.usernameKey));
     private readonly _userId = signal<number | null>(this.readValue(this.userIdKey) ? parseInt(this.readValue(this.userIdKey)!) : null);
     private readonly _roles = signal<string[]>(this.readRoles());
+    private readonly _authProvider = signal<AuthProvider>(AuthProvider.BASKETPLAN);
 
     readonly token = computed(() => this._token());
     readonly userId = computed(() => this._userId());
     readonly username = computed(() => this._username());
     readonly roles = computed(() => this._roles());
     readonly isAuthenticated = computed(() => !!this._token());
+    readonly authProvider = computed(() => this._authProvider());
+    readonly isLocalAuthentication = computed(() => this._authProvider() === AuthProvider.LOCAL);
+
+    constructor() {
+        this.loadAuthConfig();
+    }
 
     hasRole(role: string) {
         return this._roles().includes(role);
+    }
+
+    /**
+     * the login flow differs per provider, so the configuration is fetched before the user signs in.
+     */
+    private loadAuthConfig() {
+        this.http.get<AuthConfigDTO>(`${this.baseUrl}/api/auth/config`).subscribe({
+            next: (res) => this._authProvider.set(res.authProvider),
+            error: () => this._authProvider.set(AuthProvider.BASKETPLAN)
+        });
+    }
+
+    changePassword(currentPassword: string, newPassword: string) {
+        const body: ChangePasswordDTO = {currentPassword, newPassword};
+        return this.http.post<void>(`${this.baseUrl}/api/auth/change-password`, body);
     }
 
     login(username: string, password: string) {

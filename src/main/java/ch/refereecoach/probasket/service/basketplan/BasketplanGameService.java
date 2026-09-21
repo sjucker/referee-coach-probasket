@@ -1,5 +1,6 @@
 package ch.refereecoach.probasket.service.basketplan;
 
+import ch.refereecoach.probasket.configuration.ApplicationProperties;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.basketplan.BasketplanGameDTO;
 import ch.refereecoach.probasket.service.report.UserService;
@@ -33,10 +34,16 @@ public class BasketplanGameService {
 
     private static final String SEARCH_GAMES_URL = "https://www.basketplan.ch/showSearchGames.do?actionType=searchGames&gameNumber=%s&xmlView=true&perspective=de_default";
 
+    private final ApplicationProperties applicationProperties;
     private final UserService userService;
     private final Builder webClientBuilder;
 
     public Optional<BasketplanGameDTO> findGameByNumber(String gameNumber) {
+        if (!applicationProperties.isBasketplanGameLookupEnabled()) {
+            log.info("Basketplan game lookup is disabled, not looking up game {}", gameNumber);
+            return Optional.empty();
+        }
+
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 

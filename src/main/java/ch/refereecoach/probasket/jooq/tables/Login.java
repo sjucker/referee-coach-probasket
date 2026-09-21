@@ -128,6 +128,11 @@ public class Login extends TableImpl<LoginRecord> {
      */
     public final TableField<LoginRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(255), this, "");
 
+    /**
+     * The column <code>public.login.password</code>.
+     */
+    public final TableField<LoginRecord, String> PASSWORD = createField(DSL.name("password"), SQLDataType.VARCHAR(255), this, "");
+
     private Login(Name alias, Table<LoginRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

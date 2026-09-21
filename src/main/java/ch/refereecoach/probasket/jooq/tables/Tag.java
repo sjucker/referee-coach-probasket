@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -59,7 +60,7 @@ public class Tag extends TableImpl<TagRecord> {
     /**
      * The column <code>public.tag.id</code>.
      */
-    public final TableField<TagRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TagRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).generatedByDefaultAsIdentity(), this, "");
 
     /**
      * The column <code>public.tag.name</code>.
@@ -131,6 +132,11 @@ public class Tag extends TableImpl<TagRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public Identity<TagRecord, Long> getIdentity() {
+        return (Identity<TagRecord, Long>) super.getIdentity();
     }
 
     @Override
