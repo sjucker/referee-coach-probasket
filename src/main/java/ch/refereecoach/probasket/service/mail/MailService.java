@@ -75,7 +75,7 @@ public class MailService {
             simpleMessage.setBcc(properties.getBccMail());
             simpleMessage.setTo(properties.getCopyMail());
 
-            simpleMessage.setText("Neues Coaching für Spiel-Nr. %s wurde erfasst. Referee: %s, Coach: %s".formatted(report.getGameNumber(), report.getReporteeName(), report.getCoachName()));
+            simpleMessage.setText("È stato registrato un nuovo coaching per la partita n. %s. Arbitro: %s, Coach: %s".formatted(report.getGameNumber(), report.getReporteeName(), report.getCoachName()));
 
             mailSender.send(simpleMessage);
         } catch (MailException e) {

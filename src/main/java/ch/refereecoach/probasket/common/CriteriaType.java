@@ -9,13 +9,13 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public enum CriteriaType {
-    IMAGE_ON_TIME("pünktlich", CategoryType.IMAGE, CriteriaStateType.RADIO),
-    IMAGE_PRE_GAME_CHECKS("Kontrollen, OT", CategoryType.IMAGE, CriteriaStateType.RADIO),
+    IMAGE_ON_TIME("puntuale", CategoryType.IMAGE, CriteriaStateType.RADIO),
+    IMAGE_PRE_GAME_CHECKS("Controlli, OT", CategoryType.IMAGE, CriteriaStateType.RADIO),
     IMAGE_PRE_GAME("Pre-Game", CategoryType.IMAGE, CriteriaStateType.RADIO),
 
     FITNESS_SPEED("Speed", CategoryType.FITNESS, CriteriaStateType.RADIO),
-    FITNESS_ENDURANCE("Ausdauer", CategoryType.FITNESS, CriteriaStateType.RADIO),
-    FITNESS_EFFECT("Wirkung", CategoryType.FITNESS, CriteriaStateType.RADIO),
+    FITNESS_ENDURANCE("Resistenza", CategoryType.FITNESS, CriteriaStateType.RADIO),
+    FITNESS_EFFECT("Impatto", CategoryType.FITNESS, CriteriaStateType.RADIO),
 
     LEAD_OA("Lead: OA / 45°", CategoryType.MECHANICS, CriteriaStateType.RADIO),
     LEAD_DS("Lead: D&S", CategoryType.MECHANICS, CriteriaStateType.RADIO),
