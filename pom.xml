@@ -33,7 +33,7 @@
 
         <poi.version>5.5.1</poi.version>
 
-        <archunit.version>1.5.0</archunit.version>
+        <archunit.version>1.5.1</archunit.version>
 
         <typescript-generator-maven-plugin.version>4.1.1</typescript-generator-maven-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
