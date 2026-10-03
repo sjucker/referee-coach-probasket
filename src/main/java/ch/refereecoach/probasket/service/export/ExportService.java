@@ -3,6 +3,7 @@ package ch.refereecoach.probasket.service.export;
 import ch.refereecoach.probasket.common.CategoryType;
 import ch.refereecoach.probasket.common.CriteriaState;
 import ch.refereecoach.probasket.common.CriteriaType;
+import ch.refereecoach.probasket.common.Rank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -144,7 +145,7 @@ public class ExportService {
                           var pointsToImprove = it.value3().stream().filter(p -> p.getCategoryType() == POINTS_TO_IMPROVE).toList();
                           return new GameSummary(report.getGameDate(), report.getGameNumber(), report.getGameCompetition(),
                                                  "%s - %s".formatted(report.getGameHomeTeam(), report.getGameGuestTeam()),
-                                                 report.getCoachName(), report.getReporteeName(), report.getReporteeRank(), report.getOverallScore(), report.getInternal(),
+                                                 report.getCoachName(), report.getReporteeName(), Rank.of(report.getReporteeRank()).map(Rank::name).orElse(""), report.getOverallScore(), report.getInternal(),
                                                  scores, pointsToKeep, pointsToImprove);
                       });
     }

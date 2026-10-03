@@ -1,7 +1,7 @@
-import {Component, input, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {DatePipe, NgClass} from "@angular/common";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
-import {OfficiatingMode, RefereeReportDTO} from "../../../rest";
+import {OfficiatingMode, Rank, RefereeReportDTO} from "../../../rest";
 import {ScoreUtil} from "../../util/score-util";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
@@ -32,4 +32,8 @@ export class GameInfo {
     report = input.required<RefereeReportDTO>();
     showOverallScore = input(false);
     refereeCoachPlus = input(false);
+
+    protected rankSuffix(rank?: Rank): string {
+        return rank ? ` (${rank})` : '';
+    }
 }
