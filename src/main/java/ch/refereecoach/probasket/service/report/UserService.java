@@ -31,6 +31,7 @@ public class UserService {
                            it.getFirstname(),
                            it.getLastname(),
                            it.getEmail(),
+                           it.getUsername(),
                            Rank.of(it.getRank()).orElse(null),
                            it.getRefereeCoach(),
                            it.getRefereeCoachPlus(),

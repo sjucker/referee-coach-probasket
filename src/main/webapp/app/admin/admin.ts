@@ -147,7 +147,7 @@ export class AdminPage {
     }
 
     get displayedColumns(): string[] {
-        return ['name', 'email', 'rank', 'active', 'refereeCoach', 'refereeCoachPlus', 'referee', 'trainerCoach', 'trainer', 'actions'];
+        return ['name', 'username', 'email', 'rank', 'active', 'refereeCoach', 'refereeCoachPlus', 'referee', 'trainerCoach', 'trainer', 'actions'];
     }
 
     onMatSortChange($event: Sort) {

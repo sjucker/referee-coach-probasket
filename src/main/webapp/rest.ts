@@ -46,6 +46,7 @@ export interface UserDTO {
     firstName: string;
     lastName: string;
     email: string;
+    username?: string;
     rank?: Rank;
     refereeCoach: boolean;
     refereeCoachPlus: boolean;
