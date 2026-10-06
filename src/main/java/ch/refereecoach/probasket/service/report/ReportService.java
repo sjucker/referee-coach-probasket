@@ -33,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -267,6 +268,7 @@ public class ReportService {
         }
     }
 
+    @Transactional
     public CreateRefereeReportResultDTO copyReport(String externalId, CopyRefereeReportDTO dto, long userId) {
         var coach = userService.getById(userId);
         var report = reportDao.fetchOptionalByExternalId(externalId).orElseThrow(() -> new IllegalArgumentException("report for external id %s not found".formatted(externalId)));
@@ -284,6 +286,10 @@ public class ReportService {
 
             reportCommentDao.fetchByReportId(newReport.id()).forEach(it -> {
                 var source = sourceComments.get(it.getType());
+                if (source == null) {
+                    // category did not exist when source report was created
+                    return;
+                }
                 it.setComment(source.getComment());
                 // do not set score, only copy source comment
                 reportCommentDao.update(it);
