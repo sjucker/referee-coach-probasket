@@ -1,10 +1,13 @@
 package ch.refereecoach.probasket.rest;
 
+import ch.refereecoach.probasket.dto.admin.SaveTagDTO;
+import ch.refereecoach.probasket.dto.admin.TagAdminDTO;
 import ch.refereecoach.probasket.dto.auth.CreateUserDTO;
 import ch.refereecoach.probasket.dto.auth.SetPasswordDTO;
 import ch.refereecoach.probasket.dto.auth.UpdateUserRolesDTO;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.auth.UsersSearchResultDTO;
+import ch.refereecoach.probasket.service.admin.AdminTagService;
 import ch.refereecoach.probasket.service.admin.AdminUserService;
 import ch.refereecoach.probasket.service.auth.PasswordService;
 import ch.refereecoach.probasket.service.export.ExportService;
@@ -16,6 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
@@ -40,6 +45,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 public class AdminEndpoint {
 
     private final AdminUserService adminUserService;
+    private final AdminTagService adminTagService;
     private final ExportService exportService;
     private final PasswordService passwordService;
 
@@ -91,6 +97,55 @@ public class AdminEndpoint {
         log.info("PUT /api/admin/users/{}/roles {}", id, dto);
         try {
             return ResponseEntity.ok(adminUserService.updateRoles(id, dto));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/tags")
+    @Secured({"ADMIN"})
+    public ResponseEntity<List<TagAdminDTO>> tags() {
+        log.info("GET /api/admin/tags");
+        return ResponseEntity.ok(adminTagService.findAll());
+    }
+
+    @PostMapping("/tags")
+    @Secured({"ADMIN"})
+    public ResponseEntity<TagAdminDTO> createTag(@RequestBody @Valid SaveTagDTO dto) {
+        log.info("POST /api/admin/tags {}", dto);
+        try {
+            return ResponseEntity.ok(adminTagService.createTag(dto));
+        } catch (IllegalStateException e) {
+            log.warn("tag creation rejected: {}", e.getMessage());
+            return ResponseEntity.status(409).build();
+        }
+    }
+
+    @PutMapping("/tags/{id}")
+    @Secured({"ADMIN"})
+    public ResponseEntity<TagAdminDTO> renameTag(@PathVariable Long id,
+                                                 @RequestBody @Valid SaveTagDTO dto) {
+        log.info("PUT /api/admin/tags/{} {}", id, dto);
+        try {
+            return ResponseEntity.ok(adminTagService.renameTag(id, dto));
+        } catch (IllegalStateException e) {
+            log.warn("tag rename rejected: {}", e.getMessage());
+            return ResponseEntity.status(409).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/tags/{id}")
+    @Secured({"ADMIN"})
+    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
+        log.info("DELETE /api/admin/tags/{}", id);
+        try {
+            adminTagService.deleteTag(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            log.warn("tag deletion rejected: {}", e.getMessage());
+            return ResponseEntity.status(409).build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

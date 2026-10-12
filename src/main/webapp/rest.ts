@@ -1,5 +1,15 @@
 /* eslint-disable */
 
+export interface SaveTagDTO {
+    name: string;
+}
+
+export interface TagAdminDTO {
+    id: number;
+    name: string;
+    usageCount: number;
+}
+
 export interface AuthConfigDTO {
     authProvider: AuthProvider;
 }

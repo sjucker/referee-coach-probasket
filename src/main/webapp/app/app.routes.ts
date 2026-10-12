@@ -8,6 +8,7 @@ import {canDeactivateGuard} from './can-deactivate.guard';
 import {ViewPage} from './view/view';
 import {DiscussPage} from './discuss/discuss';
 import {AdminPage} from './admin/admin';
+import {AdminTagsPage} from './admin/admin-tags';
 import {ExportPage} from './export/export';
 import {ChangePassword} from './profile/change-password';
 
@@ -18,6 +19,7 @@ export const PATH_EDIT = 'edit';
 export const PATH_VIEW = 'view';
 export const PATH_DISCUSS = 'discuss';
 export const PATH_ADMIN = 'admin';
+export const PATH_ADMIN_TAGS = 'admin-tags';
 export const PATH_EXPORT = 'export';
 export const PATH_CHANGE_PASSWORD = 'change-password';
 
@@ -26,6 +28,7 @@ export const routes: Routes = [
     {path: PATH_OVERVIEW, component: Overview, canActivate: [authGuard]},
     {path: PATH_TAG_SEARCH, component: TagSearch, canActivate: [authGuard]},
     {path: PATH_ADMIN, component: AdminPage, canActivate: [authGuard, adminGuard]},
+    {path: PATH_ADMIN_TAGS, component: AdminTagsPage, canActivate: [authGuard, adminGuard]},
     {path: PATH_EXPORT, component: ExportPage, canActivate: [authGuard, adminGuard]},
     {path: PATH_CHANGE_PASSWORD, component: ChangePassword, canActivate: [authGuard]},
     {path: `${PATH_EDIT}/:externalId`, component: EditPage, canActivate: [authGuard], canDeactivate: [canDeactivateGuard]},
