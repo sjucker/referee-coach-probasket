@@ -10,6 +10,7 @@ import ch.refereecoach.probasket.dto.report.RefereeReportDTO;
 import ch.refereecoach.probasket.dto.report.ReportCommentDTO;
 import ch.refereecoach.probasket.dto.report.ReportCriteriaDTO;
 import ch.refereecoach.probasket.dto.report.ReportVideoCommentDTO;
+import ch.refereecoach.probasket.dto.report.TagDTO;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCommentDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportCriteriaDao;
 import ch.refereecoach.probasket.jooq.tables.daos.ReportDao;
@@ -23,7 +24,6 @@ import ch.refereecoach.probasket.jooq.tables.pojos.ReportCriteria;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoComment;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentRef;
 import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentReply;
-import ch.refereecoach.probasket.jooq.tables.pojos.ReportVideoCommentTag;
 import ch.refereecoach.probasket.service.basketplan.BasketplanGameService;
 import ch.refereecoach.probasket.service.mail.MailService;
 import ch.refereecoach.probasket.util.AsportUtil;
@@ -32,23 +32,29 @@ import ch.refereecoach.probasket.util.YouTubeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_COMMENT_REPORT;
 import static ch.refereecoach.probasket.common.ReportType.REFEREE_VIDEO_REPORT;
+import static ch.refereecoach.probasket.jooq.Tables.REPORT_VIDEO_COMMENT_TAG;
+import static ch.refereecoach.probasket.jooq.Tables.TAG;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.jooq.impl.DSL.select;
+import static org.jooq.impl.DSL.val;
 
 @Slf4j
 @Service
@@ -57,6 +63,7 @@ public class ReportService {
 
     private static final BigDecimal DEFAULT_SCORE = new BigDecimal("7.00");
 
+    private final DSLContext jooqDsl;
     private final ReportDao reportDao;
     private final ReportCommentDao reportCommentDao;
     private final ReportCriteriaDao reportCriteriaDao;
@@ -193,7 +200,7 @@ public class ReportService {
                        var newVideoComment = new ReportVideoComment(null, report.getId(), videoComment.timestampInSeconds(), videoComment.comment(), DateUtil.now(), coach.id(), videoComment.requiresReply());
                        reportVideoCommentDao.insert(newVideoComment);
 
-                       videoComment.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(newVideoComment.getId(), tag.id())));
+                       insertTags(newVideoComment.getId(), videoComment.tags());
                    }
                } else {
                    // update
@@ -209,7 +216,7 @@ public class ReportService {
                 reportVideoCommentDao.update(reportVideoComment);
 
                 reportVideoCommentTagDao.delete(reportVideoCommentTagDao.fetchByReportVideoCommentId(reportVideoComment.getId()));
-                reportVideoCommentDTO.tags().forEach(tag -> reportVideoCommentTagDao.insert(new ReportVideoCommentTag(reportVideoComment.getId(), tag.id())));
+                insertTags(reportVideoComment.getId(), reportVideoCommentDTO.tags());
             } else {
                 reportVideoCommentDao.delete(reportVideoComment);
             }
@@ -377,6 +384,20 @@ public class ReportService {
                         .filter(report -> Objects.equals(report.getCoachId(), coachId))
                         .map(Report::getId)
                         .collect(toSet());
+    }
+
+    /**
+     * tags may have been deleted by an admin while the report was being edited, those are skipped.
+     */
+    private void insertTags(Long videoCommentId, List<TagDTO> tags) {
+        if (tags.isEmpty()) {
+            return;
+        }
+        jooqDsl.insertInto(REPORT_VIDEO_COMMENT_TAG, REPORT_VIDEO_COMMENT_TAG.REPORT_VIDEO_COMMENT_ID, REPORT_VIDEO_COMMENT_TAG.TAG_ID)
+               .select(select(val(videoCommentId), TAG.ID)
+                               .from(TAG)
+                               .where(TAG.ID.in(tags.stream().map(TagDTO::id).collect(toSet()))))
+               .execute();
     }
 
     public static class InvalidVideoUrlException extends Exception {

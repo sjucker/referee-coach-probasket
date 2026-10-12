@@ -86,7 +86,9 @@ export class AdminTagsPage {
             const body: SaveTagDTO = {name};
             this.http.put<TagAdminDTO>(`/api/admin/tags/${tag.id}`, body).subscribe({
                 next: (updated) => {
-                    this.tags.set(this.tags().map(t => (t.id === updated.id ? updated : t)));
+                    this.tags.set(this.tags()
+                        .map(t => (t.id === updated.id ? updated : t))
+                        .sort((a, b) => a.name.localeCompare(b.name)));
                     this.notify('Tag renamed');
                 },
                 error: (err) => this.notify(err?.status === 409 ? 'A tag with this name already exists' : 'Could not rename tag'),

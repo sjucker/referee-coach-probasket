@@ -7,12 +7,14 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -42,6 +44,16 @@ class AdminTagServiceTest {
 
         assertThatThrownBy(() -> service.deleteTag(7L)).isInstanceOf(IllegalStateException.class);
         verify(tagDao, never()).delete(any(Tag.class));
+    }
+
+    @Test
+    void rejectsDeletionOfTagReferencedAfterUsageCheck() {
+        var tag = tag(7L, "LEAD");
+        when(tagDao.fetchOptionalById(7L)).thenReturn(Optional.of(tag));
+        when(jooqDsl.fetchCount(any(Table.class), any(Condition.class))).thenReturn(0);
+        doThrow(new DataIntegrityViolationException("fk__report_video_comment_tag_tag")).when(tagDao).delete(tag);
+
+        assertThatThrownBy(() -> service.deleteTag(7L)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test

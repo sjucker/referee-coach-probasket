@@ -6,6 +6,7 @@ import ch.refereecoach.probasket.jooq.tables.daos.TagDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,7 +79,12 @@ public class AdminTagService {
             throw new IllegalStateException("Tag is still referenced: " + id);
         }
 
-        tagDao.delete(tag);
+        try {
+            tagDao.delete(tag);
+        } catch (DataIntegrityViolationException e) {
+            // the tag got referenced after the usage check
+            throw new IllegalStateException("Tag is still referenced: " + id, e);
+        }
         log.info("deleted tag {} ({})", tag.getName(), id);
     }
 
