@@ -1,6 +1,13 @@
 @use '../../variables';
 @use '../../responsive';
 
+.search-container {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: variables.$half-padding;
+}
+
 .table-container {
   width: 100%;
   overflow-x: auto;
