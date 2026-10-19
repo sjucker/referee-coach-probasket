@@ -37,6 +37,7 @@ export class AdminPage {
     protected readonly pageIndex = signal(0);
     protected readonly pageSize = signal(20);
     protected readonly loading = signal(false);
+    protected readonly syncing = signal(false);
     protected readonly error = signal<string | null>(null);
     protected readonly textFilter = signal<string>('');
     protected readonly sortBy = signal<string>('lastName');
@@ -104,6 +105,21 @@ export class AdminPage {
             },
             error: () => {
                 this.snackBar.open('Save failed', undefined, {duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'});
+            },
+        });
+    }
+
+    syncUsers(): void {
+        this.syncing.set(true);
+        this.http.post<void>('/api/admin/users/sync', null).subscribe({
+            next: () => {
+                this.syncing.set(false);
+                this.snackBar.open('Users synchronized with Basketplan', undefined, {duration: 1500, horizontalPosition: 'center', verticalPosition: 'top'});
+                this.load();
+            },
+            error: () => {
+                this.syncing.set(false);
+                this.snackBar.open('Synchronization with Basketplan failed', undefined, {duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'});
             },
         });
     }

@@ -36,7 +36,14 @@ public class BasketplanUserSyncService {
     private final LoginDao loginDao;
 
     @Scheduled(initialDelay = 0, fixedDelay = 24, timeUnit = HOURS)
-    public void syncReferees() {
+    public void scheduledSyncReferees() {
+        syncReferees();
+    }
+
+    /**
+     * @return true if the referees were synchronized successfully, false otherwise
+     */
+    public synchronized boolean syncReferees() {
         log.info("Synchronizing referees from basketplan");
         try {
             var client = webClientBuilder.build();
@@ -102,12 +109,14 @@ public class BasketplanUserSyncService {
                                      log.info("deactivated referee %s %s (%d)".formatted(login.getFirstname(), login.getLastname(), login.getId()));
                                  }
                              });
+                return true;
             } else {
                 log.warn("Basketplan referee-data call returned empty body");
             }
         } catch (Exception e) {
             log.error("unexpected error while retrieving referee-data from Basketplan", e);
         }
+        return false;
     }
 
 }

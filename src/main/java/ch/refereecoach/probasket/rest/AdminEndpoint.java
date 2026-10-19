@@ -4,6 +4,7 @@ import ch.refereecoach.probasket.dto.auth.UpdateUserRolesDTO;
 import ch.refereecoach.probasket.dto.auth.UserDTO;
 import ch.refereecoach.probasket.dto.auth.UsersSearchResultDTO;
 import ch.refereecoach.probasket.service.admin.AdminUserService;
+import ch.refereecoach.probasket.service.basketplan.BasketplanUserSyncService;
 import ch.refereecoach.probasket.service.export.ExportService;
 import ch.refereecoach.probasket.util.ExportUtil;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import static ch.refereecoach.probasket.dto.auth.UserDTO.Fields.lastName;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @Slf4j
@@ -37,6 +40,7 @@ public class AdminEndpoint {
 
     private final AdminUserService adminUserService;
     private final ExportService exportService;
+    private final BasketplanUserSyncService basketplanUserSyncService;
 
     @GetMapping("/users")
     @Secured({"ADMIN"})
@@ -59,6 +63,15 @@ public class AdminEndpoint {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/users/sync")
+    @Secured({"ADMIN"})
+    public ResponseEntity<Void> syncUsers() {
+        log.info("POST /api/admin/users/sync");
+        return basketplanUserSyncService.syncReferees()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.status(BAD_GATEWAY).build();
     }
 
     @GetMapping("/export")

@@ -1,5 +1,5 @@
 <app-header></app-header>
-<app-loading-bar [show]="loading()"></app-loading-bar>
+<app-loading-bar [show]="loading() || syncing()"></app-loading-bar>
 
 <mat-card appearance="outlined">
     <mat-card-content>
@@ -11,6 +11,11 @@
             <mat-form-field appearance="fill" class="search-field">
                 <input matInput placeholder="Search by first or last name" [ngModel]="textFilter()" (ngModelChange)="textFilter.set($event)"/>
             </mat-form-field>
+            <button mat-stroked-button (click)="syncUsers()" [disabled]="!canEdit() || syncing()"
+                    matTooltip="Synchronize referees (names, emails, ranks, active state) from Basketplan">
+                <mat-icon>sync</mat-icon>
+                Sync with Basketplan
+            </button>
         </div>
 
         <div class="table-container" [class.loading]="loading()">
