@@ -25,7 +25,8 @@ public record BasketplanGameDTO(@NotNull String gameNumber,
                                 Long referee3Id,
                                 String referee3Name,
                                 Rank referee3Rank,
-                                String videoUrl) {
+                                String videoUrl,
+                                boolean refereeMissingInDatabase) {
 
     public boolean containsReferee(Long refereeId) {
         return Objects.equals(refereeId, referee1Id) ||
