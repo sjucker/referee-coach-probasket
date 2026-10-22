@@ -92,6 +92,7 @@ export interface BasketplanGameDTO {
     referee3Name?: string;
     referee3Rank?: Rank;
     videoUrl?: string;
+    refereeMissingInDatabase: boolean;
 }
 
 export interface CopyRefereeReportDTO {
