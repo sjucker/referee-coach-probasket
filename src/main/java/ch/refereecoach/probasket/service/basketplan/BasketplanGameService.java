@@ -61,6 +61,9 @@ public class BasketplanGameService {
                 var referee1 = getReferee(gameNode, "referee1Id");
                 var referee2 = getReferee(gameNode, "referee2Id");
                 var referee3 = getReferee(gameNode, "referee3Id");
+                var refereeMissingInDatabase = isMissingInDatabase(gameNode, "referee1Id", referee1)
+                        || isMissingInDatabase(gameNode, "referee2Id", referee2)
+                        || isMissingInDatabase(gameNode, "referee3Id", referee3);
 
                 return Optional.of(new BasketplanGameDTO(
                         gameNumber,
@@ -78,7 +81,8 @@ public class BasketplanGameService {
                         referee3.map(UserDTO::id).orElse(null), referee3.map(UserDTO::fullName).orElse(null), referee3.map(UserDTO::rank).orElse(null),
                         getAttributeValue(gameNode, "videoLink")
                                 .or(() -> findAsportVideoUrl(gameNumber))
-                                .orElse(null)
+                                .orElse(null),
+                        refereeMissingInDatabase
                 ));
             }
 
@@ -99,6 +103,10 @@ public class BasketplanGameService {
             return referee;
         }
         return Optional.empty();
+    }
+
+    private boolean isMissingInDatabase(Node gameNode, String name, Optional<UserDTO> referee) {
+        return getAttributeValue(gameNode, name).isPresent() && referee.isEmpty();
     }
 
     private Optional<String> findAsportVideoUrl(String gameNumber) {

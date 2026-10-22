@@ -60,6 +60,7 @@ export interface BasketplanGameDTO {
     referee3Name?: string;
     referee3Rank?: Rank;
     videoUrl?: string;
+    refereeMissingInDatabase: boolean;
 }
 
 export interface CopyRefereeReportDTO {
@@ -270,6 +271,8 @@ export enum CriteriaType {
     FOULS_RB = "FOULS_RB",
     FOULS_PNR = "FOULS_PNR",
     FOULS_OFF_BALL = "FOULS_OFF_BALL",
+    FOULS_T = "FOULS_T",
+    FOULS_DI_FL = "FOULS_DI_FL",
     VIOLATION_TV = "VIOLATION_TV",
     VIOLATION_DD = "VIOLATION_DD",
     VIOLATION_OOB = "VIOLATION_OOB",

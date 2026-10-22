@@ -248,16 +248,18 @@ export class Overview implements OnInit {
                         ]);
                     }
                     this.videoUrlInputNeeded.set(!game.videoUrl);
+                } else if (game.refereeMissingInDatabase) {
+                    this.problemDescription.set('At least one referee of this game is not registered in Referee-Coach. Please contact an administrator.');
                 } else {
-                    this.problemDescription.set('At least one referee not available in database');
+                    this.problemDescription.set('No referees have been assigned to this game in Basketplan yet. Please try again later.');
                 }
                 this.searching.set(false);
             },
             error: error => {
                 if (error.status === 404) {
-                    this.problemDescription.set('No game found for given game number');
+                    this.problemDescription.set(`No game found in Basketplan for game number ${gameNumber}. Please check the game number.`);
                 } else {
-                    this.problemDescription.set('An unexpected error occurred');
+                    this.problemDescription.set('An unexpected error occurred while searching for the game. Please try again later.');
                 }
                 this.searching.set(false);
             }
