@@ -23,6 +23,8 @@ import static ch.refereecoach.probasket.jooq.Tables.REPORT_CRITERIA;
 import static ch.refereecoach.probasket.jooq.tables.Report.REPORT;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.left;
+import static org.apache.commons.lang3.StringUtils.strip;
 import static org.apache.poi.ss.usermodel.DateUtil.getExcelDate;
 import static org.jooq.Records.mapping;
 import static org.jooq.impl.DSL.multiset;
@@ -130,7 +132,9 @@ public class ExportService {
                                               .where(REPORT_COMMENT.REPORT_ID.eq(REPORT.ID),
                                                      REPORT_CRITERIA.STATE.eq(CriteriaState.TRUE.name()))
                                               .orderBy(REPORT_CRITERIA.ID.asc())
-                                      ).convertFrom(it -> it.map(mapping(v -> CriteriaType.valueOf(v))))
+                                      ).convertFrom(it -> it.map(mapping(v -> CriteriaType.valueOf(v)))),
+                              REPORT.fk_ReportCoach().FIRSTNAME,
+                              REPORT.fk_ReportCoach().LASTNAME
                              )
                       .from(REPORT)
                       .where(REPORT.FINISHED_AT.isNotNull(),
@@ -144,9 +148,16 @@ public class ExportService {
                           var pointsToImprove = it.value3().stream().filter(p -> p.getCategoryType() == POINTS_TO_IMPROVE).toList();
                           return new GameSummary(report.getGameDate(), report.getGameNumber(), report.getGameCompetition(),
                                                  "%s - %s".formatted(report.getGameHomeTeam(), report.getGameGuestTeam()),
-                                                 report.getCoachName(), report.getReporteeName(), report.getReporteeRank(), report.getOverallScore(), report.getInternal(),
+                                                 coachShortName(it.value5(), it.value6(), report.getCoachName()), report.getReporteeName(), report.getReporteeRank(), report.getOverallScore(), report.getInternal(),
                                                  scores, pointsToKeep, pointsToImprove);
                       });
+    }
+
+    static String coachShortName(String firstName, String lastName, String fallback) {
+        if (firstName == null || lastName == null) {
+            return fallback;
+        }
+        return left(strip(firstName), 2) + left(strip(lastName), 2);
     }
 
     private record GameSummary(LocalDate date, String gameNumber, String competition, String teams, String coach, String referee, String refereeRank, BigDecimal overallScore, boolean internal,
