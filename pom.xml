@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
     <groupId>ch.referee-coach.probasket</groupId>
@@ -31,16 +31,16 @@
         <nodeVersion>v24.19.0</nodeVersion>
         <npmVersion>11.17.0</npmVersion>
 
-        <poi.version>5.5.1</poi.version>
+        <poi.version>6.0.0</poi.version>
 
         <archunit.version>1.5.1</archunit.version>
 
-        <typescript-generator-maven-plugin.version>4.1.1</typescript-generator-maven-plugin.version>
+        <typescript-generator-maven-plugin.version>4.2.1</typescript-generator-maven-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.4</testcontainers-jooq-codegen-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.16</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
-        <versions-maven-plugin.version>2.22.0</versions-maven-plugin.version>
-        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <versions-maven-plugin.version>2.23.0</versions-maven-plugin.version>
+        <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
         <frontend-maven-plugin.version>2.0.2</frontend-maven-plugin.version>
         <testcontainers-jooq-codegen.version>2.0.5</testcontainers-jooq-codegen.version>
 

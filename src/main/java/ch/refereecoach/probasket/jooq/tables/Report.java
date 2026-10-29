@@ -22,6 +22,7 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -66,7 +67,7 @@ public class Report extends TableImpl<ReportRecord> {
     /**
      * The column <code>public.report.id</code>.
      */
-    public final TableField<ReportRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).generatedByDefaultAsIdentity(), this, "");
 
     /**
      * The column <code>public.report.external_id</code>.
@@ -303,6 +304,11 @@ public class Report extends TableImpl<ReportRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public Identity<ReportRecord, Long> getIdentity() {
+        return (Identity<ReportRecord, Long>) super.getIdentity();
     }
 
     @Override
