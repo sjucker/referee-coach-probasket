@@ -338,6 +338,7 @@ public class ReportSearchService {
                                 .where(REPORT.REPORT_TYPE.eq(REFEREE_VIDEO_REPORT.name()),
                                        REPORT.FINISHED_AT.isNotNull(),
                                        REPORT.FINISHED_AT.lt(dateTime),
+                                       REPORT.INTERNAL.isFalse(),
                                        REPORT.REMINDER_SENT.isFalse(),
                                        REPORT_VIDEO_COMMENT.REQUIRES_REPLY.isTrue(),
                                        notExists(selectOne().from(REPORT_VIDEO_COMMENT_REPLY)
@@ -353,6 +354,7 @@ public class ReportSearchService {
                                 .where(REPORT.REPORT_TYPE.eq(REFEREE_VIDEO_REPORT.name()),
                                        REPORT.FINISHED_AT.isNotNull(),
                                        REPORT.FINISHED_AT.lt(dateTime),
+                                       REPORT.INTERNAL.isFalse(),
                                        REPORT.REMINDER_SENT.isFalse(),
                                        REPORT_VIDEO_COMMENT_REF.REQUIRES_REPLY.isTrue(),
                                        notExists(selectOne().from(REPORT_VIDEO_COMMENT_REPLY)
