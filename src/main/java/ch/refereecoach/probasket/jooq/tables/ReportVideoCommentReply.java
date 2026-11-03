@@ -18,6 +18,7 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Identity;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -62,7 +63,7 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
     /**
      * The column <code>public.report_video_comment_reply.id</code>.
      */
-    public final TableField<ReportVideoCommentReplyRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ReportVideoCommentReplyRecord, Long> ID = createField(DSL.name("id"), SQLDataType.BIGINT.nullable(false).generatedByDefaultAsIdentity(), this, "");
 
     /**
      * The column
@@ -152,6 +153,11 @@ public class ReportVideoCommentReply extends TableImpl<ReportVideoCommentReplyRe
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public Identity<ReportVideoCommentReplyRecord, Long> getIdentity() {
+        return (Identity<ReportVideoCommentReplyRecord, Long>) super.getIdentity();
     }
 
     @Override
