@@ -366,6 +366,10 @@ public class ReportService {
                      .filter(id -> !Objects.equals(id, report.getId()))
                      .forEach(id -> {
                          var otherReport = reportDao.fetchOneById(id);
+                         if (otherReport.getFinishedAt() == null || otherReport.getInternal()) {
+                             // reportee is not (yet) allowed to access this report
+                             return;
+                         }
                          var referee = userService.getById(otherReport.getReporteeId());
 
                          mailService.sendNewDiscussionMail(commenter, referee, otherReport);
