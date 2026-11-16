@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.ArrayList;
@@ -95,6 +96,7 @@ public class SecurityConfiguration {
                                    return new JwtAuthenticationToken(jwt, currentAuthorities);
                                });
                            }))
+                   .addFilterAfter(new MdcUserFilter(), AnonymousAuthenticationFilter.class)
                    .build();
     }
 
